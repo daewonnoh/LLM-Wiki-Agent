@@ -1,8 +1,8 @@
-export const manuscriptText = `트러블과 함께 읽기
-
-AI 에이전트와 문학 연구자의 대화에 관한 연구
-
-노대원(제주대)
+export const manuscriptText = `<div class="paper-title-container">
+  <h1 class="paper-title">트러블과 함께 읽기</h1>
+  <h2 class="paper-subtitle">AI 에이전트와 문학 연구자의 대화에 관한 연구</h2>
+  <div class="paper-author">노대원<span>(제주대)</span></div>
+</div>
 
 1. 서론: AI 시대 문학 연구자의 실존과 기술공생
 

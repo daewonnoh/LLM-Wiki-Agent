@@ -72,7 +72,7 @@ function App() {
       .replace(/\[TODO-C\*\]/g, '<span class="todo-badge todo-c">🟢 논리 보완</span>')
       .replace(/\[\^(\d+)\](?!:)/g, (match, p1) => {
         const title = footnotesMap[p1] ? footnotesMap[p1] : '';
-        return `<sup class="footnote-ref" title="${title}">[${p1}]</sup>`;
+        return `<sup class="footnote-ref" data-tooltip="${title}">[${p1}]</sup>`;
       });
   };
 
