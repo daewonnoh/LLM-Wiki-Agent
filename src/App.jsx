@@ -41,13 +41,13 @@ function App() {
   const [isTyping, setIsTyping] = useState(false);
 
   const menuItems = [
-    { id: 'home', name: '홈 (Home)' },
-    { id: 'maps', name: '연구 맵 & 지도 (Maps)' },
-    { id: 'explorer', name: '트러블 익스플로러 (Explorer)' },
-    { id: 'media', name: '미디어 쇼케이스 (Media)' },
-    { id: 'reviews', name: '비평 쇼케이스 (Reviews)' },
-    { id: 'reader', name: '논문 뷰어 (Reader)' },
-    { id: 'assembly', name: '토론의 장 (Assembly)' }
+    { id: 'home', name: '홈' },
+    { id: 'maps', name: '연구 맵 & 지도' },
+    { id: 'explorer', name: '트러블 익스플로러' },
+    { id: 'media', name: '미디어 쇼케이스' },
+    { id: 'reviews', name: '비평 쇼케이스' },
+    { id: 'reader', name: '논문 뷰어' },
+    { id: 'assembly', name: '토론의 장' }
   ];
 
   // 1. 마크다운 인라인 헬퍼 함수
