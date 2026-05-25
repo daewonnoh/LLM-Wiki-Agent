@@ -2315,19 +2315,21 @@ body {
 }
 .paper-subtitle {
   font-size: 1.5rem;
-  font-weight: 400;
-  color: #a0aec0;
+  font-weight: 500;
+  color: #e2e8f0;
   margin-bottom: 2rem;
 }
 .paper-author {
   font-size: 1.2rem;
-  color: #e2e8f0;
+  font-weight: 600;
+  color: #ffffff;
   font-style: italic;
 }
 .paper-author span {
-  font-size: 1rem;
-  color: #718096;
+  font-size: 1.1rem;
+  color: #a0aec0;
   margin-left: 5px;
+  font-weight: 400;
 }
 
 /* Tooltip Override */
