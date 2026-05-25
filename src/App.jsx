@@ -815,6 +815,19 @@ function App() {
                 </div>
               </div>
 
+              {/* 2. 팟캐스트 플레이어 */}
+              <div className="media-placeholder" style={{ padding: '30px', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
+                <div style={{ fontSize: '3rem' }}>🎙️</div>
+                <h4 style={{ margin: 0, color: 'white', fontSize: '1.5rem' }}>연구 소개 팟캐스트</h4>
+                <p style={{ margin: 0, color: '#a0aec0', fontSize: '1rem', textAlign: 'center' }}>AI의 매끄러운 정답에 맞선 문학적 트러블</p>
+                <audio 
+                  controls 
+                  src={`${import.meta.env.BASE_URL}assets/media/trouble_podcast.m4a`}
+                  style={{ width: '100%', maxWidth: '500px', marginTop: '15px' }}
+                  title="연구 소개 팟캐스트"
+                />
+              </div>
+
               {/* 3. 소개 영상 플레이어 */}
               <div className="media-placeholder">
                 <div style={{ padding: '20px', background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
