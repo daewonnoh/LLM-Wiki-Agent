@@ -2964,19 +2964,20 @@ body {
   border: none;
   padding: 10px 22px;
   font-size: 0.95rem;
-  font-weight: 600;
-  color: #94a3b8;
+  font-weight: 700;
+  color: #e2e8f0;
   border-radius: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
 
 .novel-sub-tab-btn:hover {
-  color: #f8fafc;
-  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .novel-sub-tab-btn.active {
