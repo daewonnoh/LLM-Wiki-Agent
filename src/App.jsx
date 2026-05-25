@@ -885,18 +885,99 @@ function App() {
 
             {activeMediaTab === 'greta' && (
               <div className="novel-content-container fade-in">
-                {/* 미디어 플레이스홀더 */}
-                <div className="media-placeholders-container">
-                  <div className="media-placeholder">
-                    <div className="placeholder-box webtoon-placeholder">
-                      <span className="placeholder-icon">🎨</span>
-                      <p>「그레타 복음」 웹툰<br/><small>(추후 연결)</small></p>
+                {/* 미디어 쇼케이스 영역 (웹툰 + 팟캐스트 가로 배치) */}
+                <div className="greta-media-showcase">
+                  {/* 웹툰 뷰어 */}
+                  <div className="webtoon-container">
+                    <h3 className="media-subtitle">🎨 그레타 복음 10컷 웹툰</h3>
+                    <div className="webtoon-viewer">
+                      <div className="webtoon-image-frame">
+                        <img 
+                          src={`${import.meta.env.BASE_URL}assets/webtoon/page_${currentWebtoonPage.toString().padStart(2, '0')}.png`} 
+                          alt={`소설 그레타 복음 웹툰 ${currentWebtoonPage}컷`}
+                          className="webtoon-img"
+                        />
+                      </div>
+                      <div className="webtoon-controls">
+                        <button 
+                          disabled={currentWebtoonPage === 1}
+                          onClick={() => setCurrentWebtoonPage(prev => prev - 1)}
+                          className="webtoon-nav-btn"
+                        >
+                          ◀ 이전 컷
+                        </button>
+                        <span className="webtoon-page-indicator">{currentWebtoonPage} / 10</span>
+                        <button 
+                          disabled={currentWebtoonPage === 10}
+                          onClick={() => setCurrentWebtoonPage(prev => prev + 1)}
+                          className="webtoon-nav-btn"
+                        >
+                          다음 컷 ▶
+                        </button>
+                      </div>
+                    </div>
+                    <div className="webtoon-caption-box">
+                      <h4>💡 {currentWebtoonPage}컷 해설</h4>
+                      <p>{webtoonData.find(w => w.page === currentWebtoonPage)?.caption}</p>
                     </div>
                   </div>
-                  <div className="media-placeholder">
-                    <div className="placeholder-box podcast-placeholder">
-                      <span className="placeholder-icon">🎙️</span>
-                      <p>「그레타 복음」 팟캐스트<br/><small>(추후 연결)</small></p>
+
+                  {/* 팟캐스트 재생기 */}
+                  <div className="podcast-container">
+                    <h3 className="media-subtitle">🎙️ NotebookLM 가상 오디오 극장</h3>
+                    <div className="podcast-player-ui">
+                      <div className="player-meta">
+                        <span className="player-title">NotebookLM 가상 브리핑</span>
+                        <span className="player-status">{isPlaying ? '재생 중' : '일시정지'}</span>
+                      </div>
+                      
+                      {/* 플레이 바 */}
+                      <div className="player-progress-bar">
+                        <div 
+                          className="player-progress-fill" 
+                          style={{ width: `${(podcastTime / 135) * 100}%` }}
+                        />
+                      </div>
+                      
+                      <div className="player-time-controls">
+                        <span className="player-time">
+                          {Math.floor(podcastTime / 60)}:{(podcastTime % 60).toString().padStart(2, '0')}
+                        </span>
+                        <div className="player-btns">
+                          <button className="play-btn" onClick={togglePodcast}>
+                            {isPlaying ? '⏸ 일시정지' : '▶ 재생하기'}
+                          </button>
+                          <button className="reset-btn" onClick={resetPodcast}>
+                            ⏹ 처음으로
+                          </button>
+                        </div>
+                        <span className="player-time">2:15</span>
+                      </div>
+                      <p className="player-hint">※ 재생을 누르면 시간 경과에 따라 대사가 타이핑됩니다.</p>
+                    </div>
+
+                    {/* 대화 스크립트 윈도우 */}
+                    <div className="podcast-chat-window">
+                      {podcastScript.map((chat, idx) => {
+                        const isVisible = podcastTime >= chat.time;
+                        if (!isVisible) return null;
+                        const isMinwoo = chat.speaker === '민우';
+                        return (
+                          <div 
+                            key={idx} 
+                            className={`chat-bubble-wrapper ${isMinwoo ? 'left' : 'right'} fade-in`}
+                          >
+                            <div className="speaker-avatar">
+                              {isMinwoo ? '👨‍💼 Todd' : '👩‍💼 Kim'}
+                            </div>
+                            <div className="chat-bubble">
+                              <div className="speaker-name">{chat.speaker} (MC)</div>
+                              <p className="bubble-text">{chat.text}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      <div ref={chatEndRef} />
                     </div>
                   </div>
                 </div>

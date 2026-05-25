@@ -2417,3 +2417,39 @@ body {
   color: #a0aec0;
   font-weight: 400;
 }
+
+/* 그레타 미디어 쇼케이스 레이아웃 */
+.greta-media-showcase {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.greta-media-showcase .webtoon-container,
+.greta-media-showcase .podcast-container {
+  flex: 1 1 450px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+.greta-media-showcase .media-subtitle {
+  font-size: 1.3rem;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.5rem;
+  color: #e2e8f0;
+}
+@media (max-width: 900px) {
+  .greta-media-showcase {
+    flex-direction: column;
+  }
+  .greta-media-showcase .webtoon-container,
+  .greta-media-showcase .podcast-container {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+}
