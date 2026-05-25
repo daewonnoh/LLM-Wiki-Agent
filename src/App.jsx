@@ -752,11 +752,13 @@ function App() {
                   <p>연구 소개 팟캐스트<br/><small>(추후 연결)</small></p>
                 </div>
               </div>
-              <div className="media-placeholder">
-                <div className="placeholder-box video-placeholder">
-                  <span className="placeholder-icon">🎥</span>
-                  <p>연구 소개 영상<br/><small>(추후 연결)</small></p>
-                </div>
+              <div className="media-placeholder" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <video 
+                  controls 
+                  src={`${import.meta.env.BASE_URL}assets/media/trouble_intro.mp4`}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  title="연구 소개 영상: 트러블과 함께 읽기"
+                />
               </div>
             </div>
 
