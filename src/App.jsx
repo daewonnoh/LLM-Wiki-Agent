@@ -977,8 +977,7 @@ function App() {
                 {/* 웹툰 탭 */}
                 {gretaSubTab === 'webtoon' && (
                   <div className="webtoon-container fade-in">
-                    <h3 className="media-subtitle" style={{ textAlign: 'center', marginBottom: '20px' }}>🎨 그레타 복음 웹툰</h3>
-                    <div className="vertical-webtoon-viewer" style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', background: '#000', boxShadow: '0 0 20px rgba(0,0,0,0.5)' }}>
+                    <div className="vertical-webtoon-viewer" style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', flexDirection: 'column', background: '#000', boxShadow: '0 0 20px rgba(0,0,0,0.5)' }}>
                       {[...Array(20)].map((_, i) => (
                         <img 
                           key={i}
@@ -1048,8 +1047,7 @@ function App() {
                 {/* 웹툰 탭 */}
                 {cognitionSubTab === 'webtoon' && (
                   <div className="webtoon-container fade-in">
-                    <h3 className="media-subtitle" style={{ textAlign: 'center', marginBottom: '20px' }}>🎨 인지 공간 웹툰</h3>
-                    <div className="vertical-webtoon-viewer" style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', background: '#000', boxShadow: '0 0 20px rgba(0,0,0,0.5)' }}>
+                    <div className="vertical-webtoon-viewer" style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', flexDirection: 'column', background: '#000', boxShadow: '0 0 20px rgba(0,0,0,0.5)' }}>
                       {[...Array(20)].map((_, i) => (
                         <img 
                           key={i}
