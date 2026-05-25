@@ -43,10 +43,10 @@ function App() {
   const menuItems = [
     { id: 'home', name: '홈' },
     { id: 'maps', name: '연구 맵 & 지도' },
-    { id: 'explorer', name: '트러블 익스플로러' },
+    { id: 'explorer', name: '트러블 읽기' },
     { id: 'media', name: '미디어 쇼케이스' },
     { id: 'reviews', name: '비평 쇼케이스' },
-    { id: 'reader', name: '논문 뷰어' },
+    { id: 'reader', name: '논문 읽기' },
     { id: 'assembly', name: '토론의 장' }
   ];
 
