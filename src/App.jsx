@@ -997,37 +997,19 @@ function App() {
                 {/* 미디어 쇼케이스 영역 (웹툰 + 팟캐스트 가로 배치) */}
                 <div className="greta-media-showcase">
                   {/* 웹툰 뷰어 */}
+                  {/* 그레타 복음 웹툰 뷰어 (종 스크롤 방식) */}
                   <div className="webtoon-container">
-                    <h3 className="media-subtitle">🎨 그레타 복음 10컷 웹툰</h3>
-                    <div className="webtoon-viewer">
-                      <div className="webtoon-image-frame">
+                    <h3 className="media-subtitle" style={{ textAlign: 'center', marginBottom: '20px' }}>🎨 그레타 복음 웹툰</h3>
+                    <div className="vertical-webtoon-viewer" style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', background: '#000', boxShadow: '0 0 20px rgba(0,0,0,0.5)' }}>
+                      {[...Array(20)].map((_, i) => (
                         <img 
-                          src={`${import.meta.env.BASE_URL}assets/webtoon/page_${currentWebtoonPage.toString().padStart(2, '0')}.png`} 
-                          alt={`소설 그레타 복음 웹툰 ${currentWebtoonPage}컷`}
-                          className="webtoon-img"
+                          key={i}
+                          src={`${import.meta.env.BASE_URL}assets/webtoon/greta/image${i + 1}.png`} 
+                          alt={`그레타 복음 웹툰 ${i + 1}컷`}
+                          style={{ width: '100%', display: 'block', margin: 0, padding: 0 }}
+                          loading="lazy"
                         />
-                      </div>
-                      <div className="webtoon-controls">
-                        <button 
-                          disabled={currentWebtoonPage === 1}
-                          onClick={() => setCurrentWebtoonPage(prev => prev - 1)}
-                          className="webtoon-nav-btn"
-                        >
-                          ◀ 이전 컷
-                        </button>
-                        <span className="webtoon-page-indicator">{currentWebtoonPage} / 10</span>
-                        <button 
-                          disabled={currentWebtoonPage === 10}
-                          onClick={() => setCurrentWebtoonPage(prev => prev + 1)}
-                          className="webtoon-nav-btn"
-                        >
-                          다음 컷 ▶
-                        </button>
-                      </div>
-                    </div>
-                    <div className="webtoon-caption-box">
-                      <h4>💡 {currentWebtoonPage}컷 해설</h4>
-                      <p>{webtoonData.find(w => w.page === currentWebtoonPage)?.caption}</p>
+                      ))}
                     </div>
                   </div>
 
