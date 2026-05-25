@@ -596,7 +596,7 @@ function App() {
         {activeMenu === 'explorer' && (
           <div className="explorer-page fade-in">
             <div className="page-header-wrapper">
-              <h2 className="page-title">37대 트러블 익스플로러</h2>
+              <h2 className="page-title">트러블 익스플로러</h2>
               <p className="page-subtitle">연구 과정에서 생성된 인간 연구자와 AI 에이전트의 지적 마찰 및 합의의 궤적</p>
             </div>
 
