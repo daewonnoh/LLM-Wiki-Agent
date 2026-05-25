@@ -29,6 +29,6 @@ def run_git(args):
         print("STDERR:", res.stderr)
 
 run_git(["add", "."])
-run_git(["commit", "-m", "Integrate critique-prism v2.0 detailed report to cognition tab in novel reader"])
+run_git(["commit", "-m", "Implement subtabs (webtoon, critique, discussion) for each novel in Media page"])
 run_git(["push"])
 print("SUCCESS")
