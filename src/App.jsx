@@ -65,6 +65,25 @@ function App() {
     }
   };
 
+  // 슬라이드 키보드 내비게이션
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // 연구 소개 탭에서만 동작
+      if (activeMenu !== 'maps') return;
+
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault();
+        setCurrentSlidePage(prev => Math.min(prev + 1, 20));
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        setCurrentSlidePage(prev => Math.max(prev - 1, 1));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeMenu]);
+
   // 미디어 쇼케이스 서브탭
   const [activeMediaTab, setActiveMediaTab] = useState('cognition');
   const [currentWebtoonPage, setCurrentWebtoonPage] = useState(1);

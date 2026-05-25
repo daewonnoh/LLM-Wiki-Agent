@@ -2720,3 +2720,30 @@ body {
   background: #4a5568;
 }
 
+/* 전체 화면 시 슬라이드 레이아웃 유지 */
+.slide-viewer-container:fullscreen {
+  display: flex !important;
+  flex-direction: column !important;
+  background: #0f172a !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.slide-viewer-container:fullscreen .slide-image-frame {
+  flex-grow: 1 !important;
+  height: calc(100vh - 80px) !important;
+}
+
+.slide-viewer-container:fullscreen .slide-image-frame img {
+  max-height: 100% !important;
+  object-fit: contain !important;
+}
+
+.slide-viewer-container:fullscreen .slide-controls {
+  height: 80px !important;
+  flex-shrink: 0 !important;
+}
