@@ -1099,20 +1099,7 @@ function App() {
                 ))}
               </ul>
               
-              <div className="sidebar-filters">
-                <h4>연구 지표 필터</h4>
-                {['All', 'A', 'B', 'C'].map(lvl => (
-                  <button
-                    key={lvl}
-                    className={`filter-btn-small ${todoFilter === lvl ? 'active' : ''}`}
-                    onClick={() => setTodoFilter(lvl)}
-                  >
-                    {lvl === 'All' ? '전체 보기' : 
-                     lvl === 'A' ? '🔴 구조결함(A)' :
-                     lvl === 'B' ? '🟡 내용보강(B)' : '🟢 표현보완(C)'}
-                  </button>
-                ))}
-              </div>
+
             </aside>
 
             {/* 오른쪽 논문 본문 */}
