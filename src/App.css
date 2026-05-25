@@ -2053,49 +2053,56 @@ body {
   flex-direction: column;
   background-color: #faf5ff;
   border-radius: 24px;
-  padding: 20px 40px;
+  padding: 40px 20px;
   border: 1px solid rgba(124, 58, 237, 0.08);
-  overflow-x: auto;
   position: relative;
   box-shadow: inset 0 0 20px rgba(124, 58, 237, 0.02);
+  max-height: 800px;
+  overflow-y: auto;
 }
 
 .timeline-track-wrapper {
   position: relative;
-  min-width: max-content;
-  height: 520px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
   display: flex;
-  align-items: center;
-  padding: 0 60px;
+  flex-direction: column;
+  padding: 40px 0;
 }
 
 .timeline-axis-line {
   position: absolute;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #7c3aed 0%, #0891b2 50%, #db2777 100%);
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #7c3aed 0%, #0891b2 50%, #db2777 100%);
   border-radius: 2px;
   box-shadow: 0 0 10px rgba(124, 58, 237, 0.2);
 }
 
 .timeline-node-item {
   position: relative;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
   align-items: center;
-  width: 250px;
+  width: 100%;
+  margin: 25px 0;
   transition: all 0.3s ease;
 }
 
 .timeline-connector {
-  width: 2px;
-  height: 50px;
+  grid-row: 1;
+  height: 2px;
   background-color: #cbd5e1;
   transition: all 0.3s ease;
+  z-index: 1;
 }
 
 .timeline-node-dot {
+  grid-row: 1;
   width: 18px;
   height: 18px;
   border-radius: 50%;
@@ -2112,24 +2119,38 @@ body {
   font-weight: 700;
 }
 
-.timeline-node-item.top {
-  margin-bottom: 230px;
+.timeline-node-item.top .timeline-bubble-card {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: end;
+  --hover-translate-x: -6px;
+  --hover-translate-y: 0px;
 }
 .timeline-node-item.top .timeline-connector {
-  order: 2;
+  grid-column: 2;
+  width: 40px;
+  justify-self: start;
 }
 .timeline-node-item.top .timeline-node-dot {
-  order: 3;
+  grid-column: 2;
+  justify-self: center;
 }
 
-.timeline-node-item.bottom {
-  margin-top: 230px;
+.timeline-node-item.bottom .timeline-bubble-card {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: start;
+  --hover-translate-x: 6px;
+  --hover-translate-y: 0px;
 }
 .timeline-node-item.bottom .timeline-connector {
-  order: 2;
+  grid-column: 2;
+  width: 40px;
+  justify-self: end;
 }
 .timeline-node-item.bottom .timeline-node-dot {
-  order: 1;
+  grid-column: 2;
+  justify-self: center;
 }
 
 .timeline-bubble-card {
@@ -2151,19 +2172,10 @@ body {
 }
 
 .timeline-bubble-card:hover {
-  transform: translateY(var(--hover-translate, -5px));
+  transform: translateX(var(--hover-translate-x, 0px)) translateY(var(--hover-translate-y, -2px));
   border-color: #7c3aed;
   box-shadow: 0 15px 30px rgba(124, 58, 237, 0.12);
   background: #ffffff;
-}
-
-.timeline-node-item.top .timeline-bubble-card {
-  order: 1;
-  --hover-translate: -6px;
-}
-.timeline-node-item.bottom .timeline-bubble-card {
-  order: 3;
-  --hover-translate: 6px;
 }
 
 .timeline-node-item:hover .timeline-node-dot {
@@ -2173,7 +2185,6 @@ body {
 }
 .timeline-node-item:hover .timeline-connector {
   background-color: #7c3aed;
-  height: 60px;
 }
 
 .timeline-bubble-meta {
@@ -2219,4 +2230,36 @@ body {
 .dot-Ⅳ, .dot-기술적 { background-color: #ea580c; box-shadow: 0 0 8px rgba(234, 88, 12, 0.4); }
 .dot-Ⅴ, .dot-양가적 { background-color: #db2777; box-shadow: 0 0 8px rgba(219, 39, 119, 0.4); }
 .dot-Unknown { background-color: #64748b; }
+
+@media (max-width: 650px) {
+  .timeline-track-wrapper {
+    padding: 20px 10px;
+  }
+  .timeline-axis-line {
+    left: 30px;
+    transform: none;
+  }
+  .timeline-node-item {
+    grid-template-columns: 60px 1fr;
+    margin: 20px 0;
+  }
+  .timeline-node-item.top .timeline-bubble-card,
+  .timeline-node-item.bottom .timeline-bubble-card {
+    grid-column: 2;
+    justify-self: start;
+    width: 100%;
+    --hover-translate-x: 4px;
+    --hover-translate-y: 0px;
+  }
+  .timeline-node-item.top .timeline-connector,
+  .timeline-node-item.bottom .timeline-connector {
+    grid-column: 1;
+    width: 20px;
+    justify-self: end;
+  }
+  .timeline-node-item.top .timeline-node-dot,
+  .timeline-node-item.bottom .timeline-node-dot {
+    grid-column: 1;
+    justify-self: center;
+  }
 }
