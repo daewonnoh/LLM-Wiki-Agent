@@ -54,7 +54,7 @@ function App() {
   const [hoveredConcept, setHoveredConcept] = useState(null);
 
   // 미디어 쇼케이스 서브탭
-  const [activeMediaTab, setActiveMediaTab] = useState('greta');
+  const [activeMediaTab, setActiveMediaTab] = useState('cognition');
   const [currentWebtoonPage, setCurrentWebtoonPage] = useState(1);
   
   // 팟캐스트 관련 상태
@@ -900,16 +900,16 @@ function App() {
 
             <div className="tab-navigation">
               <button 
-                className={`tab-btn ${activeMediaTab === 'greta' ? 'active' : ''}`}
-                onClick={() => setActiveMediaTab('greta')}
-              >
-                듀나 「그레타 복음」
-              </button>
-              <button 
                 className={`tab-btn ${activeMediaTab === 'cognition' ? 'active' : ''}`}
                 onClick={() => setActiveMediaTab('cognition')}
               >
                 김초엽 「인지 공간」
+              </button>
+              <button 
+                className={`tab-btn ${activeMediaTab === 'greta' ? 'active' : ''}`}
+                onClick={() => setActiveMediaTab('greta')}
+              >
+                듀나 「그레타 복음」
               </button>
             </div>
 
