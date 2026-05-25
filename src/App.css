@@ -2368,3 +2368,52 @@ body {
   text-decoration: none;
   padding: 0 2px;
 }
+
+/* Media Placeholders CSS */
+.media-placeholders-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0 4rem 0;
+  flex-wrap: wrap;
+}
+.media-placeholder {
+  flex: 1 1 300px;
+  max-width: 350px;
+}
+.placeholder-box {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 3rem 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.placeholder-box:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-5px);
+}
+.placeholder-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+.placeholder-box p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #e2e8f0;
+  margin: 0;
+  line-height: 1.5;
+}
+.placeholder-box small {
+  font-size: 0.85rem;
+  color: #a0aec0;
+  font-weight: 400;
+}

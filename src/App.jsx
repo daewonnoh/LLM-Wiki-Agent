@@ -24,7 +24,7 @@ function App() {
   const [hoveredConcept, setHoveredConcept] = useState(null);
 
   // 미디어 쇼케이스 서브탭
-  const [activeMediaTab, setActiveMediaTab] = useState('webtoon');
+  const [activeMediaTab, setActiveMediaTab] = useState('greta');
   const [currentWebtoonPage, setCurrentWebtoonPage] = useState(1);
   
   // 팟캐스트 관련 상태
@@ -50,10 +50,9 @@ function App() {
 
   const menuItems = [
     { id: 'home', name: '홈' },
-    { id: 'maps', name: '연구 맵 & 지도' },
+    { id: 'maps', name: '연구 소개' },
     { id: 'explorer', name: '트러블 읽기' },
-    { id: 'media', name: '미디어 쇼케이스' },
-    { id: 'reviews', name: '비평 쇼케이스' },
+    { id: 'media', name: '소설 읽기' },
     { id: 'reader', name: '논문 읽기' },
     { id: 'assembly', name: '토론의 장' }
   ];
@@ -505,23 +504,18 @@ function App() {
               <h2 className="section-title">플랫폼 주요 탐색 경로</h2>
               <div className="quicklinks-grid">
                 <div className="quicklink-card" onClick={() => setActiveMenu('maps')}>
-                  <h4>지식 맵 &amp; 기능 지도</h4>
-                  <p>58개 핵심 개념의 D3.js 포스 맵 및 에이전트 기능 아키텍처 다이어그램</p>
+                  <h4>연구 소개</h4>
+                  <p>본 연구를 소개하는 발표 슬라이드, 팟캐스트, 그리고 소개 영상</p>
                   <span className="arrow-link">탐색하기 →</span>
                 </div>
                 <div className="quicklink-card" onClick={() => setActiveMenu('explorer')}>
-                  <h4>37대 트러블 익스플로러</h4>
+                  <h4>트러블 읽기</h4>
                   <p>연구 진행 시 발생한 37가지의 마찰 대화로그와 극복 양상 탐색</p>
                   <span className="arrow-link">탐색하기 →</span>
                 </div>
                 <div className="quicklink-card" onClick={() => setActiveMenu('media')}>
-                  <h4>팟캐스트 &amp; 소설 웹툰</h4>
-                  <p>NotebookLM 오디오 팟캐스트 및 듀나 소설 &lt;그레타 복음&gt; 10컷 웹툰 감상</p>
-                  <span className="arrow-link">탐색하기 →</span>
-                </div>
-                <div className="quicklink-card" onClick={() => setActiveMenu('reviews')}>
-                  <h4>비평 스크롤텔링</h4>
-                  <p>&lt;인지 공간&gt;과 &lt;그레타 복음&gt;에 대한 AI-인간 교차 비평 분석 보고서</p>
+                  <h4>소설 읽기</h4>
+                  <p>듀나 「그레타 복음」과 김초엽 「인지 공간」의 웹툰, 비평 등 관련 자료</p>
                   <span className="arrow-link">탐색하기 →</span>
                 </div>
               </div>
@@ -709,8 +703,30 @@ function App() {
         {activeMenu === 'maps' && (
           <div className="maps-page fade-in">
             <div className="page-header-wrapper">
-              <h2 className="page-title">지식 맵 &amp; 기능 지도</h2>
-              <p className="page-subtitle">학술 개념 간의 긴장 지형과 에이전트 협업 기능 아키텍처</p>
+              <h2 className="page-title">연구 소개</h2>
+              <p className="page-subtitle">본 연구를 요약하고 소개하는 슬라이드, 팟캐스트, 그리고 영상입니다.</p>
+            </div>
+
+            {/* 미디어 플레이스홀더 (슬라이드, 팟캐스트, 영상) */}
+            <div className="media-placeholders-container">
+              <div className="media-placeholder">
+                <div className="placeholder-box slide-placeholder">
+                  <span className="placeholder-icon">📊</span>
+                  <p>연구 소개 슬라이드<br/><small>(추후 연결)</small></p>
+                </div>
+              </div>
+              <div className="media-placeholder">
+                <div className="placeholder-box podcast-placeholder">
+                  <span className="placeholder-icon">🎙️</span>
+                  <p>연구 소개 팟캐스트<br/><small>(추후 연결)</small></p>
+                </div>
+              </div>
+              <div className="media-placeholder">
+                <div className="placeholder-box video-placeholder">
+                  <span className="placeholder-icon">🎥</span>
+                  <p>연구 소개 영상<br/><small>(추후 연결)</small></p>
+                </div>
+              </div>
             </div>
 
             <div className="tab-navigation">
@@ -844,271 +860,164 @@ function App() {
           </div>
         )}
 
-        {/* MEDIA SHOWCASE */}
+        {/* NOVEL READER (Integrated Media & Critique) */}
         {activeMenu === 'media' && (
           <div className="media-page fade-in">
             <div className="page-header-wrapper">
-              <h2 className="page-title">미디어 쇼케이스</h2>
-              <p className="page-subtitle">소설 웹툰, 팟캐스트 브리핑 요약 등 지식의 다중 매체적 감응의 공간</p>
+              <h2 className="page-title">소설 읽기</h2>
+              <p className="page-subtitle">두 편의 소설을 감상하고, 이와 관련된 웹툰, 비평, 토론 등 다중 매체 자료를 탐색해 보세요.</p>
             </div>
 
             <div className="tab-navigation">
               <button 
-                className={`tab-btn ${activeMediaTab === 'webtoon' ? 'active' : ''}`}
-                onClick={() => setActiveMediaTab('webtoon')}
+                className={`tab-btn ${activeMediaTab === 'greta' ? 'active' : ''}`}
+                onClick={() => setActiveMediaTab('greta')}
               >
-                듀나 〈그레타 복음〉 10컷 소설 웹툰
+                듀나 「그레타 복음」
               </button>
               <button 
-                className={`tab-btn ${activeMediaTab === 'podcast' ? 'active' : ''}`}
-                onClick={() => setActiveMediaTab('podcast')}
+                className={`tab-btn ${activeMediaTab === 'cognition' ? 'active' : ''}`}
+                onClick={() => setActiveMediaTab('cognition')}
               >
-                NotebookLM 팟캐스트 극장
+                김초엽 「인지 공간」
               </button>
             </div>
 
-            {activeMediaTab === 'webtoon' && (
-              <div className="webtoon-container fade-in">
-                <div className="webtoon-viewer">
-                  <div className="webtoon-image-frame">
-                    <img 
-                      src={`${import.meta.env.BASE_URL}assets/webtoon/page_${currentWebtoonPage.toString().padStart(2, '0')}.png`} 
-                      alt={`소설 그레타 복음 웹툰 ${currentWebtoonPage}컷`}
-                      className="webtoon-img"
-                    />
+            {activeMediaTab === 'greta' && (
+              <div className="novel-content-container fade-in">
+                {/* 미디어 플레이스홀더 */}
+                <div className="media-placeholders-container">
+                  <div className="media-placeholder">
+                    <div className="placeholder-box webtoon-placeholder">
+                      <span className="placeholder-icon">🎨</span>
+                      <p>「그레타 복음」 웹툰<br/><small>(추후 연결)</small></p>
+                    </div>
                   </div>
-                  <div className="webtoon-controls">
-                    <button 
-                      disabled={currentWebtoonPage === 1}
-                      onClick={() => setCurrentWebtoonPage(prev => prev - 1)}
-                      className="webtoon-nav-btn"
-                    >
-                      ◀ 이전 컷
-                    </button>
-                    <span className="webtoon-page-indicator">{currentWebtoonPage} / 10</span>
-                    <button 
-                      disabled={currentWebtoonPage === 10}
-                      onClick={() => setCurrentWebtoonPage(prev => prev + 1)}
-                      className="webtoon-nav-btn"
-                    >
-                      다음 컷 ▶
-                    </button>
+                  <div className="media-placeholder">
+                    <div className="placeholder-box podcast-placeholder">
+                      <span className="placeholder-icon">🎙️</span>
+                      <p>「그레타 복음」 팟캐스트<br/><small>(추후 연결)</small></p>
+                    </div>
                   </div>
                 </div>
-                <div className="webtoon-caption-box">
-                  <h4>💡 {currentWebtoonPage}컷 해설</h4>
-                  <p>{webtoonData.find(w => w.page === currentWebtoonPage)?.caption}</p>
+
+                {/* 비평 영역 (기존 reviews의 greta 분석) */}
+                <div className="greta-analysis-container mt-10 fade-in">
+                  <h3 className="section-title">듀나 소설 〈그레타 복음〉 주체론적 얽힘 분석</h3>
+                  <p className="section-description" style={{color: '#a0aec0', marginBottom: '2rem'}}>소설 속 세 가지 인간 군상의 포지션과 본 연구의 기술공생적 주체성 모델의 완벽한 대조 분석입니다.</p>
+                  
+                  <div className="greta-grid">
+                    <div className="greta-card">
+                      <h4>1. 위베르 마르티농</h4>
+                      <p className="greta-role" style={{color: '#ffb86c', marginBottom: '1rem'}}>지적 오케스트레이터 (이상적 공생)</p>
+                      <p>그레타의 연산 모델을 12년간 재조정하여 '이류의 지식 관리자'를 자처한 인물. 기계의 단순 출력을 비평적으로 맥락화하고 재구성하는 본 연구의 <strong>공동 창작 오케스트레이터</strong> 모델에 정합.</p>
+                    </div>
+                    <div className="greta-card">
+                      <h4>2. 정찬환</h4>
+                      <p className="greta-role" style={{color: '#ffb86c', marginBottom: '1rem'}}>인지적 외주화의 파멸자 (의존적 파탄)</p>
+                      <p>그레타가 뱉어내는 초안에 단지 수식어구만 붙이는 단순 기입 노동에 머무르다 인지적 주체성을 완전히 상실해 파멸한 학자. 본 연구에서 경고한 <strong>인지적 아웃소싱의 극단적 경고</strong> 메타포.</p>
+                    </div>
+                    <div className="greta-card">
+                      <h4>3. 신지현 (화자)</h4>
+                      <p className="greta-role" style={{color: '#ffb86c', marginBottom: '1rem'}}>양가적 경계인 (회의적 공생자)</p>
+                      <p>그레타의 유능함에 매혹되면서도 지배당하지 않으려 주체성을 방어하고 익명 뒤에서 자신만의 연구를 사수하는 공생자. 본 연구 저자의 <strong>실존적 주저함과 양가적 트러블</strong>의 문학적 자화상.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
 
-            {activeMediaTab === 'podcast' && (
-              <div className="podcast-container fade-in">
-                <div className="podcast-player-ui">
-                  <div className="player-meta">
-                    <span className="player-title">🎙️ NotebookLM 가상 오디오 극장</span>
-                    <span className="player-status">{isPlaying ? '재생 중' : '일시정지'}</span>
-                  </div>
-                  
-                  {/* 플레이 바 */}
-                  <div className="player-progress-bar">
-                    <div 
-                      className="player-progress-fill" 
-                      style={{ width: `${(podcastTime / 135) * 100}%` }}
-                    />
-                  </div>
-                  
-                  <div className="player-time-controls">
-                    <span className="player-time">
-                      {Math.floor(podcastTime / 60)}:{(podcastTime % 60).toString().padStart(2, '0')}
-                    </span>
-                    <div className="player-btns">
-                      <button className="play-btn" onClick={togglePodcast}>
-                        {isPlaying ? '⏸ 일시정지' : '▶ 재생하기'}
-                      </button>
-                      <button className="reset-btn" onClick={resetPodcast}>
-                        ⏹ 처음으로
-                      </button>
+            {activeMediaTab === 'cognition' && (
+              <div className="novel-content-container fade-in">
+                {/* 미디어 플레이스홀더 */}
+                <div className="media-placeholders-container">
+                  <div className="media-placeholder">
+                    <div className="placeholder-box webtoon-placeholder">
+                      <span className="placeholder-icon">🎨</span>
+                      <p>「인지 공간」 웹툰<br/><small>(추후 연결)</small></p>
                     </div>
-                    <span className="player-time">2:15</span>
                   </div>
-                  <p className="player-hint">※ 재생을 누르면 시간 경과에 따라 대사가 타이핑되며 하이라이트됩니다.</p>
+                  <div className="media-placeholder">
+                    <div className="placeholder-box video-placeholder">
+                      <span className="placeholder-icon">🎥</span>
+                      <p>「인지 공간」 소개 영상<br/><small>(추후 연결)</small></p>
+                    </div>
+                  </div>
                 </div>
 
-                {/* 대화 스크립트 윈도우 */}
-                <div className="podcast-chat-window">
-                  {podcastScript.map((chat, idx) => {
-                    const isVisible = podcastTime >= chat.time;
-                    if (!isVisible) return null;
-                    const isMinwoo = chat.speaker === '민우';
-                    return (
-                      <div 
-                        key={idx} 
-                        className={`chat-bubble-wrapper ${isMinwoo ? 'left' : 'right'} fade-in`}
+                {/* 비평 영역 (기존 reviews의 clash) */}
+                <div className="critique-clash-container mt-10 fade-in">
+                  <h3 className="section-title">〈인지 공간〉 다성적 리뷰 5인 대화 (Critique Clash)</h3>
+                  <div className="critique-tabs mt-4" style={{display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px'}}>
+                    {['posthuman', 'feminism', 'marxism', 'postcolonial', 'skeptic'].map(tab => (
+                      <button
+                        key={tab}
+                        className={`critique-tab-btn ${activeCritiqueTab === tab ? 'active' : ''}`}
+                        onClick={() => setActiveCritiqueTab(tab)}
                       >
-                        <div className="speaker-avatar">
-                          {isMinwoo ? '👨‍💼 Todd' : '👩‍💼 Kim'}
-                        </div>
-                        <div className="chat-bubble">
-                          <div className="speaker-name">{chat.speaker} (MC)</div>
-                          <p className="bubble-text">{chat.text}</p>
-                        </div>
+                        {tab === 'posthuman' && '포스트휴먼 비평가'}
+                        {tab === 'feminism' && '페미니즘 비평가'}
+                        {tab === 'marxism' && '마르크스주의 비평가'}
+                        {tab === 'postcolonial' && '포스트콜로니얼'}
+                        {tab === 'skeptic' && '회의적 비평가'}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="critique-tab-content">
+                    {activeCritiqueTab === 'posthuman' && (
+                      <div className="critique-essay fade-in">
+                        <h4>👾 포스트휴먼 / 신유물론 비평가의 독해</h4>
+                        <p style={{lineHeight: 1.6, marginTop: '10px'}}>"이 소설은 인간 인지가 두개골 안에 갇혀 있지 않고 <strong>물질적 환경으로 확장</strong>되어 있다는 테제를 직접적으로 서사화합니다. 격자 구조물은 앤디 클락과 찰머스의 '확장된 마음(Extended Mind)' 논제의 극단적인 문학적 구현입니다. 스피어는 확장된 마음의 개인화이며, 비인간 물질(스피어)이 인간의 기억과 정동을 보존하는 능동적 행위자(vibrant matter)로 기능함을 증명합니다."</p>
+                        <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: 인간과 비인간 물질의 경계를 유동적으로 보며, 기술적 객체에 행위성을 부여한다.</span>
                       </div>
-                    );
-                  })}
-                  <div ref={chatEndRef} />
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* CRITIQUE SHOWCASE */}
-        {activeMenu === 'reviews' && (
-          <div className="reviews-page fade-in">
-            <div className="page-header-wrapper">
-              <h2 className="page-title">비평 쇼케이스</h2>
-              <p className="page-subtitle">김초엽 〈인지 공간〉 및 듀나 〈그레타 복음〉에 대한 AI-인간 교차 비평 분석 리포트</p>
-            </div>
-
-            <div className="reviews-navigation">
-              <button 
-                className={`review-nav-btn ${activeReviewTab === 'clash' ? 'active' : ''}`}
-                onClick={() => setActiveReviewTab('clash')}
-              >
-                〈인지 공간〉 다성적 리뷰 5인 대화 (Critique Clash)
-              </button>
-              <button 
-                className={`review-nav-btn ${activeReviewTab === 'greta' ? 'active' : ''}`}
-                onClick={() => setActiveReviewTab('greta')}
-              >
-                〈그레타 복음〉 주체론적 얽힘 분석
-              </button>
-            </div>
-
-            {activeReviewTab === 'clash' && (
-              <div className="critique-clash-container fade-in">
-                <div className="critique-tabs">
-                  {['posthuman', 'feminism', 'marxism', 'postcolonial', 'skeptic'].map(tab => (
-                    <button
-                      key={tab}
-                      className={`critique-tab-btn ${activeCritiqueTab === tab ? 'active' : ''}`}
-                      onClick={() => setActiveCritiqueTab(tab)}
-                    >
-                      {tab === 'posthuman' && '포스트휴먼 비평가'}
-                      {tab === 'feminism' && '페미니즘 비평가'}
-                      {tab === 'marxism' && '마르크스주의 비평가'}
-                      {tab === 'postcolonial' && '포스트콜로니얼'}
-                      {tab === 'skeptic' && '회의적 비평가'}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="critique-tab-content">
-                  {activeCritiqueTab === 'posthuman' && (
-                    <div className="critique-essay fade-in">
-                      <h4>👾 포스트휴먼 / 신유물론 비평가의 독해</h4>
-                      <p>
-                        "이 소설은 인간 인지가 두개골 안에 갇혀 있지 않고 <strong>물질적 환경으로 확장</strong>되어 있다는 테제를 직접적으로 서사화합니다. 
-                        격자 구조물은 앤디 클락과 찰머스의 '확장된 마음(Extended Mind)' 논제의 극단적인 문학적 구현입니다. 
-                        스피어는 확장된 마음의 개인화이며, 비인간 물질(스피어)이 인간의 기억과 정동을 보존하는 능동적 행위자(vibrant matter)로 기능함을 증명합니다."
-                      </p>
-                      <span className="premise">전제: 인간과 비인간 물질의 경계를 유동적으로 보며, 기술적 객체에 행위성을 부여한다.</span>
-                    </div>
-                  )}
-
-                  {activeCritiqueTab === 'feminism' && (
-                    <div className="critique-essay fade-in">
-                      <h4>👩‍🎤 페미니즘 / 취약성 비평가의 독해</h4>
-                      <p>
-                        "소설의 중심에는 <strong>취약한 신체의 정치학</strong>이 놓여 있습니다. 이브는 작은 몸 때문에 격자 지식에 진입하지 못하며, 
-                        공동체는 이를 개인의 결핍으로 의료화합니다. 그러나 이브의 취약성은 결핍이 아닌, 대안적 인지 방식 '스피어'를 발명하는 인식론적 특권(버틀러의 취약성으로부터의 저항)이 됩니다. 
-                        또한 제나가 이브의 보호자를 자처하며 가하는 미세한 권력적 돌봄의 외양도 예리하게 포착해야 합니다."
-                      </p>
-                      <span className="premise">전제: '보호'의 수사 안에 숨겨진 권력을 읽고, 취약한 신체가 앎의 조건임을 규명한다.</span>
-                    </div>
-                  )}
-
-                  {activeCritiqueTab === 'marxism' && (
-                    <div className="critique-essay fade-in">
-                      <h4>☭ 마르크스주의 비평가의 독해</h4>
-                      <p>
-                        "인지 공간은 <strong>생산수단의 소유 구조</strong>로 분석되어야 합니다. 격자는 모든 사회적 지식 노동(생산)의 유일한 수단이며, 
-                        접근하지 못하는 이브는 배제된 잉여노동자 계급입니다. 의상실을 운영하는 이브 아버지는 수공업적 신체 노동을 상징하죠. 
-                        격자 지식 서기관들의 기억 편집권은 지배 계급의 이데올로기 독점이며, 스피어는 생산수단의 민주적 탈중심화 시도입니다."
-                      </p>
-                      <span className="premise">전제: 지식 체계를 물질적 생산관계의 반영으로 읽으며, 격자 접근권을 계급 분석의 렌즈로 본다.</span>
-                    </div>
-                  )}
-
-                  {activeCritiqueTab === 'postcolonial' && (
-                    <div className="critique-essay fade-in">
-                      <h4>🧭 포스트콜로니얼 비평가의 독해</h4>
-                      <p>
-                        "격자 구조물은 보편적 지식의 전당이 아닌 <strong>인식론적 식민 장치</strong>입니다. '세 번째 달'에 맞춘 전설을 
-                        공동체가 격자의 정보 정리에 맞춰 자의적으로 교정하고 왜곡하는 것은, 피식민지의 구전 역사가 제국 문자로 쓰인 관찬 역사에 의해 교정되는 것과 평행합니다. 
-                        보편이라는 미명 아래 특정 기억을 삭제하는 인식론적 식민화 현상입니다."
-                      </p>
-                      <span className="premise">전제: 모든 보편 지식 체계를 제국주의적 게이트키핑 권력의 산물로 의심한다.</span>
-                    </div>
-                  )}
-
-                  {activeCritiqueTab === 'skeptic' && (
-                    <div className="critique-essay fade-in">
-                      <h4>🧐 회의적 비평가 (The Skeptic)의 반론</h4>
-                      <p>
-                        "위의 네 비평가 모두 이브를 저항의 영웅으로 만드는 <strong>거대 서사의 과잉 코딩</strong>에 빠져 있습니다. 
-                        이브는 어쩌면 단지 자기가 오르지 못하는 시스템을 폄하(제나의 의심)한 것일 수 있고, 스피어는 아주 적은 정보만 기록하는 조잡한 도구일 뿐입니다. 
-                        이론의 과잉 수사로 작품을 읽으면, 이브와 제나 사이의 원초적인 우정과 상실, 애도의 인간적 서사가 질식해버립니다."
-                      </p>
-                      <span className="premise">전제: 비평 이론이 텍스트에 과잉 의미를 주입하는 지적 월권을 경계한다.</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* 교차 논쟁 메신저 */}
-                <div className="clash-dialogue-box">
-                  <h4>💬 비평가들 간의 뜨거운 교차 설전 (Messenger)</h4>
-                  <div className="clash-chat-room">
-                    <div className="clash-msg left">
-                      <span className="clash-speaker">회의적 비평가</span>
-                      <p>"스피어에 행위성이 깃들었다는 건 비평가의 투사요! 스피어는 그저 이브의 미완의 의지가 남긴 볼품없는 잔해일 뿐입니다. 행위성을 모든 물건에 남발하면, 인간 이브가 겪은 고독과 죽음이라는 실존의 무게가 비인간 플랫 존재론 아래 희석됩니다!"</p>
-                    </div>
-                    <div className="clash-msg right">
-                      <span className="clash-speaker text-purple">포스트휴먼 비평가</span>
-                      <p>"그 초라함이라는 기준 자체가 격자 체제의 거대 지식 미학을 추종하는 맹점입니다! 제나의 회고가 상당 부분 이브의 스피어에 기록된 기억에 의존하고 있는 순간, 스피어는 서사 자체를 생산하는 관계적 행위자로 복권되는 것입니다."</p>
-                    </div>
-                    <div className="clash-msg left">
-                      <span className="clash-speaker text-pink">페미니즘 비평가</span>
-                      <p>"두 분 다 감정이나 도구에만 치우치시는데, 이브의 신체 조건이 지식의 배제로 직결되는 이 소설의 구조적 '몸의 정치학'을 보지 않으면, 이브를 이론적으로든 감정적으로든 또다시 소외시키는 결과를 낳을 뿐입니다."</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeReviewTab === 'greta' && (
-              <div className="greta-analysis-container fade-in">
-                <h3>듀나 소설 〈그레타 복음〉 주체론적 얽힘 분석</h3>
-                <p>소설 속 세 가지 인간 군상의 포지션과 본 연구의 기술공생적 주체성 모델의 완벽한 대조 분석입니다.</p>
-                
-                <div className="greta-grid">
-                  <div className="greta-card">
-                    <h4>1. 위베르 마르티농</h4>
-                    <p className="greta-role">지적 오케스트레이터 (이상적 공생)</p>
-                    <p>그레타의 연산 모델을 12년간 재조정하여 '이류의 지식 관리자'를 자처한 인물. 기계의 단순 출력을 비평적으로 맥락화하고 재구성하는 본 연구의 <strong>공동 창작 오케스트레이터</strong> 모델에 정합.</p>
+                    )}
+                    {activeCritiqueTab === 'feminism' && (
+                      <div className="critique-essay fade-in">
+                        <h4>👩‍🎤 페미니즘 / 취약성 비평가의 독해</h4>
+                        <p style={{lineHeight: 1.6, marginTop: '10px'}}>"소설의 중심에는 <strong>취약한 신체의 정치학</strong>이 놓여 있습니다. 이브는 작은 몸 때문에 격자 지식에 진입하지 못하며, 공동체는 이를 개인의 결핍으로 의료화합니다. 그러나 이브의 취약성은 결핍이 아닌, 대안적 인지 방식 '스피어'를 발명하는 인식론적 특권(버틀러의 취약성으로부터의 저항)이 됩니다. 또한 제나가 이브의 보호자를 자처하며 가하는 미세한 권력적 돌봄의 외양도 예리하게 포착해야 합니다."</p>
+                        <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: '보호'의 수사 안에 숨겨진 권력을 읽고, 취약한 신체가 앎의 조건임을 규명한다.</span>
+                      </div>
+                    )}
+                    {activeCritiqueTab === 'marxism' && (
+                      <div className="critique-essay fade-in">
+                        <h4>☭ 마르크스주의 비평가의 독해</h4>
+                        <p style={{lineHeight: 1.6, marginTop: '10px'}}>"인지 공간은 <strong>생산수단의 소유 구조</strong>로 분석되어야 합니다. 격자는 모든 사회적 지식 노동(생산)의 유일한 수단이며, 접근하지 못하는 이브는 배제된 잉여노동자 계급입니다. 의상실을 운영하는 이브 아버지는 수공업적 신체 노동을 상징하죠. 격자 지식 서기관들의 기억 편집권은 지배 계급의 이데올로기 독점이며, 스피어는 생산수단의 민주적 탈중심화 시도입니다."</p>
+                        <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: 지식 체계를 물질적 생산관계의 반영으로 읽으며, 격자 접근권을 계급 분석의 렌즈로 본다.</span>
+                      </div>
+                    )}
+                    {activeCritiqueTab === 'postcolonial' && (
+                      <div className="critique-essay fade-in">
+                        <h4>🧭 포스트콜로니얼 비평가의 독해</h4>
+                        <p style={{lineHeight: 1.6, marginTop: '10px'}}>"격자 구조물은 보편적 지식의 전당이 아닌 <strong>인식론적 식민 장치</strong>입니다. '세 번째 달'에 맞춘 전설을 공동체가 격자의 정보 정리에 맞춰 자의적으로 교정하고 왜곡하는 것은, 피식민지의 구전 역사가 제국 문자로 쓰인 관찬 역사에 의해 교정되는 것과 평행합니다. 보편이라는 미명 아래 특정 기억을 삭제하는 인식론적 식민화 현상입니다."</p>
+                        <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: 모든 보편 지식 체계를 제국주의적 게이트키핑 권력의 산물로 의심한다.</span>
+                      </div>
+                    )}
+                    {activeCritiqueTab === 'skeptic' && (
+                      <div className="critique-essay fade-in">
+                        <h4>🧐 회의적 비평가 (The Skeptic)의 반론</h4>
+                        <p style={{lineHeight: 1.6, marginTop: '10px'}}>"위의 네 비평가 모두 이브를 저항의 영웅으로 만드는 <strong>거대 서사의 과잉 코딩</strong>에 빠져 있습니다. 이브는 어쩌면 단지 자기가 오르지 못하는 시스템을 폄하(제나의 의심)한 것일 수 있고, 스피어는 아주 적은 정보만 기록하는 조잡한 도구일 뿐입니다. 이론의 과잉 수사로 작품을 읽으면, 이브와 제나 사이의 원초적인 우정과 상실, 애도의 인간적 서사가 질식해버립니다."</p>
+                        <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: 비평 이론이 텍스트에 과잉 의미를 주입하는 지적 월권을 경계한다.</span>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="greta-card">
-                    <h4>2. 정찬환</h4>
-                    <p className="greta-role">인지적 외주화의 파멸자 (의존적 파탄)</p>
-                    <p>그레타가 뱉어내는 초안에 단지 수식어구만 붙이는 단순 기입 노동에 머무르다 인지적 주체성을 완전히 상실해 파멸한 학자. 본 연구에서 경고한 <strong>인지적 아웃소싱의 극단적 경고</strong> 메타포.</p>
-                  </div>
-
-                  <div className="greta-card">
-                    <h4>3. 신지현 (화자)</h4>
-                    <p className="greta-role">양가적 경계인 (회의적 공생자)</p>
-                    <p>그레타의 유능함에 매혹되면서도 지배당하지 않으려 주체성을 방어하고 익명 뒤에서 자신만의 연구를 사수하는 공생자. 본 연구 저자의 <strong>실존적 주저함과 양가적 트러블</strong>의 문학적 자화상.</p>
+                  <div className="clash-dialogue-box mt-10">
+                    <h4 style={{marginBottom: '1rem'}}>💬 비평가들 간의 뜨거운 교차 설전 (Messenger)</h4>
+                    <div className="clash-chat-room">
+                      <div className="clash-msg left">
+                        <span className="clash-speaker" style={{color: '#a0aec0', fontSize: '0.8rem', display: 'block', marginBottom: '4px'}}>회의적 비평가</span>
+                        <p>"스피어에 행위성이 깃들었다는 건 비평가의 투사요! 스피어는 그저 이브의 미완의 의지가 남긴 볼품없는 잔해일 뿐입니다. 행위성을 모든 물건에 남발하면, 인간 이브가 겪은 고독과 죽음이라는 실존의 무게가 비인간 플랫 존재론 아래 희석됩니다!"</p>
+                      </div>
+                      <div className="clash-msg right" style={{marginLeft: 'auto'}}>
+                        <span className="clash-speaker text-purple" style={{color: '#b794f4', fontSize: '0.8rem', display: 'block', marginBottom: '4px', textAlign: 'right'}}>포스트휴먼 비평가</span>
+                        <p>"그 초라함이라는 기준 자체가 격자 체제의 거대 지식 미학을 추종하는 맹점입니다! 제나의 회고가 상당 부분 이브의 스피어에 기록된 기억에 의존하고 있는 순간, 스피어는 서사 자체를 생산하는 관계적 행위자로 복권되는 것입니다."</p>
+                      </div>
+                      <div className="clash-msg left">
+                        <span className="clash-speaker text-pink" style={{color: '#ed64a6', fontSize: '0.8rem', display: 'block', marginBottom: '4px'}}>페미니즘 비평가</span>
+                        <p>"두 분 다 감정이나 도구에만 치우치시는데, 이브의 신체 조건이 지식의 배제로 직결되는 이 소설의 구조적 '몸의 정치학'을 보지 않으면, 이브를 이론적으로든 감정적으로든 또다시 소외시키는 결과를 낳을 뿐입니다."</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
