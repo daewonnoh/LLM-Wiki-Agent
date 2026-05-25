@@ -56,6 +56,7 @@ function App() {
   // 미디어 쇼케이스 서브탭
   const [activeMediaTab, setActiveMediaTab] = useState('cognition');
   const [currentWebtoonPage, setCurrentWebtoonPage] = useState(1);
+  const [currentCognitionWebtoonPage, setCurrentCognitionWebtoonPage] = useState(1);
   
   // 팟캐스트 관련 상태
   const [isPlaying, setIsPlaying] = useState(false);
@@ -1040,20 +1041,44 @@ function App() {
 
             {activeMediaTab === 'cognition' && (
               <div className="novel-content-container fade-in">
-                {/* 미디어 플레이스홀더 */}
-                <div className="media-placeholders-container">
-                  <div className="media-placeholder">
-                    <div className="placeholder-box webtoon-placeholder">
-                      <span className="placeholder-icon">🎨</span>
-                      <p>「인지 공간」 웹툰<br/><small>(추후 연결)</small></p>
+                {/* 인지 공간 미디어 영역 */}
+                <div className="greta-media-showcase">
+                  {/* 인지 공간 웹툰 뷰어 (그레타 복음 리소스 재사용) */}
+                  <div className="webtoon-container">
+                    <h3 className="media-subtitle">🎨 인지 공간 웹툰</h3>
+                    <div className="webtoon-viewer">
+                      <div className="webtoon-image-frame">
+                        <img 
+                          src={`${import.meta.env.BASE_URL}assets/webtoon/page_${currentCognitionWebtoonPage.toString().padStart(2, '0')}.png`} 
+                          alt={`소설 인지 공간 웹툰 ${currentCognitionWebtoonPage}컷`}
+                          className="webtoon-img"
+                        />
+                      </div>
+                      <div className="webtoon-controls">
+                        <button 
+                          disabled={currentCognitionWebtoonPage === 1}
+                          onClick={() => setCurrentCognitionWebtoonPage(prev => prev - 1)}
+                          className="webtoon-nav-btn"
+                        >
+                          ◀ 이전 컷
+                        </button>
+                        <span className="webtoon-page-indicator">{currentCognitionWebtoonPage} / 10</span>
+                        <button 
+                          disabled={currentCognitionWebtoonPage === 10}
+                          onClick={() => setCurrentCognitionWebtoonPage(prev => prev + 1)}
+                          className="webtoon-nav-btn"
+                        >
+                          다음 컷 ▶
+                        </button>
+                      </div>
+                    </div>
+                    <div className="webtoon-caption-box">
+                      <h4>💡 {currentCognitionWebtoonPage}컷 해설</h4>
+                      <p>{webtoonData.find(w => w.page === currentCognitionWebtoonPage)?.caption}</p>
                     </div>
                   </div>
-                  <div className="media-placeholder">
-                    <div className="placeholder-box video-placeholder">
-                      <span className="placeholder-icon">🎥</span>
-                      <p>「인지 공간」 소개 영상<br/><small>(추후 연결)</small></p>
-                    </div>
-                  </div>
+
+
                 </div>
 
                 {/* 비평 영역 (기존 reviews의 clash) */}
