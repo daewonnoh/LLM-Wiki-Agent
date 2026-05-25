@@ -9,6 +9,7 @@ function App() {
   const [selectedTrouble, setSelectedTrouble] = useState(null);
   const [troubleFilter, setTroubleFilter] = useState('All');
   const [troubleSearch, setTroubleSearch] = useState('');
+  const [explorerView, setExplorerView] = useState('grid'); // 'grid' 또는 'timeline'
   
   // 지식 맵 서브탭
   const [activeMapTab, setActiveMapTab] = useState('concept');
@@ -41,8 +42,8 @@ function App() {
 
   const menuItems = [
     { id: 'home', name: '홈 (Home)' },
-    { id: 'explorer', name: '트러블 익스플로러 (Explorer)' },
     { id: 'maps', name: '연구 맵 & 지도 (Maps)' },
+    { id: 'explorer', name: '트러블 익스플로러 (Explorer)' },
     { id: 'media', name: '미디어 쇼케이스 (Media)' },
     { id: 'reviews', name: '비평 쇼케이스 (Reviews)' },
     { id: 'reader', name: '논문 뷰어 (Reader)' },
@@ -515,44 +516,115 @@ function App() {
                   </button>
                 ))}
               </div>
-              <input
-                type="text"
-                placeholder="트러블 제목, 마찰 지점 검색..."
-                className="search-input"
-                value={troubleSearch}
-                onChange={(e) => setTroubleSearch(e.target.value)}
-              />
+              <div className="search-toggle-group">
+                <input
+                  type="text"
+                  placeholder="트러블 제목, 마찰 지점 검색..."
+                  className="search-input"
+                  value={troubleSearch}
+                  onChange={(e) => setTroubleSearch(e.target.value)}
+                />
+                <div className="view-toggle-group">
+                  <button 
+                    className={`view-toggle-btn ${explorerView === 'grid' ? 'active' : ''}`}
+                    onClick={() => setExplorerView('grid')}
+                    title="카드 그리드 뷰"
+                  >
+                    📋 카드
+                  </button>
+                  <button 
+                    className={`view-toggle-btn ${explorerView === 'timeline' ? 'active' : ''}`}
+                    onClick={() => setExplorerView('timeline')}
+                    title="타임라인 그래프 뷰"
+                  >
+                    📈 타임라인
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* 카드 그리드 */}
-            <div className="trouble-grid">
-              {troublesData
-                .filter(t => troubleFilter === 'All' || (t.category && t.category.includes(troubleFilter)))
-                .filter(t => (t.title && t.title.includes(troubleSearch)) || 
-                             (t.situation && t.situation.includes(troubleSearch)) || 
-                             (t.friction && t.friction.includes(troubleSearch)))
-                .map(trouble => (
-                  <div 
-                    key={trouble.id} 
-                    className="trouble-card"
-                    onClick={() => setSelectedTrouble(trouble)}
-                  >
-                    <div className="card-top-meta">
-                      <span className="trouble-id">Trouble {trouble.id}</span>
-                      <span className="trouble-date">{trouble.date || ''}</span>
+            {explorerView === 'grid' ? (
+              /* 카드 그리드 */
+              <div className="trouble-grid">
+                {troublesData
+                  .filter(t => troubleFilter === 'All' || (t.category && t.category.includes(troubleFilter)))
+                  .filter(t => (t.title && t.title.includes(troubleSearch)) || 
+                               (t.situation && t.situation.includes(troubleSearch)) || 
+                               (t.friction && t.friction.includes(troubleSearch)))
+                  .map(trouble => (
+                    <div 
+                      key={trouble.id} 
+                      className="trouble-card"
+                      onClick={() => setSelectedTrouble(trouble)}
+                    >
+                      <div className="card-top-meta">
+                        <span className="trouble-id">Trouble {trouble.id}</span>
+                        <span className="trouble-date">{trouble.date || ''}</span>
+                      </div>
+                      <h3 className="card-title">{trouble.title || '제목 없음'}</h3>
+                      <p className="card-brief-situation">
+                        {trouble.situation ? trouble.situation.substring(0, 100) : ''}...
+                      </p>
+                      <div className="card-bottom-tags">
+                        <span className={`category-tag ${(trouble.category || '').split('.')[0] || 'Unknown'}`}>
+                          {trouble.category || '기타'}
+                        </span>
+                      </div>
                     </div>
-                    <h3 className="card-title">{trouble.title || '제목 없음'}</h3>
-                    <p className="card-brief-situation">
-                      {trouble.situation ? trouble.situation.substring(0, 100) : ''}...
-                    </p>
-                    <div className="card-bottom-tags">
-                      <span className={`category-tag ${(trouble.category || '').split('.')[0] || 'Unknown'}`}>
-                        {trouble.category || '기타'}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-            </div>
+                  ))}
+              </div>
+            ) : (
+              /* 타임라인 그래프 뷰 */
+              <div className="timeline-graph-container">
+                <div className="timeline-track-wrapper">
+                  <div className="timeline-axis-line"></div>
+                  {troublesData
+                    .filter(t => troubleFilter === 'All' || (t.category && t.category.includes(troubleFilter)))
+                    .filter(t => (t.title && t.title.includes(troubleSearch)) || 
+                                 (t.situation && t.situation.includes(troubleSearch)) || 
+                                 (t.friction && t.friction.includes(troubleSearch)))
+                    .sort((a, b) => a.id - b.id)
+                    .map((trouble, index) => {
+                      const isTop = index % 2 === 0;
+                      const categoryClass = (trouble.category || '').split('.')[0] || 'Unknown';
+                      const categoryTag = (trouble.category || '').split(' ')[1] || '기타';
+                      return (
+                        <div 
+                          key={trouble.id} 
+                          className={`timeline-node-item ${isTop ? 'top' : 'bottom'}`}
+                        >
+                          <div 
+                            className="timeline-bubble-card"
+                            onClick={() => setSelectedTrouble(trouble)}
+                          >
+                            <div className="timeline-bubble-meta">
+                              <span className="timeline-bubble-id">Trouble {trouble.id}</span>
+                              <span className="timeline-bubble-date">{trouble.date}</span>
+                            </div>
+                            <h4 className="timeline-bubble-title">{trouble.title}</h4>
+                            <p className="timeline-bubble-brief">
+                              {trouble.situation ? trouble.situation.substring(0, 50) + '...' : ''}
+                            </p>
+                            <div className="card-bottom-tags">
+                              <span className={`category-tag ${categoryClass}`}>
+                                {categoryTag}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="timeline-connector"></div>
+                          <div 
+                            className={`timeline-node-dot dot-${categoryClass}`}
+                            onClick={() => setSelectedTrouble(trouble)}
+                            title={`Trouble ${trouble.id}: ${trouble.title}`}
+                          >
+                            {trouble.id}
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
 
             {/* 상세 모달 팝업 */}
             {selectedTrouble && (
