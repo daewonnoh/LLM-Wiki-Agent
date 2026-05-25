@@ -815,17 +815,63 @@ function App() {
                 </div>
               </div>
 
-              {/* 2. 팟캐스트 플레이어 */}
-              <div className="media-placeholder" style={{ padding: '30px', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
-                <div style={{ fontSize: '3rem' }}>🎙️</div>
-                <h4 style={{ margin: 0, color: 'white', fontSize: '1.5rem' }}>연구 소개 팟캐스트</h4>
-                <p style={{ margin: 0, color: '#a0aec0', fontSize: '1rem', textAlign: 'center' }}>AI의 매끄러운 정답에 맞선 문학적 트러블</p>
-                <audio 
-                  controls 
-                  src={`${import.meta.env.BASE_URL}assets/media/trouble_podcast.m4a`}
-                  style={{ width: '100%', maxWidth: '500px', marginTop: '15px' }}
-                  title="연구 소개 팟캐스트"
-                />
+              {/* 2. 오디오 토론 극장 */}
+              <div className="podcast-container fade-in" style={{ width: '100%', maxWidth: '900px', margin: '30px auto' }}>
+                <h3 className="media-subtitle">🎙️ NotebookLM 가상 오디오 극장</h3>
+                <div className="podcast-player-ui">
+                  <div className="player-meta">
+                    <span className="player-title">NotebookLM 가상 브리핑</span>
+                    <span className="player-status">{isPlaying ? '재생 중' : '일시정지'}</span>
+                  </div>
+                  
+                  {/* 플레이 바 */}
+                  <div className="player-progress-bar">
+                    <div 
+                      className="player-progress-fill" 
+                      style={{ width: `${(podcastTime / 135) * 100}%` }}
+                    />
+                  </div>
+                  
+                  <div className="player-time-controls">
+                    <span className="player-time">
+                      {Math.floor(podcastTime / 60)}:{(podcastTime % 60).toString().padStart(2, '0')}
+                    </span>
+                    <div className="player-btns">
+                      <button className="play-btn" onClick={togglePodcast}>
+                        {isPlaying ? '⏸ 일시정지' : '▶ 재생하기'}
+                      </button>
+                      <button className="reset-btn" onClick={resetPodcast}>
+                        ⏹ 처음으로
+                      </button>
+                    </div>
+                    <span className="player-time">2:15</span>
+                  </div>
+                  <p className="player-hint">※ 재생을 누르면 시간 경과에 따라 대사가 타이핑됩니다.</p>
+                </div>
+
+                {/* 대화 스크립트 윈도우 */}
+                <div className="podcast-chat-window">
+                  {podcastScript.map((chat, idx) => {
+                    const isVisible = podcastTime >= chat.time;
+                    if (!isVisible) return null;
+                    const isMinwoo = chat.speaker === '민우';
+                    return (
+                      <div 
+                        key={idx} 
+                        className={`chat-bubble-wrapper ${isMinwoo ? 'left' : 'right'} fade-in`}
+                      >
+                        <div className="speaker-avatar">
+                          {isMinwoo ? '👨‍💼 Todd' : '👩‍💼 Kim'}
+                        </div>
+                        <div className="chat-bubble">
+                          <div className="speaker-name">{chat.speaker} (MC)</div>
+                          <p className="bubble-text">{chat.text}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  <div ref={chatEndRef} />
+                </div>
               </div>
 
               {/* 3. 소개 영상 플레이어 */}
@@ -1015,12 +1061,6 @@ function App() {
                   >
                     📄 주체론적 비평 분석
                   </button>
-                  <button 
-                    className={`novel-sub-tab-btn ${gretaSubTab === 'discussion' ? 'active' : ''}`}
-                    onClick={() => setGretaSubTab('discussion')}
-                  >
-                    🎙️ 오디오 토론 극장
-                  </button>
                 </div>
 
                 {/* 웹툰 탭 */}
@@ -1067,66 +1107,6 @@ function App() {
                   </div>
                 )}
 
-                {/* 토론 탭 (오디오 극장) */}
-                {gretaSubTab === 'discussion' && (
-                  <div className="podcast-container fade-in" style={{ width: '100%', maxWidth: '900px', margin: '0 auto' }}>
-                    <h3 className="media-subtitle">🎙️ NotebookLM 가상 오디오 극장</h3>
-                    <div className="podcast-player-ui">
-                      <div className="player-meta">
-                        <span className="player-title">NotebookLM 가상 브리핑</span>
-                        <span className="player-status">{isPlaying ? '재생 중' : '일시정지'}</span>
-                      </div>
-                      
-                      {/* 플레이 바 */}
-                      <div className="player-progress-bar">
-                        <div 
-                          className="player-progress-fill" 
-                          style={{ width: `${(podcastTime / 135) * 100}%` }}
-                        />
-                      </div>
-                      
-                      <div className="player-time-controls">
-                        <span className="player-time">
-                          {Math.floor(podcastTime / 60)}:{(podcastTime % 60).toString().padStart(2, '0')}
-                        </span>
-                        <div className="player-btns">
-                          <button className="play-btn" onClick={togglePodcast}>
-                            {isPlaying ? '⏸ 일시정지' : '▶ 재생하기'}
-                          </button>
-                          <button className="reset-btn" onClick={resetPodcast}>
-                            ⏹ 처음으로
-                          </button>
-                        </div>
-                        <span className="player-time">2:15</span>
-                      </div>
-                      <p className="player-hint">※ 재생을 누르면 시간 경과에 따라 대사가 타이핑됩니다.</p>
-                    </div>
-
-                    {/* 대화 스크립트 윈도우 */}
-                    <div className="podcast-chat-window">
-                      {podcastScript.map((chat, idx) => {
-                        const isVisible = podcastTime >= chat.time;
-                        if (!isVisible) return null;
-                        const isMinwoo = chat.speaker === '민우';
-                        return (
-                          <div 
-                            key={idx} 
-                            className={`chat-bubble-wrapper ${isMinwoo ? 'left' : 'right'} fade-in`}
-                          >
-                            <div className="speaker-avatar">
-                              {isMinwoo ? '👨‍💼 Todd' : '👩‍💼 Kim'}
-                            </div>
-                            <div className="chat-bubble">
-                              <div className="speaker-name">{chat.speaker} (MC)</div>
-                              <p className="bubble-text">{chat.text}</p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                      <div ref={chatEndRef} />
-                    </div>
-                  </div>
-                )}
               </div>
             )}
 
