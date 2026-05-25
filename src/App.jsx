@@ -1062,16 +1062,16 @@ function App() {
                     🎨 웹툰 보기
                   </button>
                   <button 
-                    className={`novel-sub-tab-btn ${cognitionSubTab === 'critique' ? 'active' : ''}`}
-                    onClick={() => setCognitionSubTab('critique')}
-                  >
-                    📄 텍스트 분석 상세 리포트
-                  </button>
-                  <button 
                     className={`novel-sub-tab-btn ${cognitionSubTab === 'discussion' ? 'active' : ''}`}
                     onClick={() => setCognitionSubTab('discussion')}
                   >
                     💬 다성적 리뷰 및 설전
+                  </button>
+                  <button 
+                    className={`novel-sub-tab-btn ${cognitionSubTab === 'critique' ? 'active' : ''}`}
+                    onClick={() => setCognitionSubTab('critique')}
+                  >
+                    📄 텍스트 분석 상세 리포트
                   </button>
                 </div>
 
