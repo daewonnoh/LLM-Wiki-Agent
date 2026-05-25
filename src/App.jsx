@@ -4,6 +4,14 @@ import troublesData from './data/troubles.json';
 import { manuscriptText } from './data/manuscript.js';
 import { critiqueText } from './data/critique.js';
 
+const footnotesMap = {};
+manuscriptText.split('\n').forEach(line => {
+  const match = line.match(/^\[\^(\d+)\]:\s*(.*)/);
+  if (match) {
+    footnotesMap[match[1]] = match[2].trim().replace(/"/g, '&quot;');
+  }
+});
+
 function App() {
   const [activeMenu, setActiveMenu] = useState('home');
   const [selectedTrouble, setSelectedTrouble] = useState(null);
@@ -61,7 +69,11 @@ function App() {
       .replace(/\[\[([^\]]+)\]\]/g, '<span class="wiki-link-custom">$1</span>')
       .replace(/\[TODO-A\*\]/g, '<span class="todo-badge todo-a">🔴 구조적 결함</span>')
       .replace(/\[TODO-B(\d)?\*\]/g, '<span class="todo-badge todo-b">🟡 내용 보강 $1</span>')
-      .replace(/\[TODO-C\*\]/g, '<span class="todo-badge todo-c">🟢 논리 보완</span>');
+      .replace(/\[TODO-C\*\]/g, '<span class="todo-badge todo-c">🟢 논리 보완</span>')
+      .replace(/\[\^(\d+)\](?!:)/g, (match, p1) => {
+        const title = footnotesMap[p1] ? footnotesMap[p1] : '';
+        return `<sup class="footnote-ref" title="${title}">[${p1}]</sup>`;
+      });
   };
 
   // 2. 마크다운 전체 렌더러 함수
@@ -129,6 +141,16 @@ function App() {
         let title = line.substring(5).trim();
         let id = encodeURIComponent(title);
         result.push(`<h4 class="md-h4" id="${id}" key="h4-${i}">${title}</h4>`);
+      } else if (/^\d+\.\d+\.\s/.test(line.trim())) {
+        let title = line.trim();
+        let id = encodeURIComponent(title);
+        result.push(`<h3 class="md-h3" id="${id}" key="h3-${i}">${title}</h3>`);
+      } else if (/^\d+\.\s/.test(line.trim())) {
+        let title = line.trim();
+        let id = encodeURIComponent(title);
+        result.push(`<h2 class="md-h2" id="${id}" key="h2-${i}">${title}</h2>`);
+      } else if (line.trim().startsWith('<')) {
+        result.push(line);
       } else if (line.trim() === '---') {
         result.push(`<hr class="md-hr" key="hr-${i}" />`);
       } else if (line.trim() === '') {
@@ -194,9 +216,21 @@ function App() {
     const lines = manuscriptText.split('\n');
     const headingList = [];
     lines.forEach((line) => {
-      if (line.startsWith('## ') || line.startsWith('### ')) {
-        const isSub = line.startsWith('### ');
-        const title = line.replace(/^###?\s+/, '').trim();
+      let title = '';
+      let isSub = false;
+      if (line.startsWith('## ')) {
+        title = line.replace(/^##\s+/, '').trim();
+      } else if (line.startsWith('### ')) {
+        title = line.replace(/^###\s+/, '').trim();
+        isSub = true;
+      } else if (/^\d+\.\d+\.\s/.test(line.trim())) {
+        title = line.trim();
+        isSub = true;
+      } else if (/^\d+\.\s/.test(line.trim())) {
+        title = line.trim();
+      }
+
+      if (title) {
         headingList.push({
           title,
           isSub,
@@ -1094,7 +1128,18 @@ function App() {
                     key={idx} 
                     className={`toc-item ${h.isSub ? 'sub-item' : ''}`}
                   >
-                    <a href={`#${h.id}`}>{h.title}</a>
+                    <a 
+                      href={`#${h.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const target = document.getElementById(h.id);
+                        if (target) {
+                          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                      }}
+                    >
+                      {h.title}
+                    </a>
                   </li>
                 ))}
               </ul>

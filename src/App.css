@@ -2263,3 +2263,38 @@ body {
     justify-self: center;
   }
 }
+
+/* Academic Table Styles */
+.table-container {
+  overflow-x: auto;
+  margin: 2rem 0;
+}
+.academic-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  text-align: left;
+}
+.academic-table th, .academic-table td {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 15px;
+}
+.academic-table th {
+  background-color: rgba(255, 255, 255, 0.05);
+  font-weight: 600;
+}
+.academic-table .total-row td {
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Footnote Tooltip Styles */
+.footnote-ref {
+  cursor: help;
+  color: #a0aec0;
+  text-decoration: underline dotted;
+  margin-left: 2px;
+}
+.footnote-ref:hover {
+  color: #e2e8f0;
+}
