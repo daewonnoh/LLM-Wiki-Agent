@@ -53,6 +53,17 @@ function App() {
   const [activeMapTab, setActiveMapTab] = useState('concept');
   const [hoveredConcept, setHoveredConcept] = useState(null);
   const [currentSlidePage, setCurrentSlidePage] = useState(1);
+  const slideRef = useRef(null);
+  
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      slideRef.current?.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   // 미디어 쇼케이스 서브탭
   const [activeMediaTab, setActiveMediaTab] = useState('cognition');
@@ -743,12 +754,17 @@ function App() {
             <div className="media-placeholders-container">
               
               {/* 1. 슬라이드 뷰어 */}
-              <div className="media-placeholder slide-viewer-container">
+              <div className="media-placeholder slide-viewer-container" ref={slideRef} style={{ position: 'relative' }}>
+                <div style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 10 }}>
+                  <button onClick={toggleFullscreen} className="premium-nav-btn" style={{ padding: '8px 12px', fontSize: '0.9rem', backgroundColor: 'rgba(0,0,0,0.6)' }}>
+                    ⛶ 전체 화면
+                  </button>
+                </div>
                 <div className="slide-image-frame" style={{ flexGrow: 1, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0b1121' }}>
                   <img 
                     src={`${import.meta.env.BASE_URL}assets/slides/image${currentSlidePage}.png`} 
                     alt={`연구 소개 슬라이드 ${currentSlidePage}페이지`}
-                    style={{ width: '100%', height: '100%', maxHeight: '600px', objectFit: 'contain' }}
+                    style={{ width: '100%', height: '100%', maxHeight: '100%', objectFit: 'contain' }}
                   />
                 </div>
                 <div className="slide-controls" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 30px', background: 'rgba(0,0,0,0.3)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>

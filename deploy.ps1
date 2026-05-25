@@ -1,7 +1,7 @@
 $git = (Get-ChildItem -Path C:\Users\naisd\AppData\Local\GitHubDesktop -Filter git.exe -Recurse -ErrorAction SilentlyContinue | Where-Object { $_.FullName -match 'cmd\\git.exe$' } | Select-Object -First 1).FullName
 if ($git) {
     & $git add .
-    & $git commit -m "Enhance media layouts in research maps tab for premium look and usability"
+    & $git commit -m "Add fullscreen toggle functionality to slide viewer in maps tab"
     & $git push
 } else {
     Write-Output "Git not found"
