@@ -12,6 +12,36 @@ manuscriptText.split('\n').forEach(line => {
   }
 });
 
+const parseCritiqueData = (text) => {
+  if (!text) return { meta: {}, body: '' };
+  const parts = text.split('---\n');
+  if (parts.length >= 3) {
+    const yamlStr = parts[1];
+    const bodyStr = parts.slice(2).join('---\n');
+    
+    const meta = {};
+    yamlStr.split('\n').forEach(line => {
+      const idx = line.indexOf(':');
+      if (idx !== -1) {
+        const key = line.substring(0, idx).trim();
+        let val = line.substring(idx + 1).trim();
+        if (val.startsWith('[') && val.endsWith(']')) {
+          val = val.substring(1, val.length - 1)
+            .split(',')
+            .map(s => s.trim().replace(/^["']|["']$/g, ''));
+        } else {
+          val = val.replace(/^["']|["']$/g, '');
+        }
+        meta[key] = val;
+      }
+    });
+    return { meta, body: bodyStr };
+  }
+  return { meta: {}, body: text };
+};
+
+const { meta: critiqueMeta, body: critiqueBody } = parseCritiqueData(critiqueText);
+
 function App() {
   const [activeMenu, setActiveMenu] = useState('home');
   const [selectedTrouble, setSelectedTrouble] = useState(null);
@@ -1099,6 +1129,56 @@ function App() {
                         <p>"두 분 다 감정이나 도구에만 치우치시는데, 이브의 신체 조건이 지식의 배제로 직결되는 이 소설의 구조적 '몸의 정치학'을 보지 않으면, 이브를 이론적으로든 감정적으로든 또다시 소외시키는 결과를 낳을 뿐입니다."</p>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                {/* 텍스트 분석 상세 리포트 전문 */}
+                <div className="critique-report-section mt-10 fade-in">
+                  <h3 className="section-title">📄 critique-prism v2.0 상세 분석 리포트 전문</h3>
+                  <p className="section-description" style={{color: '#a0aec0', marginBottom: '1.5rem'}}>
+                    에이전트가 critique-prism v2.0 알고리즘을 사용해 도출한 원문 비평 리포트 전체 텍스트입니다.
+                  </p>
+                  
+                  {/* 리포트 메타데이터 카드 */}
+                  {critiqueMeta.title && (
+                    <div className="critique-meta-card">
+                      <div className="meta-header">
+                        <span className="meta-badge">알고리즘 분석 결과</span>
+                        <span className="meta-date">분석일자: {critiqueMeta.created}</span>
+                      </div>
+                      <h4 className="meta-title">{critiqueMeta.title}</h4>
+                      
+                      <div className="meta-grid">
+                        <div className="meta-item">
+                          <strong>검색 쿼리(Query)</strong>
+                          <p>"{critiqueMeta.query}"</p>
+                        </div>
+                        <div className="meta-item">
+                          <strong>인용 출처(Sources)</strong>
+                          <p>
+                            {Array.isArray(critiqueMeta.sources_cited) 
+                              ? critiqueMeta.sources_cited.join(', ') 
+                              : critiqueMeta.sources_cited}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {critiqueMeta.tags && (
+                        <div className="meta-tags">
+                          {critiqueMeta.tags.map((tag, i) => (
+                            <span key={i} className="meta-tag-badge">#{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* 리포트 문서 본문 */}
+                  <div className="critique-report-doc-container">
+                    <div 
+                      className="critique-report-doc"
+                      dangerouslySetInnerHTML={{ __html: renderMarkdown(critiqueBody) }}
+                    />
                   </div>
                 </div>
               </div>

@@ -1,0 +1,205 @@
+﻿const fs = require('fs');
+let content = fs.readFileSync('src/App.jsx', 'utf8');
+
+// 1. Change State
+content = content.replace(
+  "const [activeMediaTab, setActiveMediaTab] = useState('webtoon');",
+  "const [activeMediaTab, setActiveMediaTab] = useState('greta');"
+);
+
+// 2. Change menuItems (Remove reviews)
+content = content.replace(
+  "    { id: 'reviews', name: '鍮꾪룊 ?쇱??댁뒪' },\n",
+  ""
+);
+
+// 3. Change Quicklinks (Remove reviews, Update media)
+const oldMediaQuicklink = `<div className="quicklink-card" onClick={() => setActiveMenu('media')}>
+                  <h4>?잛틦?ㅽ듃 &amp; ?뚯꽕 ?뱁댆</h4>
+                  <p>NotebookLM ?ㅻ뵒???잛틦?ㅽ듃 諛?????뚯꽕 &lt;洹몃젅? 蹂듭쓬&gt; 10而??뱁댆 媛먯긽</p>
+                  <span className="arrow-link">?먯깋?섍린 ??/span>
+                </div>`;
+const newMediaQuicklink = `<div className="quicklink-card" onClick={() => setActiveMenu('media')}>
+                  <h4>?뚯꽕 ?쎄린</h4>
+                  <p>????뚭렇?덊? 蹂듭쓬?띻낵 源珥덉뿽 ?뚯씤吏 怨듦컙?띿쓽 ?뱁댆, 鍮꾪룊 ??愿???먮즺 媛먯긽</p>
+                  <span className="arrow-link">?먯깋?섍린 ??/span>
+                </div>`;
+content = content.replace(oldMediaQuicklink, newMediaQuicklink);
+
+const oldReviewsQuicklink = `<div className="quicklink-card" onClick={() => setActiveMenu('reviews')}>
+                  <h4>鍮꾪룊 ?ㅽ겕濡ㅽ뀛留?/h4>
+                  <p>&lt;?몄? 怨듦컙&gt;怨?&lt;洹몃젅? 蹂듭쓬&gt;?????AI-?멸컙 援먯감 鍮꾪룊 遺꾩꽍 蹂닿퀬??/p>
+                  <span className="arrow-link">?먯깋?섍린 ??/span>
+                </div>\n`;
+content = content.replace(oldReviewsQuicklink, "");
+
+// 4. Replace the entire media + reviews blocks
+const [part1, rest] = content.split('{/* MEDIA SHOWCASE */}');
+if (!rest) {
+  console.log("Could not find {/* MEDIA SHOWCASE */}! Perhaps it was modified?");
+  process.exit(1);
+}
+const [part2, part3] = rest.split('{/* THESIS READER */}');
+
+const newMediaBlock = `{/* NOVEL READER (Integrated Media & Critique) */}
+        {activeMenu === 'media' && (
+          <div className="media-page fade-in">
+            <div className="page-header-wrapper">
+              <h2 className="page-title">?뚯꽕 ?쎄린</h2>
+              <p className="page-subtitle">???몄쓽 ?뚯꽕??媛먯긽?섍퀬, ?댁? 愿?⑤맂 ?뱁댆, 鍮꾪룊, 湲고? ?먮즺瑜??먯깋??蹂댁꽭??</p>
+            </div>
+
+            <div className="tab-navigation">
+              <button 
+                className={\`tab-btn \${activeMediaTab === 'greta' ? 'active' : ''}\`}
+                onClick={() => setActiveMediaTab('greta')}
+              >
+                ????덇렇?덊? 蹂듭쓬??              </button>
+              <button 
+                className={\`tab-btn \${activeMediaTab === 'cognition' ? 'active' : ''}\`}
+                onClick={() => setActiveMediaTab('cognition')}
+              >
+                源珥덉뿽 ?덉씤吏 怨듦컙??              </button>
+            </div>
+
+            {activeMediaTab === 'greta' && (
+              <div className="novel-content-container fade-in">
+                {/* 誘몃뵒???뚮젅?댁뒪???*/}
+                <div className="media-placeholders-container">
+                  <div className="media-placeholder">
+                    <div className="placeholder-box webtoon-placeholder">
+                      <span className="placeholder-icon">?렓</span>
+                      <p>?덇렇?덊? 蹂듭쓬???뱁댆<br/><small>(異뷀썑 ?곌껐)</small></p>
+                    </div>
+                  </div>
+                  <div className="media-placeholder">
+                    <div className="placeholder-box podcast-placeholder">
+                      <span className="placeholder-icon">?렒</span>
+                      <p>?덇렇?덊? 蹂듭쓬??愿???잛틦?ㅽ듃<br/><small>(異뷀썑 ?곌껐)</small></p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 鍮꾪룊 ?곸뿭 (湲곗〈 reviews??greta 遺꾩꽍) */}
+                <div className="greta-analysis-container mt-10 fade-in">
+                  <h3 className="section-title">????뚯꽕 ?덇렇?덊? 蹂듭쓬??二쇱껜濡좎쟻 ?쏀옒 遺꾩꽍</h3>
+                  <p>?뚯꽕 ????媛吏 ?멸컙 援곗긽???ъ??섍낵 蹂??곌뎄??湲곗닠怨듭깮??二쇱껜??紐⑤뜽???꾨꼍???議?遺꾩꽍?낅땲??</p>
+                  
+                  <div className="greta-grid">
+                    <div className="greta-card">
+                      <h4>1. ?꾨쿋瑜?留덈Ⅴ?곕냽</h4>
+                      <p className="greta-role">吏???ㅼ??ㅽ듃?덉씠??(?댁긽??怨듭깮)</p>
+                      <p>洹몃젅????곗궛 紐⑤뜽??12?꾧컙 ?ъ“?뺥븯??'?대쪟??吏??愿由ъ옄'瑜??먯쿂???몃Ъ. 湲곌퀎???⑥닚 異쒕젰??鍮꾪룊?곸쑝濡?留λ씫?뷀븯怨??ш뎄?깊븯??蹂??곌뎄??<strong>怨듬룞 李쎌옉 ?ㅼ??ㅽ듃?덉씠??/strong> 紐⑤뜽???뺥빀.</p>
+                    </div>
+                    <div className="greta-card">
+                      <h4>2. ?뺤갔??/h4>
+                      <p className="greta-role">?몄????몄＜?붿쓽 ?뚮㈇??(?섏〈???뚰깂)</p>
+                      <p>洹몃젅?媛 諭됱뼱?대뒗 珥덉븞???⑥? ?섏떇?닿뎄留?遺숈씠???⑥닚 湲곗엯 ?몃룞??癒몃Т瑜대떎 ?몄???二쇱껜?깆쓣 ?꾩쟾???곸떎???뚮㈇???숈옄. 蹂??곌뎄?먯꽌 寃쎄퀬??<strong>?몄????꾩썐?뚯떛??洹밸떒??寃쎄퀬</strong> 硫뷀???</p>
+                    </div>
+                    <div className="greta-card">
+                      <h4>3. ?좎???(?붿옄)</h4>
+                      <p className="greta-role">?묎???寃쎄퀎??(?뚯쓽??怨듭깮??</p>
+                      <p>洹몃젅????좊뒫?⑥뿉 留ㅽ샊?섎㈃?쒕룄 吏諛곕떦?섏? ?딆쑝??二쇱껜?깆쓣 諛⑹뼱?섍퀬 ?듬챸 ?ㅼ뿉???먯떊留뚯쓽 ?곌뎄瑜??ъ닔?섎뒗 怨듭깮?? 蹂??곌뎄 ??먯쓽 <strong>?ㅼ〈??二쇱??④낵 ?묎????몃윭釉?/strong>??臾명븰???먰솕??</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeMediaTab === 'cognition' && (
+              <div className="novel-content-container fade-in">
+                {/* 誘몃뵒???뚮젅?댁뒪???*/}
+                <div className="media-placeholders-container">
+                  <div className="media-placeholder">
+                    <div className="placeholder-box video-placeholder">
+                      <span className="placeholder-icon">?뱴</span>
+                      <p>?덉씤吏 怨듦컙???뱁댆 諛??곸긽<br/><small>(異뷀썑 ?곌껐)</small></p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 鍮꾪룊 ?곸뿭 (湲곗〈 reviews??clash) */}
+                <div className="critique-clash-container mt-10 fade-in">
+                  <h3 className="section-title">?덉씤吏 怨듦컙???ㅼ꽦??由щ럭 5?????(Critique Clash)</h3>
+                  <div className="critique-tabs mt-4">
+                    {['posthuman', 'feminism', 'marxism', 'postcolonial', 'skeptic'].map(tab => (
+                      <button
+                        key={tab}
+                        className={\`critique-tab-btn \${activeCritiqueTab === tab ? 'active' : ''}\`}
+                        onClick={() => setActiveCritiqueTab(tab)}
+                      >
+                        {tab === 'posthuman' && '?ъ뒪?명쑕癒?鍮꾪룊媛'}
+                        {tab === 'feminism' && '?섎??덉쬁 鍮꾪룊媛'}
+                        {tab === 'marxism' && '留덈Ⅴ?ъ뒪二쇱쓽 鍮꾪룊媛'}
+                        {tab === 'postcolonial' && '?ъ뒪?몄퐳濡쒕땲??}
+                        {tab === 'skeptic' && '?뚯쓽??鍮꾪룊媛'}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="critique-tab-content">
+                    {activeCritiqueTab === 'posthuman' && (
+                      <div className="critique-essay fade-in">
+                        <h4>?뫞 ?ъ뒪?명쑕癒?/ ?좎쑀臾쇰줎 鍮꾪룊媛???낇빐</h4>
+                        <p>"???뚯꽕? ?멸컙 ?몄?媛 ?먭컻怨??덉뿉 媛뉙? ?덉? ?딄퀬 <strong>臾쇱쭏???섍꼍?쇰줈 ?뺤옣</strong>?섏뼱 ?덈떎???뚯젣瑜?吏곸젒?곸쑝濡??쒖궗?뷀빀?덈떎. 寃⑹옄 援ъ“臾쇱? ?ㅻ뵒 ?대씫怨?李곕㉧?ㅼ쓽 '?뺤옣??留덉쓬(Extended Mind)' ?쇱젣??洹밸떒?곸씤 臾명븰??援ы쁽?낅땲?? ?ㅽ뵾?대뒗 ?뺤옣??留덉쓬??媛쒖씤?붿씠硫? 鍮꾩씤媛?臾쇱쭏(?ㅽ뵾?????멸컙??湲곗뼲怨??뺣룞??蹂댁〈?섎뒗 ?λ룞???됱쐞??vibrant matter)濡?湲곕뒫?⑥쓣 利앸챸?⑸땲??"</p>
+                        <span className="premise">?꾩젣: ?멸컙怨?鍮꾩씤媛?臾쇱쭏??寃쎄퀎瑜??좊룞?곸쑝濡?蹂대ŉ, 湲곗닠??媛앹껜???됱쐞?깆쓣 遺?ы븳??</span>
+                      </div>
+                    )}
+                    {activeCritiqueTab === 'feminism' && (
+                      <div className="critique-essay fade-in">
+                        <h4>?뫆?랅윃??섎??덉쬁 / 痍⑥빟??鍮꾪룊媛???낇빐</h4>
+                        <p>"?뚯꽕??以묒떖?먮뒗 <strong>痍⑥빟???좎껜???뺤튂??/strong>???볦뿬 ?덉뒿?덈떎. ?대툕???묒? 紐??뚮Ц??寃⑹옄 吏?앹뿉 吏꾩엯?섏? 紐삵븯硫? 怨듬룞泥대뒗 ?대? 媛쒖씤??寃고븤?쇰줈 ?섎즺?뷀빀?덈떎. 洹몃윭???대툕??痍⑥빟?깆? 寃고븤???꾨땶, ??덉쟻 ?몄? 諛⑹떇 '?ㅽ뵾??瑜?諛쒕챸?섎뒗 ?몄떇濡좎쟻 ?밴텒(踰꾪??ъ쓽 痍⑥빟?깆쑝濡쒕??곗쓽 ??????⑸땲?? ?먰븳 ?쒕굹媛 ?대툕??蹂댄샇?먮? ?먯쿂?섎ŉ 媛?섎뒗 誘몄꽭??沅뚮젰???뚮큵???몄뼇???덈━?섍쾶 ?ъ갑?댁빞 ?⑸땲??"</p>
+                        <span className="premise">?꾩젣: '蹂댄샇'???섏궗 ?덉뿉 ?④꺼吏?沅뚮젰???쎄퀬, 痍⑥빟???좎껜媛 ?롮쓽 議곌굔?꾩쓣 洹쒕챸?쒕떎.</span>
+                      </div>
+                    )}
+                    {activeCritiqueTab === 'marxism' && (
+                      <div className="critique-essay fade-in">
+                        <h4>??留덈Ⅴ?ъ뒪二쇱쓽 鍮꾪룊媛???낇빐</h4>
+                        <p>"?몄? 怨듦컙? <strong>?앹궛?섎떒???뚯쑀 援ъ“</strong>濡?遺꾩꽍?섏뼱???⑸땲?? 寃⑹옄??紐⑤뱺 ?ы쉶??吏???몃룞(?앹궛)???좎씪???섎떒?대ŉ, ?묎렐?섏? 紐삵븯???대툕??諛곗젣???됱뿬?몃룞??怨꾧툒?낅땲?? ?섏긽?ㅼ쓣 ?댁쁺?섎뒗 ?대툕 ?꾨쾭吏???섍났?낆쟻 ?좎껜 ?몃룞???곸쭠?섏짛. 寃⑹옄 吏???쒓린愿?ㅼ쓽 湲곗뼲 ?몄쭛沅뚯? 吏諛?怨꾧툒???대뜲?щ줈湲??낆젏?대ŉ, ?ㅽ뵾?대뒗 ?앹궛?섎떒??誘쇱＜???덉쨷?ы솕 ?쒕룄?낅땲??"</p>
+                        <span className="premise">?꾩젣: 吏??泥닿퀎瑜?臾쇱쭏???앹궛愿怨꾩쓽 諛섏쁺?쇰줈 ?쎌쑝硫? 寃⑹옄 ?묎렐沅뚯쓣 怨꾧툒 遺꾩꽍???뚯쫰濡?蹂몃떎.</span>
+                      </div>
+                    )}
+                    {activeCritiqueTab === 'postcolonial' && (
+                      <div className="critique-essay fade-in">
+                        <h4>?㎛ ?ъ뒪?몄퐳濡쒕땲??鍮꾪룊媛???낇빐</h4>
+                        <p>"寃⑹옄 援ъ“臾쇱? 蹂댄렪??吏?앹쓽 ?꾨떦???꾨땶 <strong>?몄떇濡좎쟻 ?앸? ?μ튂</strong>?낅땲?? '??踰덉㎏ ????留욎텣 ?꾩꽕??怨듬룞泥닿? 寃⑹옄???뺣낫 ?뺣━??留욎떠 ?먯쓽?곸쑝濡?援먯젙?섍퀬 ?쒓끝?섎뒗 寃껋?, ?쇱떇誘쇱???援ъ쟾 ??궗媛 ?쒓뎅 臾몄옄濡??곗씤 愿李???궗???섑빐 援먯젙?섎뒗 寃껉낵 ?됲뻾?⑸땲?? 蹂댄렪?대씪??誘몃챸 ?꾨옒 ?뱀젙 湲곗뼲????젣?섎뒗 ?몄떇濡좎쟻 ?앸????꾩긽?낅땲??"</p>
+                        <span className="premise">?꾩젣: 紐⑤뱺 蹂댄렪 吏??泥닿퀎瑜??쒓뎅二쇱쓽??寃뚯씠?명궎??沅뚮젰???곕Ъ濡??섏떖?쒕떎.</span>
+                      </div>
+                    )}
+                    {activeCritiqueTab === 'skeptic' && (
+                      <div className="critique-essay fade-in">
+                        <h4>?쭚 ?뚯쓽??鍮꾪룊媛 (The Skeptic)??諛섎줎</h4>
+                        <p>"?꾩쓽 ??鍮꾪룊媛 紐⑤몢 ?대툕瑜????쓽 ?곸썒?쇰줈 留뚮뱶??<strong>嫄곕? ?쒖궗??怨쇱엵 肄붾뵫</strong>??鍮좎졇 ?덉뒿?덈떎. ?대툕???댁찈硫??⑥? ?먭린媛 ?ㅻⅤ吏 紐삵븯???쒖뒪?쒖쓣 ?꾪븯(?쒕굹???섏떖)??寃껋씪 ???덇퀬, ?ㅽ뵾?대뒗 ?꾩＜ ?곸? ?뺣낫留?湲곕줉?섎뒗 議곗옟???꾧뎄??肉먯엯?덈떎. ?대줎??怨쇱엵 ?섏궗濡??묓뭹???쎌쑝硫? ?대툕? ?쒕굹 ?ъ씠???먯큹?곸씤 ?곗젙怨??곸떎, ?좊룄???멸컙???쒖궗媛 吏덉떇?대쾭由쎈땲??"</p>
+                        <span className="premise">?꾩젣: 鍮꾪룊 ?대줎???띿뒪?몄뿉 怨쇱엵 ?섎?瑜?二쇱엯?섎뒗 吏???붽텒??寃쎄퀎?쒕떎.</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="clash-dialogue-box">
+                    <h4>?뮠 鍮꾪룊媛??媛꾩쓽 ?④굅??援먯감 ?ㅼ쟾 (Messenger)</h4>
+                    <div className="clash-chat-room">
+                      <div className="clash-msg left">
+                        <span className="clash-speaker">?뚯쓽??鍮꾪룊媛</span>
+                        <p>"?ㅽ뵾?댁뿉 ?됱쐞?깆씠 源껊뱾?덈떎??嫄?鍮꾪룊媛???ъ궗?? ?ㅽ뵾?대뒗 洹몄? ?대툕??誘몄셿???섏?媛 ?④릿 蹂쇳뭹?녿뒗 ?뷀빐??肉먯엯?덈떎. ?됱쐞?깆쓣 紐⑤뱺 臾쇨굔???⑤컻?섎㈃, ?멸컙 ?대툕媛 寃れ? 怨좊룆怨?二쎌쓬?대씪???ㅼ〈??臾닿쾶媛 鍮꾩씤媛??뚮옯 議댁옱濡??꾨옒 ?ъ꽍?⑸땲??"</p>
+                      </div>
+                      <div className="clash-msg right">
+                        <span className="clash-speaker text-purple">?ъ뒪?명쑕癒?鍮꾪룊媛</span>
+                        <p>"洹?珥덈씪?⑥씠?쇰뒗 湲곗? ?먯껜媛 寃⑹옄 泥댁젣??嫄곕? 吏??誘명븰??異붿쥌?섎뒗 留뱀젏?낅땲?? ?쒕굹???뚭퀬媛 ?곷떦 遺遺??대툕???ㅽ뵾?댁뿉 湲곕줉??湲곗뼲???섏〈?섍퀬 ?덈뒗 ?쒓컙, ?ㅽ뵾?대뒗 ?쒖궗 ?먯껜瑜??앹궛?섎뒗 愿怨꾩쟻 ?됱쐞?먮줈 蹂듦텒?섎뒗 寃껋엯?덈떎."</p>
+                      </div>
+                      <div className="clash-msg left">
+                        <span className="clash-speaker text-pink">?섎??덉쬁 鍮꾪룊媛</span>
+                        <p>"??遺???媛먯젙?대굹 ?꾧뎄?먮쭔 移섏슦移섏떆?붾뜲, ?대툕???좎껜 議곌굔??吏?앹쓽 諛곗젣濡?吏곴껐?섎뒗 ???뚯꽕??援ъ“??'紐몄쓽 ?뺤튂????蹂댁? ?딆쑝硫? ?대툕瑜??대줎?곸쑝濡쒕뱺 媛먯젙?곸쑝濡쒕뱺 ?먮떎???뚯쇅?쒗궎??寃곌낵瑜??녹쓣 肉먯엯?덈떎."</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* THESIS READER */}`;
+
+content = part1 + newMediaBlock + part3;
+fs.writeFileSync('src/App.jsx', content, 'utf8');
+console.log('Migration successful');

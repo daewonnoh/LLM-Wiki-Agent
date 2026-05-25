@@ -1,0 +1,10 @@
+﻿commit f1f701ee3f83081a66723b0aaf74d827a2dbb742
+Author: nnovum <naisdw@empas.com>
+Date:   Mon May 25 19:08:47 2026 +0900
+
+    Update menus and manuscript
+
+A	migrate.ps1
+A	migrate_media.js
+M	src/App.css
+M	src/App.jsx

@@ -1,0 +1,7 @@
+﻿commit be82d7751444f2276dada18728213ae752dc2bca
+Author: nnovum <naisdw@empas.com>
+Date:   Mon May 25 19:00:18 2026 +0900
+
+    Update menus and manuscript
+
+M	src/App.jsx

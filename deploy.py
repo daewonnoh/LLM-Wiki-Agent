@@ -29,6 +29,6 @@ def run_git(args):
         print("STDERR:", res.stderr)
 
 run_git(["add", "."])
-run_git(["commit", "-m", "Update menu names and manuscript data"])
+run_git(["commit", "-m", "Integrate critique-prism v2.0 detailed report to cognition tab in novel reader"])
 run_git(["push"])
 print("SUCCESS")

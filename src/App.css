@@ -2453,3 +2453,202 @@ body {
     flex: 1 1 100%;
   }
 }
+
+/* ==========================================================================
+   Critique Report Styles (텍스트 분석 상세 리포트 전문)
+   ========================================================================== */
+.critique-report-section {
+  background: rgba(30, 30, 40, 0.4);
+  border-radius: 12px;
+  padding: 2.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 3rem;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  text-align: left;
+}
+
+.critique-meta-card {
+  background: rgba(20, 20, 28, 0.6);
+  border-radius: 10px;
+  padding: 1.8rem;
+  border-left: 4px solid #b794f4;
+  margin-bottom: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.critique-meta-card .meta-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.critique-meta-card .meta-badge {
+  background: rgba(183, 148, 244, 0.15);
+  color: #d6bcfa;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba(183, 148, 244, 0.25);
+}
+
+.critique-meta-card .meta-date {
+  color: #718096;
+  font-size: 0.85rem;
+}
+
+.critique-meta-card .meta-title {
+  color: #f7fafc;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+  letter-spacing: -0.02em;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.critique-meta-card .meta-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+@media (min-width: 768px) {
+  .critique-meta-card .meta-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.critique-meta-card .meta-item strong {
+  display: block;
+  color: #a0aec0;
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.critique-meta-card .meta-item p {
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.critique-meta-card .meta-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1rem;
+}
+
+.critique-meta-card .meta-tag-badge {
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.critique-meta-card .meta-tag-badge:hover {
+  background: rgba(183, 148, 244, 0.1);
+  color: #b794f4;
+}
+
+.critique-report-doc-container {
+  background: #111116;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  max-height: 700px;
+  overflow-y: auto;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.critique-report-doc {
+  padding: 3rem;
+  color: #e2e8f0;
+  font-size: 1rem;
+  line-height: 1.8;
+  font-family: 'Inter', 'Noto Sans KR', sans-serif;
+  text-align: left;
+}
+
+/* 마크다운 문서 내 특정 요소 스타일링 */
+.critique-report-doc .md-h1 {
+  font-size: 1.8rem;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.8rem;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.critique-report-doc .md-h2 {
+  font-size: 1.4rem;
+  color: #f7fafc;
+  margin-top: 2.5rem;
+  margin-bottom: 1.2rem;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.5rem;
+}
+
+.critique-report-doc .md-h3 {
+  font-size: 1.15rem;
+  color: #e2e8f0;
+  margin-top: 2rem;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+.critique-report-doc .md-p {
+  margin-bottom: 1.5rem;
+  color: #cbd5e0;
+}
+
+.critique-report-doc .md-hr {
+  border: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 2.5rem 0;
+}
+
+.critique-report-doc .md-blockquote {
+  border-left: 4px solid #4a5568;
+  padding-left: 1.2rem;
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #a0aec0;
+  font-style: italic;
+}
+
+/* 스크롤바 커스터마이징 */
+.critique-report-doc-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.critique-report-doc-container::-webkit-scrollbar-track {
+  background: #111116;
+}
+
+.critique-report-doc-container::-webkit-scrollbar-thumb {
+  background: #2d3748;
+  border-radius: 4px;
+}
+
+.critique-report-doc-container::-webkit-scrollbar-thumb:hover {
+  background: #4a5568;
+}
+
