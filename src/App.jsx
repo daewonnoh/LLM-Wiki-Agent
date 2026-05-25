@@ -815,65 +815,6 @@ function App() {
                 </div>
               </div>
 
-              {/* 2. 오디오 토론 극장 */}
-              <div className="podcast-container fade-in" style={{ width: '100%', maxWidth: '900px', margin: '30px auto' }}>
-                <h3 className="media-subtitle">🎙️ NotebookLM 가상 오디오 극장</h3>
-                <div className="podcast-player-ui">
-                  <div className="player-meta">
-                    <span className="player-title">NotebookLM 가상 브리핑</span>
-                    <span className="player-status">{isPlaying ? '재생 중' : '일시정지'}</span>
-                  </div>
-                  
-                  {/* 플레이 바 */}
-                  <div className="player-progress-bar">
-                    <div 
-                      className="player-progress-fill" 
-                      style={{ width: `${(podcastTime / 135) * 100}%` }}
-                    />
-                  </div>
-                  
-                  <div className="player-time-controls">
-                    <span className="player-time">
-                      {Math.floor(podcastTime / 60)}:{(podcastTime % 60).toString().padStart(2, '0')}
-                    </span>
-                    <div className="player-btns">
-                      <button className="play-btn" onClick={togglePodcast}>
-                        {isPlaying ? '⏸ 일시정지' : '▶ 재생하기'}
-                      </button>
-                      <button className="reset-btn" onClick={resetPodcast}>
-                        ⏹ 처음으로
-                      </button>
-                    </div>
-                    <span className="player-time">2:15</span>
-                  </div>
-                  <p className="player-hint">※ 재생을 누르면 시간 경과에 따라 대사가 타이핑됩니다.</p>
-                </div>
-
-                {/* 대화 스크립트 윈도우 */}
-                <div className="podcast-chat-window">
-                  {podcastScript.map((chat, idx) => {
-                    const isVisible = podcastTime >= chat.time;
-                    if (!isVisible) return null;
-                    const isMinwoo = chat.speaker === '민우';
-                    return (
-                      <div 
-                        key={idx} 
-                        className={`chat-bubble-wrapper ${isMinwoo ? 'left' : 'right'} fade-in`}
-                      >
-                        <div className="speaker-avatar">
-                          {isMinwoo ? '👨‍💼 Todd' : '👩‍💼 Kim'}
-                        </div>
-                        <div className="chat-bubble">
-                          <div className="speaker-name">{chat.speaker} (MC)</div>
-                          <p className="bubble-text">{chat.text}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                  <div ref={chatEndRef} />
-                </div>
-              </div>
-
               {/* 3. 소개 영상 플레이어 */}
               <div className="media-placeholder">
                 <div style={{ padding: '20px', background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
