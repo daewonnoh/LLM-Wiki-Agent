@@ -1579,6 +1579,42 @@ body {
 }
 
 /* 마크다운 논문 스타일 */
+.paper-title-container {
+  margin-top: 10px;
+  margin-bottom: 50px;
+  text-align: center;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 40px;
+}
+.paper-title {
+  font-size: 36px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 15px;
+  font-family: 'Pretendard', sans-serif;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+.paper-subtitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 30px;
+  font-family: 'Pretendard', sans-serif;
+  word-break: keep-all;
+}
+.paper-author {
+  font-size: 16px;
+  color: #334155;
+  font-weight: 500;
+  font-family: 'Pretendard', sans-serif;
+}
+.paper-author span {
+  font-size: 14px;
+  margin-left: 8px;
+  color: #64748b;
+}
+
 .academic-paper-content {
   text-align: left;
   line-height: 1.8;
