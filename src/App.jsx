@@ -582,6 +582,11 @@ function App() {
                   <p>듀나 「그레타 복음」과 김초엽 「인지 공간」의 웹툰, 비평 등 관련 자료</p>
                   <span className="arrow-link">탐색하기 →</span>
                 </div>
+                <div className="quicklink-card" onClick={() => setActiveMenu('reader')}>
+                  <h4>논문 읽기</h4>
+                  <p>AI 에이전트와 문학 연구자의 지적 협업을 다룬 학술 논문 전문 독해</p>
+                  <span className="arrow-link">탐색하기 →</span>
+                </div>
               </div>
             </section>
           </div>
