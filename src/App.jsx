@@ -1307,6 +1307,20 @@ function App() {
                 <span>Reading with the Trouble: Practice-Based Research</span>
                 <span>2026-05-24 Ver. v45</span>
               </div>
+
+              {/* 논문 제목 영역 (명시적 JSX 렌더링) */}
+              <div className="paper-title-container" style={{ marginTop: '20px', marginBottom: '50px', textAlign: 'center', borderBottom: '2px solid #e2e8f0', paddingBottom: '30px' }}>
+                <h1 className="paper-title" style={{ fontSize: '36px', fontWeight: 800, color: '#0f172a', marginBottom: '15px', fontFamily: 'Pretendard, sans-serif', lineHeight: 1.4, wordBreak: 'keep-all' }}>
+                  트러블과 함께 읽기
+                </h1>
+                <h2 className="paper-subtitle" style={{ fontSize: '20px', fontWeight: 600, color: '#475569', marginBottom: '25px', fontFamily: 'Pretendard, sans-serif', wordBreak: 'keep-all' }}>
+                  AI 에이전트와 문학 연구자의 대화에 관한 연구
+                </h2>
+                <div className="paper-author" style={{ fontSize: '16px', color: '#334155', fontWeight: 500, fontFamily: 'Pretendard, sans-serif' }}>
+                  노대원<span style={{ fontSize: '14px', marginLeft: '8px', color: '#64748b' }}>(제주대)</span>
+                </div>
+              </div>
+
               <div 
                 className={`academic-paper-content todo-filter-${todoFilter}`}
                 dangerouslySetInnerHTML={{ __html: renderMarkdown(manuscriptText) }}
