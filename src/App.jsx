@@ -767,11 +767,16 @@ function App() {
                   </button>
                 </div>
               </div>
-              <div className="media-placeholder">
-                <div className="placeholder-box podcast-placeholder">
-                  <span className="placeholder-icon">🎙️</span>
-                  <p>연구 소개 팟캐스트<br/><small>(추후 연결)</small></p>
-                </div>
+              <div className="media-placeholder" style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
+                <div style={{ fontSize: '3rem' }}>🎙️</div>
+                <h4 style={{ margin: 0, color: 'white' }}>연구 소개 팟캐스트</h4>
+                <p style={{ margin: 0, color: '#a0aec0', fontSize: '0.9rem', textAlign: 'center' }}>AI의 매끄러운 정답에 맞선 문학적 트러블</p>
+                <audio 
+                  controls 
+                  src={`${import.meta.env.BASE_URL}assets/media/trouble_podcast.m4a`}
+                  style={{ width: '100%', maxWidth: '300px', marginTop: '10px' }}
+                  title="연구 소개 팟캐스트"
+                />
               </div>
               <div className="media-placeholder" style={{ padding: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <video 
