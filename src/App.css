@@ -2372,14 +2372,46 @@ body {
 /* Media Placeholders CSS */
 .media-placeholders-container {
   display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin: 2rem 0 4rem 0;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rem;
+  margin: 3rem 0 5rem 0;
+  width: 100%;
 }
 .media-placeholder {
-  flex: 1 1 300px;
-  max-width: 350px;
+  width: 100%;
+  max-width: 900px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.slide-viewer-container {
+  min-height: 60vh;
+}
+.premium-nav-btn {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+.premium-nav-btn:hover:not(:disabled) {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.4);
+  transform: translateY(-2px);
+}
+.premium-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 .placeholder-box {
   background-color: rgba(255, 255, 255, 0.05);
