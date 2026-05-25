@@ -754,12 +754,7 @@ function App() {
             <div className="media-placeholders-container">
               
               {/* 1. 슬라이드 뷰어 */}
-              <div className="media-placeholder slide-viewer-container" ref={slideRef} style={{ position: 'relative' }}>
-                <div style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 10 }}>
-                  <button onClick={toggleFullscreen} className="premium-nav-btn" style={{ padding: '8px 12px', fontSize: '0.9rem', backgroundColor: 'rgba(0,0,0,0.6)' }}>
-                    ⛶ 전체 화면
-                  </button>
-                </div>
+              <div className="media-placeholder slide-viewer-container" ref={slideRef}>
                 <div className="slide-image-frame" style={{ flexGrow: 1, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0b1121' }}>
                   <img 
                     src={`${import.meta.env.BASE_URL}assets/slides/image${currentSlidePage}.png`} 
@@ -768,21 +763,29 @@ function App() {
                   />
                 </div>
                 <div className="slide-controls" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 30px', background: 'rgba(0,0,0,0.3)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                  <button 
-                    disabled={currentSlidePage === 1}
-                    onClick={() => setCurrentSlidePage(prev => prev - 1)}
-                    className="premium-nav-btn"
-                  >
-                    ◀ 이전 슬라이드
-                  </button>
-                  <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#e2e8f0' }}>{currentSlidePage} / 20</span>
-                  <button 
-                    disabled={currentSlidePage === 20}
-                    onClick={() => setCurrentSlidePage(prev => prev + 1)}
-                    className="premium-nav-btn"
-                  >
-                    다음 슬라이드 ▶
-                  </button>
+                  <div style={{ flex: 1 }}></div>
+                  <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px' }}>
+                    <button 
+                      disabled={currentSlidePage === 1}
+                      onClick={() => setCurrentSlidePage(prev => prev - 1)}
+                      className="premium-nav-btn"
+                    >
+                      ◀ 이전
+                    </button>
+                    <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#e2e8f0', whiteSpace: 'nowrap' }}>{currentSlidePage} / 20</span>
+                    <button 
+                      disabled={currentSlidePage === 20}
+                      onClick={() => setCurrentSlidePage(prev => prev + 1)}
+                      className="premium-nav-btn"
+                    >
+                      다음 ▶
+                    </button>
+                  </div>
+                  <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+                    <button onClick={toggleFullscreen} className="premium-nav-btn" style={{ padding: '8px 15px', fontSize: '0.9rem', backgroundColor: 'rgba(0,0,0,0.4)' }}>
+                      ⛶ 전체 화면
+                    </button>
+                  </div>
                 </div>
               </div>
 
