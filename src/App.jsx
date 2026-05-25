@@ -722,49 +722,6 @@ function App() {
                 </div>
               </div>
             )}
-
-            {/* 상세 모달 팝업 */}
-            {selectedTrouble && (
-              <div className="modal-backdrop" onClick={() => setSelectedTrouble(null)}>
-                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                  <button className="modal-close-btn" onClick={() => setSelectedTrouble(null)}>×</button>
-                  <div className="modal-header-meta">
-                    <span className="modal-id">Trouble {selectedTrouble.id}</span>
-                    <span className="modal-date">발생 일자: {selectedTrouble.date}</span>
-                  </div>
-                  <h3 className="modal-title">{selectedTrouble.title}</h3>
-                  <div className="modal-category">
-                    <strong>분류 유형:</strong> <span className={`category-tag ${(selectedTrouble.category || '').split('.')[0] || 'Unknown'}`}>{selectedTrouble.category || '기타'}</span>
-                  </div>
-
-                  <div className="modal-body-section">
-                    <h4>📌 발생 상황</h4>
-                    <p>{selectedTrouble.situation}</p>
-                  </div>
-
-                  <div className="modal-body-section">
-                    <h4>🔥 마찰 지점 (Friction)</h4>
-                    <p>{selectedTrouble.friction}</p>
-                  </div>
-
-                  <div className="modal-body-section">
-                    <h4>🤝 결과 및 조율 (Resolution)</h4>
-                    <p>{selectedTrouble.resolution}</p>
-                  </div>
-
-                  {selectedTrouble.notes && (
-                    <div className="modal-body-section notes-section">
-                      <h4>📖 이론적 재독해 / 비평적 메모</h4>
-                      <div dangerouslySetInnerHTML={{ __html: renderMarkdown(selectedTrouble.notes) }} />
-                    </div>
-                  )}
-
-                  <div className="modal-footer">
-                    <button className="modal-back-btn" onClick={() => setSelectedTrouble(null)}>닫기</button>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
 
@@ -1396,6 +1353,49 @@ function App() {
           </div>
         )}
       </main>
+
+      {/* 상세 모달 팝업 */}
+      {selectedTrouble && (
+        <div className="modal-backdrop" onClick={() => setSelectedTrouble(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={() => setSelectedTrouble(null)}>×</button>
+            <div className="modal-header-meta">
+              <span className="modal-id">Trouble {selectedTrouble.id}</span>
+              <span className="modal-date">발생 일자: {selectedTrouble.date}</span>
+            </div>
+            <h3 className="modal-title">{selectedTrouble.title}</h3>
+            <div className="modal-category">
+              <strong>분류 유형:</strong> <span className={`category-tag ${(selectedTrouble.category || '').split('.')[0] || 'Unknown'}`}>{selectedTrouble.category || '기타'}</span>
+            </div>
+
+            <div className="modal-body-section">
+              <h4>📌 발생 상황</h4>
+              <p>{selectedTrouble.situation}</p>
+            </div>
+
+            <div className="modal-body-section">
+              <h4>🔥 마찰 지점 (Friction)</h4>
+              <p>{selectedTrouble.friction}</p>
+            </div>
+
+            <div className="modal-body-section">
+              <h4>🤝 결과 및 조율 (Resolution)</h4>
+              <p>{selectedTrouble.resolution}</p>
+            </div>
+
+            {selectedTrouble.notes && (
+              <div className="modal-body-section notes-section">
+                <h4>📖 이론적 재독해 / 비평적 메모</h4>
+                <div dangerouslySetInnerHTML={{ __html: renderMarkdown(selectedTrouble.notes) }} />
+              </div>
+            )}
+
+            <div className="modal-footer">
+              <button className="modal-back-btn" onClick={() => setSelectedTrouble(null)}>닫기</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 푸터 영역 */}
       <footer className="main-footer">
