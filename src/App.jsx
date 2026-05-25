@@ -52,6 +52,7 @@ function App() {
   // 지식 맵 서브탭
   const [activeMapTab, setActiveMapTab] = useState('concept');
   const [hoveredConcept, setHoveredConcept] = useState(null);
+  const [currentSlidePage, setCurrentSlidePage] = useState(1);
 
   // 미디어 쇼케이스 서브탭
   const [activeMediaTab, setActiveMediaTab] = useState('cognition');
@@ -740,10 +741,30 @@ function App() {
 
             {/* 미디어 플레이스홀더 (슬라이드, 팟캐스트, 영상) */}
             <div className="media-placeholders-container">
-              <div className="media-placeholder">
-                <div className="placeholder-box slide-placeholder">
-                  <span className="placeholder-icon">📊</span>
-                  <p>연구 소개 슬라이드<br/><small>(추후 연결)</small></p>
+              <div className="media-placeholder slide-viewer-container" style={{ display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden' }}>
+                <div className="slide-image-frame" style={{ flexGrow: 1, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img 
+                    src={`${import.meta.env.BASE_URL}assets/slides/image${currentSlidePage}.png`} 
+                    alt={`연구 소개 슬라이드 ${currentSlidePage}페이지`}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                  />
+                </div>
+                <div className="slide-controls" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', background: 'rgba(255,255,255,0.05)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                  <button 
+                    disabled={currentSlidePage === 1}
+                    onClick={() => setCurrentSlidePage(prev => prev - 1)}
+                    style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'white', padding: '5px 10px', borderRadius: '4px', cursor: currentSlidePage === 1 ? 'not-allowed' : 'pointer', opacity: currentSlidePage === 1 ? 0.5 : 1 }}
+                  >
+                    ◀ 이전
+                  </button>
+                  <span style={{ fontSize: '0.9rem', color: '#a0aec0' }}>{currentSlidePage} / 20</span>
+                  <button 
+                    disabled={currentSlidePage === 20}
+                    onClick={() => setCurrentSlidePage(prev => prev + 1)}
+                    style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'white', padding: '5px 10px', borderRadius: '4px', cursor: currentSlidePage === 20 ? 'not-allowed' : 'pointer', opacity: currentSlidePage === 20 ? 0.5 : 1 }}
+                  >
+                    다음 ▶
+                  </button>
                 </div>
               </div>
               <div className="media-placeholder">
