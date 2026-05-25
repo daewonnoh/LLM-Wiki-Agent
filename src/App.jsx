@@ -1047,13 +1047,13 @@ function App() {
                 {/* 웹툰 탭 */}
                 {cognitionSubTab === 'webtoon' && (
                   <div className="webtoon-container fade-in">
-                    <div className="vertical-webtoon-viewer" style={{ width: '100%', maxWidth: '1100px', margin: '0 auto', display: 'flex', flexDirection: 'column', background: '#000', boxShadow: '0 0 20px rgba(0,0,0,0.5)' }}>
+                    <div className="vertical-webtoon-viewer" style={{ width: '100%', maxWidth: '1100px', margin: '0 auto', display: 'flex', flexDirection: 'column', background: '#000', boxShadow: '0 0 20px rgba(0,0,0,0.5)', overflowX: 'auto' }}>
                       {[...Array(20)].map((_, i) => (
                         <img 
                           key={i}
                           src={`${import.meta.env.BASE_URL}assets/webtoon/cognitive_space/image${i + 1}.png`} 
                           alt={`인지 공간 웹툰 ${i + 1}컷`}
-                          style={{ width: '100%', display: 'block', margin: 0, padding: 0 }}
+                          style={{ width: '100%', minWidth: '1100px', display: 'block', margin: 0, padding: 0 }}
                           loading="lazy"
                         />
                       ))}
