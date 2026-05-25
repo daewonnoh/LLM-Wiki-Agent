@@ -345,8 +345,7 @@ function App() {
     { id: 'situated', name: '상황적 지식', def: '보편적이고 초월적인 시야(God\'s eye view)를 거부하고, 연구자 개인의 구체적인 신체, 역사적 템포, 불완전한 현실 속에서 빚어지는 유한하고 책임 있는 지식 생산.', pos: { x: 20, y: 50 } },
     { id: 'shared', name: '공유된 인지', def: '인간 비평가의 상황적 지식과 자율적 AI 에이전트의 연산 인지가 상호 공명하여 도달하는 공동의 이해 상태이자 교차 주체적 신뢰 관계.', pos: { x: 80, y: 50 } },
     { id: 'diffractive', name: '회절적 독해', def: '캐런 버라드와 해러웨이의 이론. 두 대상의 차이를 비교하는 반사를 넘어, 텍스트와 AI의 파싱, 연구자의 해석을 부딪치고 간섭시켜 새로운 통찰의 간섭 무늬를 얻는 독법.', pos: { x: 35, y: 75 } },
-    { id: 'irony', name: '자동화의 역설', def: '리잔 베인브리지의 이론. 시스템을 자동화할수록 인간의 기본 노동은 줄어들지만, 시스템 오작동 시 사후 복구 및 수동 검증(린팅)을 위한 인간의 인지 부하는 훨씬 가중되는 현상.', pos: { x: 65, y: 75 } },
-    { id: 'nature', name: '인공자연 존재론', def: '기술적 인프라 자체를 새로운 환경적 자연으로 파악하고, 기저(물질·데이터)와 기층(정보·알고리즘)의 결합 속에서 인간의 비평적 지위를 재정립하는 이론.', pos: { x: 50, y: 15 } }
+    { id: 'irony', name: '자동화의 역설', def: '리잔 베인브리지의 이론. 시스템을 자동화할수록 인간의 기본 노동은 줄어들지만, 시스템 오작동 시 사후 복구 및 수동 검증(린팅)을 위한 인간의 인지 부하는 훨씬 가중되는 현상.', pos: { x: 65, y: 75 } }
   ];
 
   // 7. 웹툰 데이터
@@ -395,7 +394,7 @@ function App() {
               {/* 상단 타이틀 디자인 배너 */}
               <div className="hero-banner-container">
                 <img 
-                  src="/assets/webtoon/korean_homepage_design_mockup.png" 
+                  src={`${import.meta.env.BASE_URL}assets/webtoon/korean_homepage_design_mockup.png`} 
                   alt="트러블과 함께 읽기 - AI 에이전트와 문학 연구자의 대화" 
                   className="hero-banner-img"
                 />
@@ -409,7 +408,7 @@ function App() {
               {/* 메인 비주얼: 에셔 패러디 메인 비주얼 이미지 */}
               <div className="main-visual-container">
                 <img 
-                  src="/assets/webtoon/escher_parody_chatgpt.png" 
+                  src={`${import.meta.env.BASE_URL}assets/webtoon/escher_parody_chatgpt.png`} 
                   alt="인간 연구자와 AI 로봇 손의 공생적 얽힘 메타포 (에셔 오마주)" 
                   className="main-visual-img"
                 />
@@ -767,7 +766,7 @@ function App() {
                 <div className="webtoon-viewer">
                   <div className="webtoon-image-frame">
                     <img 
-                      src={`/assets/webtoon/page_${currentWebtoonPage.toString().padStart(2, '0')}.png`} 
+                      src={`${import.meta.env.BASE_URL}assets/webtoon/page_${currentWebtoonPage.toString().padStart(2, '0')}.png`} 
                       alt={`소설 그레타 복음 웹툰 ${currentWebtoonPage}컷`}
                       className="webtoon-img"
                     />
