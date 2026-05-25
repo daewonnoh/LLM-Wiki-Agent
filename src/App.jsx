@@ -9,7 +9,7 @@ function App() {
   const [selectedTrouble, setSelectedTrouble] = useState(null);
   const [troubleFilter, setTroubleFilter] = useState('All');
   const [troubleSearch, setTroubleSearch] = useState('');
-  const [explorerView, setExplorerView] = useState('grid'); // 'grid' 또는 'timeline'
+  const [explorerView, setExplorerView] = useState('timeline'); // 'grid' 또는 'timeline'
   
   // 지식 맵 서브탭
   const [activeMapTab, setActiveMapTab] = useState('concept');
@@ -470,14 +470,14 @@ function App() {
             <section className="quicklinks-section">
               <h2 className="section-title">플랫폼 주요 탐색 경로</h2>
               <div className="quicklinks-grid">
-                <div className="quicklink-card" onClick={() => setActiveMenu('explorer')}>
-                  <h4>37대 트러블 익스플로러</h4>
-                  <p>연구 진행 시 발생한 37가지의 마찰 대화로그와 극복 양상 탐색</p>
-                  <span className="arrow-link">탐색하기 →</span>
-                </div>
                 <div className="quicklink-card" onClick={() => setActiveMenu('maps')}>
                   <h4>지식 맵 &amp; 기능 지도</h4>
                   <p>58개 핵심 개념의 D3.js 포스 맵 및 에이전트 기능 아키텍처 다이어그램</p>
+                  <span className="arrow-link">탐색하기 →</span>
+                </div>
+                <div className="quicklink-card" onClick={() => setActiveMenu('explorer')}>
+                  <h4>37대 트러블 익스플로러</h4>
+                  <p>연구 진행 시 발생한 37가지의 마찰 대화로그와 극복 양상 탐색</p>
                   <span className="arrow-link">탐색하기 →</span>
                 </div>
                 <div className="quicklink-card" onClick={() => setActiveMenu('media')}>
