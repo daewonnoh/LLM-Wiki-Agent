@@ -637,7 +637,7 @@ function App() {
                   </div>
                   <h3 className="modal-title">{selectedTrouble.title}</h3>
                   <div className="modal-category">
-                    <strong>분류 유형:</strong> <span className={`category-tag ${selectedTrouble.category.split('.')[0]}`}>{selectedTrouble.category}</span>
+                    <strong>분류 유형:</strong> <span className={`category-tag ${(selectedTrouble.category || '').split('.')[0] || 'Unknown'}`}>{selectedTrouble.category || '기타'}</span>
                   </div>
 
                   <div className="modal-body-section">
