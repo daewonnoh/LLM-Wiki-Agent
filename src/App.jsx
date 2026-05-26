@@ -1460,48 +1460,48 @@ function App() {
 
             {/* 1. 연구자와 대화 (이메일 피드백 폼) */}
             {activeAssemblyTab === 'researcher' && (
-              <div className="researcher-feedback-container fade-in" style={{ maxWidth: '700px', margin: '0 auto', width: '100%', background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '16px', padding: '30px', boxShadow: '0 15px 35px rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)' }}>
-                <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '10px' }}>👨‍💻 연구자 노대원에게 의견 전송</h3>
-                <p style={{ color: '#a0aec0', fontSize: '0.95rem', marginBottom: '25px', lineHeight: 1.5 }}>
+              <div className="researcher-feedback-container fade-in" style={{ maxWidth: '700px', margin: '0 auto', width: '100%', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}>
+                <h3 style={{ color: '#0f172a', fontSize: '1.5rem', marginBottom: '10px' }}>👨‍💻 연구자 노대원에게 의견 전송</h3>
+                <p style={{ color: '#475569', fontSize: '0.95rem', marginBottom: '25px', lineHeight: 1.5 }}>
                   논문의 연구 내용, LLM Wiki 시스템, 혹은 AI 에이전트와의 공생 방법론에 대한 의견을 자유롭게 적어주세요. 
                   보내주신 내용은 연구자 노대원 교수의 공식 이메일(novel@jejunu.ac.kr)로 자동 안전 발송됩니다.
                 </p>
 
                 <form onSubmit={handleSubmitFeedback} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
-                    <label style={{ color: '#cbd5e1', fontSize: '0.9rem', fontWeight: 600 }}>보내시는 분 이름 / 소속</label>
+                    <label style={{ color: '#334155', fontSize: '0.9rem', fontWeight: 600 }}>보내시는 분 이름 / 소속</label>
                     <input 
                       type="text" 
                       placeholder="예: 홍길동 (ㅇㅇ대학교)"
                       value={senderName}
                       onChange={(e) => setSenderName(e.target.value)}
-                      style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)', color: '#fff', fontSize: '0.95rem', outline: 'none' }}
+                      style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a', fontSize: '0.95rem', outline: 'none' }}
                       required
                       disabled={isSending}
                     />
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
-                    <label style={{ color: '#cbd5e1', fontSize: '0.9rem', fontWeight: 600 }}>이메일 주소</label>
+                    <label style={{ color: '#334155', fontSize: '0.9rem', fontWeight: 600 }}>이메일 주소</label>
                     <input 
                       type="email" 
                       placeholder="답변을 받으실 이메일 주소"
                       value={senderEmail}
                       onChange={(e) => setSenderEmail(e.target.value)}
-                      style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)', color: '#fff', fontSize: '0.95rem', outline: 'none' }}
+                      style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a', fontSize: '0.95rem', outline: 'none' }}
                       required
                       disabled={isSending}
                     />
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
-                    <label style={{ color: '#cbd5e1', fontSize: '0.9rem', fontWeight: 600 }}>의견 및 제안 내용</label>
+                    <label style={{ color: '#334155', fontSize: '0.9rem', fontWeight: 600 }}>의견 및 제안 내용</label>
                     <textarea 
                       placeholder="노대원 연구자에게 보낼 의견을 상세히 기재해 주세요..."
                       value={messageBody}
                       onChange={(e) => setMessageBody(e.target.value)}
                       rows={6}
-                      style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)', color: '#fff', fontSize: '0.95rem', outline: 'none', resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5 }}
+                      style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a', fontSize: '0.95rem', outline: 'none', resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5 }}
                       required
                       disabled={isSending}
                     />
@@ -1510,17 +1510,17 @@ function App() {
                   <button 
                     type="submit" 
                     disabled={isSending}
-                    style={{ padding: '14px', borderRadius: '8px', border: 'none', background: isSending ? '#4a5568' : '#7c3aed', color: '#fff', fontSize: '1rem', fontWeight: 'bold', cursor: isSending ? 'not-allowed' : 'pointer', transition: 'background-color 0.2s', boxShadow: '0 4px 15px rgba(124,58,237,0.2)' }}
+                    style={{ padding: '14px', borderRadius: '8px', border: 'none', background: isSending ? '#94a3b8' : '#10b981', color: '#fff', fontSize: '1rem', fontWeight: 'bold', cursor: isSending ? 'not-allowed' : 'pointer', transition: 'background-color 0.2s', boxShadow: '0 4px 12px rgba(16,185,129,0.15)' }}
                   >
                     {isSending ? '전송 중...' : '의견 전송하기 ✉️'}
                   </button>
                 </form>
 
                 {/* 구글 앱스 스크립트 연결 가이드 */}
-                <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.08)', textAlign: 'left' }}>
+                <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid #e2e8f0', textAlign: 'left' }}>
                   <details style={{ cursor: 'pointer' }}>
-                    <summary style={{ color: '#a0aec0', fontSize: '0.85rem' }}>⚙️ 연구자용: Google Apps Script 이메일 연동 활성화 방법</summary>
-                    <div style={{ padding: '15px', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', marginTop: '10px', fontSize: '0.85rem', color: '#cbd5e1', lineHeight: 1.6 }}>
+                    <summary style={{ color: '#64748b', fontSize: '0.85rem' }}>⚙️ 연구자용: Google Apps Script 이메일 연동 활성화 방법</summary>
+                    <div style={{ padding: '15px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', marginTop: '10px', fontSize: '0.85rem', color: '#334155', lineHeight: 1.6 }}>
                       <ol style={{ paddingLeft: '20px', margin: '0 0 10px 0' }}>
                         <li>구글 드라이브 ➔ 새 파일 ➔ **Google Apps Script**를 만듭니다.</li>
                         <li>기존 코드를 모두 지우고 아래의 코드를 복사해 붙여넣습니다:
