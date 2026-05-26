@@ -1745,7 +1745,7 @@ body {
 .todo-filter-B .todo-badge:not(.todo-b) { opacity: 0.2; }
 .todo-filter-C .todo-badge:not(.todo-c) { opacity: 0.2; }
 
-/* 8. 토론의 장 (Assembly) 탭 스타일 */
+/* 8. 대화 참여 (Assembly) 탭 스타일 */
 .assembly-page {
   display: flex;
   flex-direction: column;

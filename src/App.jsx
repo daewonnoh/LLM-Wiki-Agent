@@ -122,7 +122,7 @@ function App() {
     { id: 'media', name: '소설 읽기' },
     { id: 'explorer', name: '트러블 읽기' },
     { id: 'reader', name: '논문 읽기' },
-    { id: 'assembly', name: '토론의 장' }
+    { id: 'assembly', name: '대화 참여' }
   ];
 
   // 1. 마크다운 인라인 헬퍼 함수
@@ -1379,7 +1379,7 @@ function App() {
         {activeMenu === 'assembly' && (
           <div className="assembly-page fade-in">
             <div className="page-header-wrapper">
-              <h2 className="page-title">토론의 장 (Assembly)</h2>
+              <h2 className="page-title">대화 참여 (Assembly)</h2>
               <p className="page-subtitle">연구 과정의 핵심 딜레마를 선택하고 '사려 깊은 회의론자' 페르소나와 실시간 대화를 나누는 장</p>
             </div>
 
