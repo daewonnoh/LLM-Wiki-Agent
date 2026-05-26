@@ -115,8 +115,8 @@ function App() {
   const menuItems = [
     { id: 'home', name: '홈' },
     { id: 'maps', name: '연구 소개' },
-    { id: 'explorer', name: '트러블 읽기' },
     { id: 'media', name: '소설 읽기' },
+    { id: 'explorer', name: '트러블 읽기' },
     { id: 'reader', name: '논문 읽기' },
     { id: 'assembly', name: '토론의 장' }
   ];
