@@ -43,7 +43,7 @@ const parseCritiqueData = (text) => {
 const { meta: critiqueMeta, body: critiqueBody } = parseCritiqueData(critiqueText);
 
 // Google Apps Script Web App URL (실제 전송을 원하시면 배포하신 웹 앱 URL을 입력해 주세요)
-const GAS_WEB_APP_URL = "";
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyemTscGqGKYxL9BVT2g17mg5InqWKOGI6zSo72ShJyZVRXvC17VFyGqUIhP0dNyDk0Kw/exec";
 
 function App() {
   const [activeMenu, setActiveMenu] = useState('home');
