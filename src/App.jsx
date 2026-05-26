@@ -3,7 +3,7 @@ import './App.css';
 import troublesData from './data/troubles.json';
 import { manuscriptText } from './data/manuscript.js';
 import { critiqueText } from './data/critique.js';
-
+import { wikiIntroText, soulText, agentsText } from './data/guidelines.js';
 const footnotesMap = {};
 manuscriptText.split('\n').forEach(line => {
   const match = line.match(/^\[\^(\d+)\]:\s*(.*)/);
@@ -49,6 +49,9 @@ function App() {
   const [troubleSearch, setTroubleSearch] = useState('');
   const [explorerView, setExplorerView] = useState('timeline'); // 'grid' 또는 'timeline'
   
+  // LLM Wiki 서브탭
+  const [activeWikiTab, setActiveWikiTab] = useState('intro'); // 'intro', 'system'
+
   // 지식 맵 서브탭
   const [activeMapTab, setActiveMapTab] = useState('concept');
   const [hoveredConcept, setHoveredConcept] = useState(null);
@@ -115,6 +118,7 @@ function App() {
   const menuItems = [
     { id: 'home', name: '홈' },
     { id: 'maps', name: '연구 소개' },
+    { id: 'wiki', name: 'LLM Wiki' },
     { id: 'media', name: '소설 읽기' },
     { id: 'explorer', name: '트러블 읽기' },
     { id: 'reader', name: '논문 읽기' },
@@ -802,24 +806,8 @@ function App() {
 
             </div>
 
-            <div className="tab-navigation">
-              <button 
-                className={`tab-btn ${activeMapTab === 'concept' ? 'active' : ''}`}
-                onClick={() => setActiveMapTab('concept')}
-              >
-                개념 간 관계망 지도 (Concept Map)
-              </button>
-              <button 
-                className={`tab-btn ${activeMapTab === 'system' ? 'active' : ''}`}
-                onClick={() => setActiveMapTab('system')}
-              >
-                에이전트 기능 아키텍처 (System Architecture)
-              </button>
-            </div>
-
-            {activeMapTab === 'concept' && (
-              <div className="concept-map-container">
-                <div className="map-sidebar">
+            <div className="concept-map-container" style={{ marginTop: '2rem' }}>
+              <div className="map-sidebar">
                   <h3>개념 설명 패널</h3>
                   <p className="sidebar-hint">지도의 개념 노드에 마우스를 오버하여 세부 연결 및 정의를 탐색하세요.</p>
                   {hoveredConcept ? (
@@ -891,9 +879,39 @@ function App() {
                   </svg>
                 </div>
               </div>
+          </div>
+        )}
+
+        {/* LLM WIKI */}
+        {activeMenu === 'wiki' && (
+          <div className="wiki-page fade-in">
+            <div className="page-header-wrapper">
+              <h2 className="page-title">LLM Wiki</h2>
+              <p className="page-subtitle">AI 시대 문학 연구의 기술공생 실험실</p>
+            </div>
+
+            <div className="tab-navigation">
+              <button 
+                className={`tab-btn ${activeWikiTab === 'intro' ? 'active' : ''}`}
+                onClick={() => setActiveWikiTab('intro')}
+              >
+                LLM Wiki란?
+              </button>
+              <button 
+                className={`tab-btn ${activeWikiTab === 'system' ? 'active' : ''}`}
+                onClick={() => setActiveWikiTab('system')}
+              >
+                실제 구축과 운영
+              </button>
+            </div>
+
+            {activeWikiTab === 'intro' && (
+              <div className="wiki-intro-container fade-in" style={{ padding: '2rem', background: '#0f172a', borderRadius: '12px', border: '1px solid #1e293b' }}>
+                <div className="academic-paper-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(wikiIntroText) }} />
+              </div>
             )}
 
-            {activeMapTab === 'system' && (
+            {activeWikiTab === 'system' && (
               <div className="system-architecture-container fade-in">
                 <div className="arch-intro">
                   <h3>LLM Wiki 3계층 &amp; 다중 파이프라인 아키텍처</h3>
@@ -927,6 +945,20 @@ function App() {
                     <h4>Knowledge Base (wiki/)</h4>
                     <p>인덱스(index.md), 성찰 로그(log.md, 감응-로그.md, 트러블-로그-v2.md), 개체/개념 요약 페이지들이 얽힌 Obsidian 기반 로컬 위키고.</p>
                   </div>
+                </div>
+
+                <div className="guidelines-section" style={{ marginTop: '3rem', borderTop: '1px solid #1e293b', paddingTop: '2rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', color: '#f8fafc', marginBottom: '1.5rem' }}>위키 운영 시스템 지침</h3>
+                  
+                  <details className="guideline-details" style={{ marginBottom: '1rem', background: '#0b1121', border: '1px solid #1e293b', borderRadius: '8px', padding: '1rem' }}>
+                    <summary style={{ fontSize: '1.2rem', color: '#93c5fd', cursor: 'pointer', fontWeight: 'bold' }}>AGENTS.md (운영 스키마)</summary>
+                    <div className="academic-paper-content mt-4" dangerouslySetInnerHTML={{ __html: renderMarkdown(agentsText) }} />
+                  </details>
+                  
+                  <details className="guideline-details" style={{ background: '#0b1121', border: '1px solid #1e293b', borderRadius: '8px', padding: '1rem' }}>
+                    <summary style={{ fontSize: '1.2rem', color: '#93c5fd', cursor: 'pointer', fontWeight: 'bold' }}>soul.md (연구 에이전트의 영혼)</summary>
+                    <div className="academic-paper-content mt-4" dangerouslySetInnerHTML={{ __html: renderMarkdown(soulText) }} />
+                  </details>
                 </div>
               </div>
             )}
