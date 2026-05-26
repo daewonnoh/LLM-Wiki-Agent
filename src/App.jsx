@@ -940,8 +940,8 @@ function App() {
                     </div>
                     <div className="ancestry-card">
                       <div className="ancestry-icon">💻</div>
-                      <h4>LLM OS (대규모 언어 모델 OS)</h4>
-                      <p>안드레 카파시의 설계 아이디어로, LLM을 단순 텍스트 생성기가 아닌 계산 자원, 메모리(지식고), 도구들을 오케스트레이션하는 새로운 컴퓨터 운영체제로 다룹니다.</p>
+                      <h4>LLM Wiki (지식 공생 시스템)</h4>
+                      <p>안드레 카파시의 LLM OS 설계를 문학 연구의 맥락에 맞게 재해석하여, LLM을 단순한 텍스트 생성기가 아닌 연구자의 메모리(지식고)와 도구들을 오케스트레이션하는 독자적 지식 생산 시스템으로 구축했습니다.</p>
                     </div>
                   </div>
                 </section>
