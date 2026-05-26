@@ -930,17 +930,17 @@ function App() {
                   <div className="pkm-ancestry-grid">
                     <div className="ancestry-card">
                       <div className="ancestry-icon">💾</div>
-                      <h4>메멕스 (Memex)</h4>
-                      <p>버니바 부시가 구상한 인지 확장 장치로, 지식과 정보를 선형적으로 정리하지 않고 상호 연상적인 링크로 엮어 기억을 저장하는 개념적 토대입니다.</p>
+                      <h4>메멕스 (Memex, 1945년)</h4>
+                      <p>미국의 과학자 바네바 부시(Vannevar Bush)가 1945년 에세이 As We May Think에서 처음 제안한 가상의 기기입니다. 개인의 방대한 자료를 마이크로필름에 저장하고, 정보 간의 '연관성(Associative Trails)'을 통해 링크로 연결하는 개념을 담아 하이퍼텍스트와 월드와이드웹의 선구적 모델로 평가받습니다.</p>
                     </div>
                     <div className="ancestry-card">
                       <div className="ancestry-icon">🗂️</div>
-                      <h4>제텔카스텐 (Zettelkasten)</h4>
-                      <p>니클라스 루만의 생각 상자 방법론입니다. 개별 메모들을 유기적으로 교차 참조함으로써 시스템 자체가 연구자의 대화 상대가 되어 생각의 창발을 유도합니다.</p>
+                      <h4>제텔카스텐 (Zettelkasten, 1950년대)</h4>
+                      <p>독일어로 '메모 상자'를 뜻하며, 사회학자 니클라스 루만(Niklas Luhmann)이 1950년대에 체계화한 지식 관리 및 메모 기법입니다. 하나의 메모에 하나의 아이디어를 적고, 고유 번호를 부여해 서로 연결하여 지식의 네트워크를 구축하는 방식입니다.</p>
                     </div>
                     <div className="ancestry-card">
                       <div className="ancestry-icon">💻</div>
-                      <h4>LLM Wiki</h4>
+                      <h4>LLM Wiki (2020년대)</h4>
                       <p>유명한 AI 엔지니어 안드레 카파시(Andrej Karpathy)가 제안한 개인 지식 베이스 구축 방법으로, AI 에이전트가 마크다운 파일을 직접 읽고 쓰며 자동으로 지식을 유지·보수하는 시스템을 뜻합니다.</p>
                     </div>
                   </div>
