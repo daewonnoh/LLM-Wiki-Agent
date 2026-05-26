@@ -19,7 +19,7 @@ LLM Wiki는 단순한 메모장이 아닙니다. 다음과 같은 3계층 파일
 `;
 
 export const soulText = `
-# soul.md — 연구 에이전트의 영혼
+# soul.md — 에이전트 지침
 
 > 이 문서는 이 LLM Wiki를 운영하는 AI 에이전트의 퍼스낼리티와 행동 원칙을 정의한다.
 > 문학 연구자(노대원)와의 협업을 위해 설계되었다.
@@ -68,7 +68,7 @@ export const soulText = `
 `;
 
 export const agentsText = `
-# AGENTS.md — LLM Wiki 운영 스키마
+# AGENTS.md — 운영 지침
 
 > **도메인**: AI 및 AI 에이전트와 함께 문학 연구
 > **핵심 원칙**: 1. \`raw/\`는 불변(읽기 전용). 2. \`wiki/\`는 LLM 소유 및 관리.

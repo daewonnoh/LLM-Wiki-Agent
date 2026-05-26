@@ -904,16 +904,16 @@ function App() {
                 실제 구축과 운영
               </button>
               <button 
-                className={`tab-btn ${activeWikiTab === 'soul' ? 'active' : ''}`}
-                onClick={() => setActiveWikiTab('soul')}
-              >
-                에이전트의 영혼 (soul.md)
-              </button>
-              <button 
                 className={`tab-btn ${activeWikiTab === 'agents' ? 'active' : ''}`}
                 onClick={() => setActiveWikiTab('agents')}
               >
-                운영 스키마 (AGENTS.md)
+                운영 지침(AGENTS.md)
+              </button>
+              <button 
+                className={`tab-btn ${activeWikiTab === 'soul' ? 'active' : ''}`}
+                onClick={() => setActiveWikiTab('soul')}
+              >
+                에이전트 지침(soul.md)
               </button>
             </div>
 
@@ -1040,15 +1040,15 @@ function App() {
               </div>
             )}
 
-            {activeWikiTab === 'soul' && (
-              <div className="wiki-soul-container fade-in" style={{ padding: '3rem 2rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', color: '#0f172a' }}>
-                <div className="academic-paper-content" style={{ color: '#0f172a' }} dangerouslySetInnerHTML={{ __html: renderMarkdown(soulText) }} />
-              </div>
-            )}
-
             {activeWikiTab === 'agents' && (
               <div className="wiki-agents-container fade-in" style={{ padding: '3rem 2rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', color: '#0f172a' }}>
                 <div className="academic-paper-content" style={{ color: '#0f172a' }} dangerouslySetInnerHTML={{ __html: renderMarkdown(agentsText) }} />
+              </div>
+            )}
+
+            {activeWikiTab === 'soul' && (
+              <div className="wiki-soul-container fade-in" style={{ padding: '3rem 2rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', color: '#0f172a' }}>
+                <div className="academic-paper-content" style={{ color: '#0f172a' }} dangerouslySetInnerHTML={{ __html: renderMarkdown(soulText) }} />
               </div>
             )}
           </div>
