@@ -947,8 +947,8 @@ function App() {
                   </div>
                 </div>
 
-                <div className="guidelines-section" style={{ marginTop: '3rem', borderTop: '1px solid #1e293b', paddingTop: '2rem' }}>
-                  <h3 style={{ fontSize: '1.5rem', color: '#f8fafc', marginBottom: '1.5rem' }}>위키 운영 시스템 지침</h3>
+                <div className="guidelines-section" style={{ marginTop: '3rem', borderTop: '1px solid rgba(16, 185, 129, 0.2)', paddingTop: '2rem' }}>
+                  <h3 style={{ fontSize: '1.5rem', color: '#065f46', marginBottom: '1.5rem' }}>위키 운영 시스템 지침</h3>
                   
                   <details className="guideline-details" style={{ marginBottom: '1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '1rem', color: '#0f172a' }}>
                     <summary style={{ fontSize: '1.2rem', color: '#1e40af', cursor: 'pointer', fontWeight: 'bold' }}>AGENTS.md (운영 스키마)</summary>
