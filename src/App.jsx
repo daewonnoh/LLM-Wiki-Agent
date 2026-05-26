@@ -940,8 +940,8 @@ function App() {
                     </div>
                     <div className="ancestry-card">
                       <div className="ancestry-icon">💻</div>
-                      <h4>LLM Wiki (지식 공생 시스템)</h4>
-                      <p>안드레 카파시의 LLM OS 설계를 문학 연구의 맥락에 맞게 재해석하여, LLM을 단순한 텍스트 생성기가 아닌 연구자의 메모리(지식고)와 도구들을 오케스트레이션하는 독자적 지식 생산 시스템으로 구축했습니다.</p>
+                      <h4>LLM Wiki</h4>
+                      <p>유명한 AI 엔지니어 안드레 카파시(Andrej Karpathy)가 제안한 개인 지식 베이스 구축 방법으로, AI 에이전트가 마크다운 파일을 직접 읽고 쓰며 자동으로 지식을 유지·보수하는 시스템을 뜻합니다.</p>
                     </div>
                   </div>
                 </section>
