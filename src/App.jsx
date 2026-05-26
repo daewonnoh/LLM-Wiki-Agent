@@ -1464,7 +1464,7 @@ function App() {
                 <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '10px' }}>👨‍💻 연구자 노대원에게 의견 전송</h3>
                 <p style={{ color: '#a0aec0', fontSize: '0.95rem', marginBottom: '25px', lineHeight: 1.5 }}>
                   논문의 연구 내용, LLM Wiki 시스템, 혹은 AI 에이전트와의 공생 방법론에 대한 의견을 자유롭게 적어주세요. 
-                  보내주신 내용은 연구자(노대원)의 이메일로 자동 안전 발송됩니다.
+                  보내주신 내용은 연구자 노대원 교수의 공식 이메일(novel@jejunu.ac.kr)로 자동 안전 발송됩니다.
                 </p>
 
                 <form onSubmit={handleSubmitFeedback} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
