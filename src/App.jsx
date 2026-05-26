@@ -1526,7 +1526,7 @@ function App() {
                         <li>기존 코드를 모두 지우고 아래의 코드를 복사해 붙여넣습니다:
                           <pre style={{ background: '#1e293b', padding: '10px', borderRadius: '6px', overflowX: 'auto', marginTop: '8px', color: '#38bdf8' }}>{`function doPost(e) {
   var data = JSON.parse(e.postData.contents);
-  var email = "노대원 교수님 이메일 주소 기입";
+  var email = "novel@jejunu.ac.kr";
   var subject = "[LLM Wiki] 방문자 의견 전송 - " + data.name;
   var body = "보낸이: " + data.name + " (" + data.email + ")\\n\\n의견 내용:\\n" + data.message;
   GmailApp.sendEmail(email, subject, body);
