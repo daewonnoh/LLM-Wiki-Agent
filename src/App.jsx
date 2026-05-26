@@ -906,8 +906,8 @@ function App() {
             </div>
 
             {activeWikiTab === 'intro' && (
-              <div className="wiki-intro-container fade-in" style={{ padding: '2rem', background: '#0f172a', borderRadius: '12px', border: '1px solid #1e293b' }}>
-                <div className="academic-paper-content" dangerouslySetInnerHTML={{ __html: renderMarkdown(wikiIntroText) }} />
+              <div className="wiki-intro-container fade-in" style={{ padding: '2rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', color: '#0f172a' }}>
+                <div className="academic-paper-content" style={{ color: '#0f172a' }} dangerouslySetInnerHTML={{ __html: renderMarkdown(wikiIntroText) }} />
               </div>
             )}
 
@@ -950,14 +950,14 @@ function App() {
                 <div className="guidelines-section" style={{ marginTop: '3rem', borderTop: '1px solid #1e293b', paddingTop: '2rem' }}>
                   <h3 style={{ fontSize: '1.5rem', color: '#f8fafc', marginBottom: '1.5rem' }}>위키 운영 시스템 지침</h3>
                   
-                  <details className="guideline-details" style={{ marginBottom: '1rem', background: '#0b1121', border: '1px solid #1e293b', borderRadius: '8px', padding: '1rem' }}>
-                    <summary style={{ fontSize: '1.2rem', color: '#93c5fd', cursor: 'pointer', fontWeight: 'bold' }}>AGENTS.md (운영 스키마)</summary>
-                    <div className="academic-paper-content mt-4" dangerouslySetInnerHTML={{ __html: renderMarkdown(agentsText) }} />
+                  <details className="guideline-details" style={{ marginBottom: '1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '1rem', color: '#0f172a' }}>
+                    <summary style={{ fontSize: '1.2rem', color: '#1e40af', cursor: 'pointer', fontWeight: 'bold' }}>AGENTS.md (운영 스키마)</summary>
+                    <div className="academic-paper-content mt-4" style={{ color: '#0f172a' }} dangerouslySetInnerHTML={{ __html: renderMarkdown(agentsText) }} />
                   </details>
                   
-                  <details className="guideline-details" style={{ background: '#0b1121', border: '1px solid #1e293b', borderRadius: '8px', padding: '1rem' }}>
-                    <summary style={{ fontSize: '1.2rem', color: '#93c5fd', cursor: 'pointer', fontWeight: 'bold' }}>soul.md (연구 에이전트의 영혼)</summary>
-                    <div className="academic-paper-content mt-4" dangerouslySetInnerHTML={{ __html: renderMarkdown(soulText) }} />
+                  <details className="guideline-details" style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '1rem', color: '#0f172a' }}>
+                    <summary style={{ fontSize: '1.2rem', color: '#1e40af', cursor: 'pointer', fontWeight: 'bold' }}>soul.md (연구 에이전트의 영혼)</summary>
+                    <div className="academic-paper-content mt-4" style={{ color: '#0f172a' }} dangerouslySetInnerHTML={{ __html: renderMarkdown(soulText) }} />
                   </details>
                 </div>
               </div>
