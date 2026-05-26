@@ -940,7 +940,7 @@ function App() {
                     </div>
                     <div className="ancestry-card">
                       <div className="ancestry-icon">💻</div>
-                      <h4>LLM Wiki (2020년대)</h4>
+                      <h4>LLM Wiki (2026년)</h4>
                       <p>유명한 AI 엔지니어 안드레 카파시(Andrej Karpathy)가 제안한 개인 지식 베이스 구축 방법으로, AI 에이전트가 마크다운 파일을 직접 읽고 쓰며 자동으로 지식을 유지·보수하는 시스템을 뜻합니다.</p>
                     </div>
                   </div>
