@@ -42,6 +42,9 @@ const parseCritiqueData = (text) => {
 
 const { meta: critiqueMeta, body: critiqueBody } = parseCritiqueData(critiqueText);
 
+// Google Apps Script Web App URL (실제 전송을 원하시면 배포하신 웹 앱 URL을 입력해 주세요)
+const GAS_WEB_APP_URL = "";
+
 function App() {
   const [activeMenu, setActiveMenu] = useState('home');
   const [selectedTrouble, setSelectedTrouble] = useState(null);
@@ -51,6 +54,15 @@ function App() {
   
   // LLM Wiki 서브탭
   const [activeWikiTab, setActiveWikiTab] = useState('intro'); // 'intro', 'system'
+
+  // 대화 참여 서브탭
+  const [activeAssemblyTab, setActiveAssemblyTab] = useState('researcher'); // 'researcher', 'simulator'
+  
+  // 연구자와 대화 (이메일 폼) 상태
+  const [senderName, setSenderName] = useState('');
+  const [senderEmail, setSenderEmail] = useState('');
+  const [messageBody, setMessageBody] = useState('');
+  const [isSending, setIsSending] = useState(false);
 
   // 지식 맵 서브탭
   const [activeMapTab, setActiveMapTab] = useState('concept');
@@ -410,6 +422,53 @@ function App() {
     if (nextStep < activeScenario.dialogue.length) {
       setSimulationStep(nextStep);
       setChatHistory(prev => [...prev, activeScenario.dialogue[nextStep]]);
+    }
+  };
+
+  const handleSubmitFeedback = async (e) => {
+    e.preventDefault();
+    if (!senderName.trim() || !senderEmail.trim() || !messageBody.trim()) {
+      alert("모든 필드를 입력해 주세요.");
+      return;
+    }
+    
+    setIsSending(true);
+
+    if (!GAS_WEB_APP_URL) {
+      // GAS URL이 지정되지 않은 상태의 모의(Mock) 작동
+      setTimeout(() => {
+        setIsSending(false);
+        alert(`[모의 전송 성공]\nGoogle Apps Script Web App URL이 설정되지 않아 브라우저 상에서 시뮬레이션 발송되었습니다.\n\n보내는이: ${senderName}\n이메일: ${senderEmail}\n의견 내용:\n${messageBody}`);
+        setSenderName('');
+        setSenderEmail('');
+        setMessageBody('');
+      }, 1200);
+      return;
+    }
+
+    try {
+      await fetch(GAS_WEB_APP_URL, {
+        method: 'POST',
+        mode: 'no-cors', // CORS 제한 우회용 설정
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: senderName,
+          email: senderEmail,
+          message: messageBody
+        })
+      });
+      
+      setIsSending(false);
+      alert("연구자에게 이메일이 성공적으로 전송되었습니다. 소중한 의견 감사합니다!");
+      setSenderName('');
+      setSenderEmail('');
+      setMessageBody('');
+    } catch (err) {
+      console.error(err);
+      setIsSending(false);
+      alert("이메일 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
     }
   };
 
@@ -1380,93 +1439,198 @@ function App() {
           <div className="assembly-page fade-in">
             <div className="page-header-wrapper">
               <h2 className="page-title">대화 참여 (Assembly)</h2>
-              <p className="page-subtitle">연구 과정의 핵심 딜레마를 선택하고 '사려 깊은 회의론자' 페르소나와 실시간 대화를 나누는 장</p>
+              <p className="page-subtitle">연구 과정의 딜레마에 대해 토론하거나 연구자에게 직접 의견을 전달해 보세요.</p>
             </div>
 
-            {!activeScenario ? (
-              <div className="scenario-selector-container">
-                <h3>연구의 3대 핵심 딜레마 시나리오</h3>
-                <p className="selector-hint">아래의 시나리오 중 하나를 골라 인간 연구자와 에이전트 간의 마찰적 대화 시뮬레이션을 시작하십시오.</p>
-                <div className="scenarios-grid">
-                  {scenarios.map(sc => (
-                    <div 
-                      key={sc.id} 
-                      className="scenario-select-card"
-                      onClick={() => handleStartScenario(sc)}
-                    >
-                      <h4>{sc.title}</h4>
-                      <p>{sc.desc}</p>
-                      <button className="select-btn">시뮬레이션 시작 →</button>
+            {/* 서브탭 내비게이션 */}
+            <div className="tab-navigation">
+              <button 
+                className={`tab-btn ${activeAssemblyTab === 'researcher' ? 'active' : ''}`}
+                onClick={() => setActiveAssemblyTab('researcher')}
+              >
+                연구자와 대화 (이메일 의견)
+              </button>
+              <button 
+                className={`tab-btn ${activeAssemblyTab === 'simulator' ? 'active' : ''}`}
+                onClick={() => setActiveAssemblyTab('simulator')}
+              >
+                AI 에이전트와 대화 시뮬레이션
+              </button>
+            </div>
+
+            {/* 1. 연구자와 대화 (이메일 피드백 폼) */}
+            {activeAssemblyTab === 'researcher' && (
+              <div className="researcher-feedback-container fade-in" style={{ maxWidth: '700px', margin: '0 auto', width: '100%', background: 'rgba(15, 23, 42, 0.6)', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '16px', padding: '30px', boxShadow: '0 15px 35px rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)' }}>
+                <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '10px' }}>👨‍💻 연구자 노대원에게 의견 전송</h3>
+                <p style={{ color: '#a0aec0', fontSize: '0.95rem', marginBottom: '25px', lineHeight: 1.5 }}>
+                  논문의 연구 내용, LLM Wiki 시스템, 혹은 AI 에이전트와의 공생 방법론에 대한 의견을 자유롭게 적어주세요. 
+                  보내주신 내용은 연구자(노대원)의 이메일로 자동 안전 발송됩니다.
+                </p>
+
+                <form onSubmit={handleSubmitFeedback} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
+                    <label style={{ color: '#cbd5e1', fontSize: '0.9rem', fontWeight: 600 }}>보내시는 분 이름 / 소속</label>
+                    <input 
+                      type="text" 
+                      placeholder="예: 홍길동 (ㅇㅇ대학교)"
+                      value={senderName}
+                      onChange={(e) => setSenderName(e.target.value)}
+                      style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)', color: '#fff', fontSize: '0.95rem', outline: 'none' }}
+                      required
+                      disabled={isSending}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
+                    <label style={{ color: '#cbd5e1', fontSize: '0.9rem', fontWeight: 600 }}>이메일 주소</label>
+                    <input 
+                      type="email" 
+                      placeholder="답변을 받으실 이메일 주소"
+                      value={senderEmail}
+                      onChange={(e) => setSenderEmail(e.target.value)}
+                      style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)', color: '#fff', fontSize: '0.95rem', outline: 'none' }}
+                      required
+                      disabled={isSending}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
+                    <label style={{ color: '#cbd5e1', fontSize: '0.9rem', fontWeight: 600 }}>의견 및 제안 내용</label>
+                    <textarea 
+                      placeholder="노대원 연구자에게 보낼 의견을 상세히 기재해 주세요..."
+                      value={messageBody}
+                      onChange={(e) => setMessageBody(e.target.value)}
+                      rows={6}
+                      style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)', color: '#fff', fontSize: '0.95rem', outline: 'none', resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5 }}
+                      required
+                      disabled={isSending}
+                    />
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={isSending}
+                    style={{ padding: '14px', borderRadius: '8px', border: 'none', background: isSending ? '#4a5568' : '#7c3aed', color: '#fff', fontSize: '1rem', fontWeight: 'bold', cursor: isSending ? 'not-allowed' : 'pointer', transition: 'background-color 0.2s', boxShadow: '0 4px 15px rgba(124,58,237,0.2)' }}
+                  >
+                    {isSending ? '전송 중...' : '의견 전송하기 ✉️'}
+                  </button>
+                </form>
+
+                {/* 구글 앱스 스크립트 연결 가이드 */}
+                <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.08)', textAlign: 'left' }}>
+                  <details style={{ cursor: 'pointer' }}>
+                    <summary style={{ color: '#a0aec0', fontSize: '0.85rem' }}>⚙️ 연구자용: Google Apps Script 이메일 연동 활성화 방법</summary>
+                    <div style={{ padding: '15px', background: 'rgba(0,0,0,0.3)', borderRadius: '8px', marginTop: '10px', fontSize: '0.85rem', color: '#cbd5e1', lineHeight: 1.6 }}>
+                      <ol style={{ paddingLeft: '20px', margin: '0 0 10px 0' }}>
+                        <li>구글 드라이브 ➔ 새 파일 ➔ **Google Apps Script**를 만듭니다.</li>
+                        <li>기존 코드를 모두 지우고 아래의 코드를 복사해 붙여넣습니다:
+                          <pre style={{ background: '#1e293b', padding: '10px', borderRadius: '6px', overflowX: 'auto', marginTop: '8px', color: '#38bdf8' }}>{`function doPost(e) {
+  var data = JSON.parse(e.postData.contents);
+  var email = "노대원 교수님 이메일 주소 기입";
+  var subject = "[LLM Wiki] 방문자 의견 전송 - " + data.name;
+  var body = "보낸이: " + data.name + " (" + data.email + ")\\n\\n의견 내용:\\n" + data.message;
+  GmailApp.sendEmail(email, subject, body);
+  return ContentService.createTextOutput("SUCCESS");
+}`}</pre>
+                        </li>
+                        <li>우측 상단 **배포** ➔ **새 배포**를 누릅니다.</li>
+                        <li>유형을 **웹 앱**으로 선택하고, 액세스 권한을 **모든 사용자(Anyone)**로 설정한 뒤 배포합니다.</li>
+                        <li>생성된 **웹 앱 URL**을 복사하여, \`src/App.jsx\` 파일 상단의 \`GAS_WEB_APP_URL\` 변수에 붙여넣으십시오.</li>
+                      </ol>
                     </div>
-                  ))}
+                  </details>
                 </div>
               </div>
-            ) : (
-              <div className="scenario-simulation-container fade-in">
-                <div className="sim-header">
-                  <button className="back-to-list-btn" onClick={() => setActiveScenario(null)}>
-                    ← 시나리오 선택으로 돌아가기
-                  </button>
-                  <h3>🎬 시뮬레이션: {activeScenario.title}</h3>
-                </div>
+            )}
 
-                {/* 대화 히스토리 */}
-                <div className="sim-chat-box">
-                  {chatHistory.map((msg, idx) => {
-                    const isUser = msg.speaker === '나 (연구자)';
-                    const isReader = msg.speaker === '독자 (나)';
-                    const isAi = msg.speaker.includes('안티그래비티');
-                    let bubbleClass = 'left';
-                    if (isUser || isReader) bubbleClass = 'right';
-                    
-                    return (
-                      <div key={idx} className={`sim-chat-wrapper ${bubbleClass} fade-in`}>
-                        <div className="sim-avatar">
-                          {isUser ? '👨‍💻 연구자' : isReader ? '👤 독자' : '🤖 AI'}
+            {/* 2. AI 에이전트와 대화 시뮬레이션 */}
+            {activeAssemblyTab === 'simulator' && (
+              <div className="simulator-tab-content fade-in" style={{ width: '100%' }}>
+                {!activeScenario ? (
+                  <div className="scenario-selector-container">
+                    <h3>연구의 3대 핵심 딜레마 시나리오</h3>
+                    <p className="selector-hint">아래의 시나리오 중 하나를 골라 인간 연구자와 에이전트 간의 마찰적 대화 시뮬레이션을 시작하십시오.</p>
+                    <div className="scenarios-grid">
+                      {scenarios.map(sc => (
+                        <div 
+                          key={sc.id} 
+                          className="scenario-select-card"
+                          onClick={() => handleStartScenario(sc)}
+                        >
+                          <h4>{sc.title}</h4>
+                          <p>{sc.desc}</p>
+                          <button className="select-btn">시뮬레이션 시작 →</button>
                         </div>
-                        <div className="sim-bubble">
-                          <span className="sim-speaker-name">{msg.speaker}</span>
-                          <p className="sim-text">{msg.text}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {isTyping && (
-                    <div className="sim-chat-wrapper left fade-in">
-                      <div className="sim-avatar">🤖 AI</div>
-                      <div className="sim-bubble typing-bubble">
-                        <span className="typing-dots">
-                          <span>.</span><span>.</span><span>.</span>
-                        </span>
-                      </div>
+                      ))}
                     </div>
-                  )}
-                  <div ref={chatEndRef} />
-                </div>
-
-                {/* 제어 패널 */}
-                <div className="sim-controls">
-                  {simulationStep < activeScenario.dialogue.length - 1 ? (
-                    <button className="next-sim-btn" onClick={handleNextStep}>
-                      다음 대화 진행하기 (Step {simulationStep + 1} / {activeScenario.dialogue.length})
-                    </button>
-                  ) : (
-                    <form className="user-comment-form" onSubmit={handleSendComment}>
-                      <input
-                        type="text"
-                        placeholder="이 딜레마에 대해 어떻게 생각하십니까? 당신의 의견을 적고 에이전트와 대화해보세요..."
-                        className="comment-input"
-                        value={userComment}
-                        onChange={(e) => setUserComment(e.target.value)}
-                        disabled={isTyping}
-                      />
-                      <button type="submit" className="send-comment-btn" disabled={isTyping}>
-                        전송
+                  </div>
+                ) : (
+                  <div className="scenario-simulation-container fade-in">
+                    <div className="sim-header">
+                      <button className="back-to-list-btn" onClick={() => setActiveScenario(null)}>
+                        ← 시나리오 선택으로 돌아가기
                       </button>
-                    </form>
-                  )}
-                </div>
+                      <h3>🎬 시뮬레이션: {activeScenario.title}</h3>
+                    </div>
+
+                    {/* 대화 히스토리 */}
+                    <div className="sim-chat-box">
+                      {chatHistory.map((msg, idx) => {
+                        const isUser = msg.speaker === '나 (연구자)';
+                        const isReader = msg.speaker === '독자 (나)';
+                        let bubbleClass = 'left';
+                        if (isUser || isReader) bubbleClass = 'right';
+                        
+                        return (
+                          <div key={idx} className={`sim-chat-wrapper ${bubbleClass} fade-in`}>
+                            <div className="sim-avatar">
+                              {isUser ? '👨‍💻 연구자' : isReader ? '👤 독자' : '🤖 AI'}
+                            </div>
+                            <div className="sim-bubble">
+                              <span className="sim-speaker-name">{msg.speaker}</span>
+                              <p className="sim-text">{msg.text}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      {isTyping && (
+                        <div className="sim-chat-wrapper left fade-in">
+                          <div className="sim-avatar">🤖 AI</div>
+                          <div className="sim-bubble typing-bubble">
+                            <span className="typing-dots">
+                              <span>.</span><span>.</span><span>.</span>
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                      <div ref={chatEndRef} />
+                    </div>
+
+                    {/* 제어 패널 */}
+                    <div className="sim-controls">
+                      {simulationStep < activeScenario.dialogue.length - 1 ? (
+                        <button className="next-sim-btn" onClick={handleNextStep}>
+                          다음 대화 진행하기 (Step {simulationStep + 1} / {activeScenario.dialogue.length})
+                        </button>
+                      ) : (
+                        <form className="user-comment-form" onSubmit={handleSendComment}>
+                          <input
+                            type="text"
+                            placeholder="이 딜레마에 대해 어떻게 생각하십니까? 당신의 의견을 적고 에이전트와 대화해보세요..."
+                            className="comment-input"
+                            value={userComment}
+                            onChange={(e) => setUserComment(e.target.value)}
+                            disabled={isTyping}
+                          />
+                          <button type="submit" className="send-comment-btn" disabled={isTyping}>
+                            전송
+                          </button>
+                        </form>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
