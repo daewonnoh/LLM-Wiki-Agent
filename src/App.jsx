@@ -903,11 +903,102 @@ function App() {
               >
                 실제 구축과 운영
               </button>
+              <button 
+                className={`tab-btn ${activeWikiTab === 'soul' ? 'active' : ''}`}
+                onClick={() => setActiveWikiTab('soul')}
+              >
+                에이전트의 영혼 (soul.md)
+              </button>
+              <button 
+                className={`tab-btn ${activeWikiTab === 'agents' ? 'active' : ''}`}
+                onClick={() => setActiveWikiTab('agents')}
+              >
+                운영 스키마 (AGENTS.md)
+              </button>
             </div>
 
             {activeWikiTab === 'intro' && (
-              <div className="wiki-intro-container fade-in" style={{ padding: '2rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', color: '#0f172a' }}>
-                <div className="academic-paper-content" style={{ color: '#0f172a' }} dangerouslySetInnerHTML={{ __html: renderMarkdown(wikiIntroText) }} />
+              <div className="wiki-intro-layout fade-in">
+                
+                {/* 1. PKM과 LLM OS의 계보 */}
+                <section className="intro-section">
+                  <h3 className="intro-section-title">💡 LLM Wiki의 계보와 지향</h3>
+                  <p style={{ fontSize: '15px', lineHeight: 1.7, color: '#334155', marginBottom: '24px' }}>
+                    이 연구에서 구축한 <strong>LLM Wiki 시스템</strong>은 지식 관리와 사유 확장의 유구한 역사에 뿌리를 두고 있으며, 최신 언어 모델의 운영 체제화(LLM OS) 설계를 결합한 지적 공간입니다.
+                  </p>
+                  
+                  <div className="pkm-ancestry-grid">
+                    <div className="ancestry-card">
+                      <div className="ancestry-icon">💾</div>
+                      <h4>메멕스 (Memex)</h4>
+                      <p>버니바 부시가 구상한 인지 확장 장치로, 지식과 정보를 선형적으로 정리하지 않고 상호 연상적인 링크로 엮어 기억을 저장하는 개념적 토대입니다.</p>
+                    </div>
+                    <div className="ancestry-card">
+                      <div className="ancestry-icon">🗂️</div>
+                      <h4>제텔카스텐 (Zettelkasten)</h4>
+                      <p>니클라스 루만의 생각 상자 방법론입니다. 개별 메모들을 유기적으로 교차 참조함으로써 시스템 자체가 연구자의 대화 상대가 되어 생각의 창발을 유도합니다.</p>
+                    </div>
+                    <div className="ancestry-card">
+                      <div className="ancestry-icon">💻</div>
+                      <h4>LLM OS (대규모 언어 모델 OS)</h4>
+                      <p>안드레 카파시의 설계 아이디어로, LLM을 단순 텍스트 생성기가 아닌 계산 자원, 메모리(지식고), 도구들을 오케스트레이션하는 새로운 컴퓨터 운영체제로 다룹니다.</p>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 2. 3계층 아키텍처 플로우 */}
+                <section className="intro-section">
+                  <h3 className="intro-section-title">⚙️ 3계층 아키텍처 기반의 지식 생산</h3>
+                  <p style={{ fontSize: '15px', lineHeight: 1.7, color: '#334155', marginBottom: '24px' }}>
+                    LLM Wiki는 단순히 글을 적는 메모장을 넘어, 에이전트와 연구자가 상호 응답적으로 결합하여 지식을 물질화하는 3단계 아키텍처를 따릅니다.
+                  </p>
+                  
+                  <div className="layer-flow-container">
+                    <div className="layer-flow-card raw-layer">
+                      <div className="layer-flow-num">Layer 1</div>
+                      <h4>원자료 (Raw)</h4>
+                      <p>수정이 불가능한 오리지널 소 텍스트나 PDF 논문 자료들. 분석의 절대적인 원자재이자 준거점입니다.</p>
+                    </div>
+                    <div className="flow-arrow-separator">➔</div>
+                    <div className="layer-flow-card agent-layer">
+                      <div className="layer-flow-num">Layer 2</div>
+                      <h4>에이전트 (Agent)</h4>
+                      <p>사려 깊은 회의론자로 조율된 인공지능(Antigravity). 원자료를 인코딩, 파싱하고 구조화된 요약을 생성합니다.</p>
+                    </div>
+                    <div className="flow-arrow-separator">➔</div>
+                    <div className="layer-flow-card wiki-layer">
+                      <div className="layer-flow-num">Layer 3</div>
+                      <h4>지식고 (Wiki)</h4>
+                      <p>상호 연결된 마크다운 지식베이스. 옵시디언(Obsidian) 기반으로 연구자의 인지와 AI의 데이터 처리가 공존하는 결과물입니다.</p>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 3. 트러블과 함께 머물기 */}
+                <section className="intro-section">
+                  <h3 className="intro-section-title">🕸️ 트러블과 함께 머물기 (Staying with the Trouble)</h3>
+                  <div className="trouble-staying-box">
+                    <p className="intro-text">
+                      이 위키의 목적은 AI를 통해 매끄럽고 빠르게 정답을 내거나 논문을 기계적으로 생산하는 가속주의를 거부합니다. 오히려 기계의 데이터 파싱과 인간의 비평적 독해 사이에서 발생하는 마찰(트러블)을 핵심 동력으로 삼습니다.
+                    </p>
+                    
+                    <div className="contrast-grid">
+                      <div className="contrast-panel ai-panel">
+                        <h5>👾 AI의 데이터 파싱 (Parsing)</h5>
+                        <p>컨텍스트의 효율적 요약, 통계적 확률론을 통한 논리적 정제, 매끄러운 단성주의적 종합 성향.</p>
+                      </div>
+                      <div className="contrast-panel human-panel">
+                        <h5>👨‍💻 연구자의 비평적 독해 (Reading)</h5>
+                        <p>상황지어진 지식(Situated Knowledge)의 고수, 맥락주의적 지연, 마찰과 이견을 통한 다성성 방어.</p>
+                      </div>
+                    </div>
+                    
+                    <div className="philosophical-quote">
+                      "이 인식론적 간극에서 발생하는 요약 본능, 유창한 작화(환각), 오독 등은 교정해야 할 무능함이 아닙니다. 오히려 인간 연구자의 사유를 낯설게 만들고 탈영토화시키는 '비평적 간섭'의 사건이 됩니다. 이 실천 기반 연구(PBR)는 AI의 기만적 효율성에 저항하며 불편한 공생 속에서 지식을 회절적으로 공동 생산해 나가는 과정입니다."
+                    </div>
+                  </div>
+                </section>
+
               </div>
             )}
 
@@ -946,20 +1037,18 @@ function App() {
                     <p>인덱스(index.md), 성찰 로그(log.md, 감응-로그.md, 트러블-로그-v2.md), 개체/개념 요약 페이지들이 얽힌 Obsidian 기반 로컬 위키고.</p>
                   </div>
                 </div>
+              </div>
+            )}
 
-                <div className="guidelines-section" style={{ marginTop: '3rem', borderTop: '1px solid rgba(16, 185, 129, 0.2)', paddingTop: '2rem' }}>
-                  <h3 style={{ fontSize: '1.5rem', color: '#065f46', marginBottom: '1.5rem' }}>위키 운영 시스템 지침</h3>
-                  
-                  <details className="guideline-details" style={{ marginBottom: '1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '1rem', color: '#0f172a' }}>
-                    <summary style={{ fontSize: '1.2rem', color: '#1e40af', cursor: 'pointer', fontWeight: 'bold' }}>AGENTS.md (운영 스키마)</summary>
-                    <div className="academic-paper-content mt-4" style={{ color: '#0f172a' }} dangerouslySetInnerHTML={{ __html: renderMarkdown(agentsText) }} />
-                  </details>
-                  
-                  <details className="guideline-details" style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '1rem', color: '#0f172a' }}>
-                    <summary style={{ fontSize: '1.2rem', color: '#1e40af', cursor: 'pointer', fontWeight: 'bold' }}>soul.md (연구 에이전트의 영혼)</summary>
-                    <div className="academic-paper-content mt-4" style={{ color: '#0f172a' }} dangerouslySetInnerHTML={{ __html: renderMarkdown(soulText) }} />
-                  </details>
-                </div>
+            {activeWikiTab === 'soul' && (
+              <div className="wiki-soul-container fade-in" style={{ padding: '3rem 2rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', color: '#0f172a' }}>
+                <div className="academic-paper-content" style={{ color: '#0f172a' }} dangerouslySetInnerHTML={{ __html: renderMarkdown(soulText) }} />
+              </div>
+            )}
+
+            {activeWikiTab === 'agents' && (
+              <div className="wiki-agents-container fade-in" style={{ padding: '3rem 2rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', color: '#0f172a' }}>
+                <div className="academic-paper-content" style={{ color: '#0f172a' }} dangerouslySetInnerHTML={{ __html: renderMarkdown(agentsText) }} />
               </div>
             )}
           </div>
