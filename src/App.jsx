@@ -1515,31 +1515,6 @@ function App() {
                     {isSending ? '전송 중...' : '의견 전송하기 ✉️'}
                   </button>
                 </form>
-
-                {/* 구글 앱스 스크립트 연결 가이드 */}
-                <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid #e2e8f0', textAlign: 'left' }}>
-                  <details style={{ cursor: 'pointer' }}>
-                    <summary style={{ color: '#64748b', fontSize: '0.85rem' }}>⚙️ 연구자용: Google Apps Script 이메일 연동 활성화 방법</summary>
-                    <div style={{ padding: '15px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', marginTop: '10px', fontSize: '0.85rem', color: '#334155', lineHeight: 1.6 }}>
-                      <ol style={{ paddingLeft: '20px', margin: '0 0 10px 0' }}>
-                        <li>구글 드라이브 ➔ 새 파일 ➔ **Google Apps Script**를 만듭니다.</li>
-                        <li>기존 코드를 모두 지우고 아래의 코드를 복사해 붙여넣습니다:
-                          <pre style={{ background: '#1e293b', padding: '10px', borderRadius: '6px', overflowX: 'auto', marginTop: '8px', color: '#38bdf8' }}>{`function doPost(e) {
-  var data = JSON.parse(e.postData.contents);
-  var email = "novel@jejunu.ac.kr";
-  var subject = "[LLM Wiki] 방문자 의견 전송 - " + data.name;
-  var body = "보낸이: " + data.name + " (" + data.email + ")\\n\\n의견 내용:\\n" + data.message;
-  GmailApp.sendEmail(email, subject, body);
-  return ContentService.createTextOutput("SUCCESS");
-}`}</pre>
-                        </li>
-                        <li>우측 상단 **배포** ➔ **새 배포**를 누릅니다.</li>
-                        <li>유형을 **웹 앱**으로 선택하고, 액세스 권한을 **모든 사용자(Anyone)**로 설정한 뒤 배포합니다.</li>
-                        <li>생성된 **웹 앱 URL**을 복사하여, \`src/App.jsx\` 파일 상단의 \`GAS_WEB_APP_URL\` 변수에 붙여넣으십시오.</li>
-                      </ol>
-                    </div>
-                  </details>
-                </div>
               </div>
             )}
 
