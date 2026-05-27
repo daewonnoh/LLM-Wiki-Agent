@@ -793,7 +793,7 @@ function App() {
                 className={`tab-btn ${activeMediaTab === 'webtoon' ? 'active' : ''}`}
                 onClick={() => setActiveMediaTab('webtoon')}
               >
-                듀나 <그레타 복음> 10컷 소설 웹툰
+                듀나 &lt;그레타 복음&gt; 10컷 소설 웹툰
               </button>
               <button 
                 className={`tab-btn ${activeMediaTab === 'podcast' ? 'active' : ''}`}
