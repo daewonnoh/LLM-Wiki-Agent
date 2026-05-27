@@ -4,7 +4,7 @@ import troublesData from './data/troubles.json';
 import { manuscriptText } from './data/manuscript.js';
 import { critiqueText } from './data/critique.js';
 import { wikiIntroText, soulText, agentsText } from './data/guidelines.js';
-import { syllabusText } from './data/syllabus.js';
+import { syllabusData } from './data/syllabusData.js';
 import screenshot1 from './assets/screenshots/screenshot_1.png';
 import screenshot2 from './assets/screenshots/screenshot_2.png';
 import screenshot3 from './assets/screenshots/screenshot_3.png';
@@ -50,8 +50,16 @@ const parseCritiqueData = (text) => {
 
 const { meta: critiqueMeta, body: critiqueBody } = parseCritiqueData(critiqueText);
 
-
-
+const renderTextWithLinks = (text) => {
+  if (!text) return null;
+  const urlRegex = /(https?:\/\/[^\s,]+)/g;
+  return text.split(urlRegex).map((part, i) => {
+    if (part.match(urlRegex)) {
+      return <a key={i} href={part} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6', textDecoration: 'underline' }}>{part}</a>;
+    }
+    return part;
+  });
+};
 // Google Apps Script Web App URL (실제 전송을 원하시면 배포하신 웹 앱 URL을 입력해 주세요)
 const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyemTscGqGKYxL9BVT2g17mg5InqWKOGI6zSo72ShJyZVRXvC17VFyGqUIhP0dNyDk0Kw/exec";
 
@@ -1470,35 +1478,35 @@ function App() {
                       {activeCritiqueTab === 'posthuman' && (
                         <div className="critique-essay fade-in">
                           <h4>👾 포스트휴먼 / 신유물론 비평가의 독해</h4>
-                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>"이 소설은 인간 인지가 두개골 안에 갇혀 있지 않고 <strong>물질적 환경으로 확장</strong>되어 있다는 테제를 직접적으로 서사화합니다. 격자 구조물은 앤디 클락과 찰머스의 '확장된 마음(Extended Mind)' 논제의 극단적인 문학적 구현입니다. 스피어는 확장된 마음의 개인화이며, 비인간 물질(스피어)이 인간의 기억과 정동을 보존하는 능동적 행위자(vibrant matter)로 기능함을 증명합니다."</p>
+                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>이 소설은 인간 인지가 두개골 안에 갇혀 있지 않고 물질적 환경으로 확장되어 있다는 테제를 직접적으로 서사화합니다. 격자 구조물은 앤디 클락과 찰머스의 '확장된 마음(Extended Mind)' 논제의 극단적인 문학적 구현입니다. 스피어는 확장된 마음의 개인화이며, 비인간 물질(스피어)이 인간의 기억과 정동을 보존하는 능동적 행위자(vibrant matter)로 기능함을 증명합니다.</p>
                           <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: 인간과 비인간 물질의 경계를 유동적으로 보며, 기술적 객체에 행위성을 부여한다.</span>
                         </div>
                       )}
                       {activeCritiqueTab === 'feminism' && (
                         <div className="critique-essay fade-in">
                           <h4>👩‍🎤 페미니즘 / 취약성 비평가의 독해</h4>
-                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>"소설의 중심에는 <strong>취약한 신체의 정치학</strong>이 놓여 있습니다. 이브는 작은 몸 때문에 격자 지식에 진입하지 못하며, 공동체는 이를 개인의 결핍으로 의료화합니다. 그러나 이브의 취약성은 결핍이 아닌, 대안적 인지 방식 '스피어'를 발명하는 인식론적 특권(버틀러의 취약성으로부터의 저항)이 됩니다. 또한 제나가 이브의 보호자를 자처하며 가하는 미세한 권력적 돌봄의 외양도 예리하게 포착해야 합니다."</p>
+                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>소설의 중심에는 취약한 신체의 정치학이 놓여 있습니다. 이브는 작은 몸 때문에 격자 지식에 진입하지 못하며, 공동체는 이를 개인의 결핍으로 의료화합니다. 그러나 이브의 취약성은 결핍이 아닌, 대안적 인지 방식 '스피어'를 발명하는 인식론적 특권(버틀러의 취약성으로부터의 저항)이 됩니다. 또한 제나가 이브의 보호자를 자처하며 가하는 미세한 권력적 돌봄의 외양도 예리하게 포착해야 합니다.</p>
                           <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: '보호'의 수사 안에 숨겨진 권력을 읽고, 취약한 신체가 앎의 조건임을 규명한다.</span>
                         </div>
                       )}
                       {activeCritiqueTab === 'marxism' && (
                         <div className="critique-essay fade-in">
                           <h4>☭ 마르크스주의 비평가의 독해</h4>
-                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>"인지 공간은 <strong>생산수단의 소유 구조</strong>로 분석되어야 합니다. 격자는 모든 사회적 지식 노동(생산)의 유일한 수단이며, 접근하지 못하는 이브는 배제된 잉여노동자 계급입니다. 의상실을 운영하는 이브 아버지는 수공업적 신체 노동을 상징하죠. 격자 지식 서기관들의 기억 편집권은 지배 계급의 이데올로기 독점이며, 스피어는 생산수단의 민주적 탈중심화 시도입니다."</p>
+                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>인지 공간은 생산수단의 소유 구조로 분석되어야 합니다. 격자는 모든 사회적 지식 노동(생산)의 유일한 수단이며, 접근하지 못하는 이브는 배제된 잉여노동자 계급입니다. 의상실을 운영하는 이브 아버지는 수공업적 신체 노동을 상징하죠. 격자 지식 서기관들의 기억 편집권은 지배 계급의 이데올로기 독점이며, 스피어는 생산수단의 민주적 탈중심화 시도입니다.</p>
                           <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: 지식 체계를 물질적 생산관계의 반영으로 읽으며, 격자 접근권을 계급 분석의 렌즈로 본다.</span>
                         </div>
                       )}
                       {activeCritiqueTab === 'postcolonial' && (
                         <div className="critique-essay fade-in">
                           <h4>🧭 포스트콜로니얼 비평가의 독해</h4>
-                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>"격자 구조물은 보편적 지식의 전당이 아닌 <strong>인식론적 식민 장치</strong>입니다. '세 번째 달'에 맞춘 전설을 공동체가 격자의 정보 정리에 맞춰 자의적으로 교정하고 왜곡하는 것은, 피식민지의 구전 역사가 제국 문자로 쓰인 관찬 역사에 의해 교정되는 것과 평행합니다. 보편이라는 미명 아래 특정 기억을 삭제하는 인식론적 식민화 현상입니다."</p>
+                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>격자 구조물은 보편적 지식의 전당이 아닌 인식론적 식민 장치입니다. '세 번째 달'에 맞춘 전설을 공동체가 격자의 정보 정리에 맞춰 자의적으로 교정하고 왜곡하는 것은, 피식민지의 구전 역사가 제국 문자로 쓰인 관찬 역사에 의해 교정되는 것과 평행합니다. 보편이라는 미명 아래 특정 기억을 삭제하는 인식론적 식민화 현상입니다.</p>
                           <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: 모든 보편 지식 체계를 제국주의적 게이트키핑 권력의 산물로 의심한다.</span>
                         </div>
                       )}
                       {activeCritiqueTab === 'skeptic' && (
                         <div className="critique-essay fade-in">
                           <h4>🧐 회의적 비평가 (The Skeptic)의 반론</h4>
-                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>"위의 네 비평가 모두 이브를 저항의 영웅으로 만드는 <strong>거대 서사의 과잉 코딩</strong>에 빠져 있습니다. 이브는 어쩌면 단지 자기가 오르지 못하는 시스템을 폄하(제나의 의심)한 것일 수 있고, 스피어는 아주 적은 정보만 기록하는 조잡한 도구일 뿐입니다. 이론의 과잉 수사로 작품을 읽으면, 이브와 제나 사이의 원초적인 우정과 상실, 애도의 인간적 서사가 질식해버립니다."</p>
+                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>위의 네 비평가 모두 이브를 저항의 영웅으로 만드는 거대 서사의 과잉 코딩에 빠져 있습니다. 이브는 어쩌면 단지 자기가 오르지 못하는 시스템을 폄하(제나의 의심)한 것일 수 있고, 스피어는 아주 적은 정보만 기록하는 조잡한 도구일 뿐입니다. 이론의 과잉 수사로 작품을 읽으면, 이브와 제나 사이의 원초적인 우정과 상실, 애도의 인간적 서사가 질식해버립니다.</p>
                           <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: 비평 이론이 텍스트에 과잉 의미를 주입하는 지적 월권을 경계한다.</span>
                         </div>
                       )}
@@ -1770,12 +1778,228 @@ function App() {
 
             {/* 3. 대학원 수업 아이디어 (Syllabus) */}
             {activeAssemblyTab === 'syllabus' && (
-              <div className="syllabus-container fade-in" style={{ maxWidth: '900px', margin: '0 auto', paddingBottom: '50px', textAlign: 'left' }}>
-                <div 
-                  className="academic-paper-content"
-                  style={{ color: '#0f172a' }}
-                  dangerouslySetInnerHTML={{ __html: renderMarkdown(syllabusText) }}
-                />
+              <div className="syllabus-container fade-in" style={{ maxWidth: '900px', margin: '0 auto', paddingBottom: '50px', textAlign: 'left', fontFamily: 'Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+                
+                {/* 헤더 카드 */}
+                <div className="syllabus-header-card" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', padding: '30px', borderRadius: '16px', border: '1px solid #cbd5e1', marginBottom: '40px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+                  <h3 style={{ fontSize: '24px', color: '#0f172a', marginBottom: '25px', display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 'bold' }}>
+                    <span>🎓</span> {syllabusData.title}
+                  </h3>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '15px' }}>
+                    {syllabusData.basicInfo.map((info, idx) => (
+                      <div key={idx} style={{ background: 'rgba(255, 255, 255, 0.7)', padding: '15px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.5)' }}>
+                        <div style={{ fontSize: '13px', color: '#64748b', fontWeight: 600, marginBottom: '5px' }}>{info.label}</div>
+                        <div style={{ fontSize: '15px', color: '#334155', fontWeight: 500 }}>{info.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 과목 개요 */}
+                <div style={{ marginBottom: '40px' }}>
+                  <h4 style={{ fontSize: '20px', color: '#334155', borderBottom: '2px solid #e2e8f0', paddingBottom: '10px', marginBottom: '20px', fontWeight: 'bold' }}>과목 개요</h4>
+                  <p style={{ color: '#475569', fontSize: '15px', lineHeight: 1.8 }}>{syllabusData.overview}</p>
+                </div>
+
+                {/* 학습 목표 — 굵은 글씨 없이 번호 배지 목록 */}
+                <div style={{ marginBottom: '40px' }}>
+                  <h4 style={{ fontSize: '20px', color: '#334155', borderBottom: '2px solid #e2e8f0', paddingBottom: '10px', marginBottom: '20px', fontWeight: 'bold' }}>학습 목표</h4>
+                  <ol style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {syllabusData.objectives.map((obj, idx) => (
+                      <li key={idx} style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '14px 16px' }}>
+                        <span style={{ flexShrink: 0, width: '28px', height: '28px', borderRadius: '50%', background: 'linear-gradient(135deg, #3b82f6, #6366f1)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700 }}>{idx + 1}</span>
+                        <span style={{ color: '#475569', fontSize: '15px', lineHeight: 1.7, fontWeight: 400 }}>{obj}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+
+                {/* 수업 방법 */}
+                <div style={{ marginBottom: '40px' }}>
+                  <h4 style={{ fontSize: '20px', color: '#334155', borderBottom: '2px solid #e2e8f0', paddingBottom: '10px', marginBottom: '20px', fontWeight: 'bold' }}>수업 방법</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
+                    {syllabusData.methods.map((method, idx) => {
+                      const icons = ['🎤', '💬', '🛠️', '🎭'];
+                      return (
+                        <div key={idx} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '18px', borderTop: '3px solid #6366f1' }}>
+                          <div style={{ fontSize: '20px', marginBottom: '8px' }}>{icons[idx] || '📌'}</div>
+                          <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '14px', marginBottom: '8px' }}>{method.type}</div>
+                          <div style={{ color: '#64748b', fontSize: '13px', lineHeight: 1.6 }}>{method.desc}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 평가 방법 — 다크 헤더 테이블 */}
+                <div style={{ marginBottom: '40px' }}>
+                  <h4 style={{ fontSize: '20px', color: '#334155', borderBottom: '2px solid #e2e8f0', paddingBottom: '10px', marginBottom: '20px', fontWeight: 'bold' }}>평가 방법</h4>
+                  <div style={{ overflowX: 'auto', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', minWidth: '400px' }}>
+                      <thead>
+                        <tr style={{ background: 'linear-gradient(135deg, #1e293b, #334155)' }}>
+                          <th style={{ padding: '14px 18px', color: '#f1f5f9', fontSize: '14px', fontWeight: 600, textAlign: 'left', width: '22%' }}>항목</th>
+                          <th style={{ padding: '14px 18px', color: '#f1f5f9', fontSize: '14px', fontWeight: 600, textAlign: 'center', width: '15%' }}>배점</th>
+                          <th style={{ padding: '14px 18px', color: '#f1f5f9', fontSize: '14px', fontWeight: 600, textAlign: 'left' }}>내용</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {syllabusData.evaluations.map((ev, idx) => {
+                          const isTotal = ev.item === '총점';
+                          return (
+                            <tr key={idx} style={{ borderBottom: idx === syllabusData.evaluations.length - 1 ? 'none' : '1px solid #f1f5f9', background: isTotal ? '#f8fafc' : '#fff' }}>
+                              <td style={{ padding: '15px 18px', fontWeight: isTotal ? 700 : 600, color: isTotal ? '#1e293b' : '#334155', fontSize: '14px' }}>{ev.item}</td>
+                              <td style={{ padding: '15px 18px', textAlign: 'center' }}>
+                                <span style={{ background: isTotal ? '#1e293b' : '#eff6ff', color: isTotal ? '#fff' : '#3b82f6', borderRadius: '20px', padding: '4px 12px', fontSize: '13px', fontWeight: 700 }}>{ev.score}</span>
+                              </td>
+                              <td style={{ padding: '15px 18px', color: '#64748b', fontSize: '14px', lineHeight: 1.6 }}>{ev.desc}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* 교재 — 하이라이트 배너 */}
+                <div style={{ marginBottom: '40px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '20px 24px', display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '22px' }}>📖</span>
+                  <div>
+                    <div style={{ fontSize: '13px', color: '#3b82f6', fontWeight: 700, marginBottom: '4px' }}>교재</div>
+                    <div style={{ color: '#1e293b', fontSize: '15px', fontWeight: 500 }}>
+                      {syllabusData.materials.textbook}{' '}
+                      <a href={syllabusData.materials.textbookUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6', textDecoration: 'underline', fontSize: '14px' }}>
+                        {syllabusData.materials.textbookUrl} ↗
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 주별 학습 내용 — Phase 컬러 카드 방식 */}
+                <div style={{ marginBottom: '40px' }}>
+                  <h4 style={{ fontSize: '20px', color: '#334155', borderBottom: '2px solid #e2e8f0', paddingBottom: '10px', marginBottom: '8px', fontWeight: 'bold' }}>주별 학습 내용</h4>
+                  <p style={{ color: '#94a3b8', fontSize: '13px', marginBottom: '24px', fontStyle: 'italic' }}>※ 수강자와의 대화를 통해 강의 내용과 수준, 계획 변경 가능</p>
+                  {syllabusData.phases.map((phaseData, pIdx) => (
+                    <div key={pIdx} style={{ marginBottom: '32px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', padding: '14px 20px', background: phaseData.bgColor, borderRadius: '10px', borderLeft: `5px solid ${phaseData.borderColor}` }}>
+                        <span style={{ background: phaseData.borderColor, color: '#fff', borderRadius: '6px', padding: '3px 10px', fontSize: '12px', fontWeight: 700 }}>Phase {pIdx + 1}</span>
+                        <span style={{ fontSize: '15px', color: phaseData.borderColor, fontWeight: 700 }}>{phaseData.phase}</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {phaseData.weeks.map((weekData, wIdx) => (
+                          <div key={wIdx} style={{ display: 'grid', gridTemplateColumns: '52px 1fr 1fr', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', overflow: 'hidden' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: weekData.isSpecial ? phaseData.borderColor : phaseData.bgColor, padding: '16px 0', minHeight: '70px' }}>
+                              <span style={{ fontSize: '11px', color: weekData.isSpecial ? 'rgba(255,255,255,0.8)' : phaseData.borderColor, fontWeight: 700 }}>주</span>
+                              <span style={{ fontSize: '20px', fontWeight: 800, color: weekData.isSpecial ? '#fff' : phaseData.borderColor, lineHeight: 1 }}>{weekData.week}</span>
+                            </div>
+                            <div style={{ padding: '14px 16px', borderRight: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                              {weekData.isSpecial && (
+                                <span style={{ fontSize: '11px', background: phaseData.borderColor, color: '#fff', borderRadius: '4px', padding: '2px 8px', marginBottom: '6px', alignSelf: 'flex-start', fontWeight: 700 }}>발표</span>
+                              )}
+                              <span style={{ color: '#1e293b', fontWeight: 600, fontSize: '14px', lineHeight: 1.5 }}>{weekData.content}</span>
+                            </div>
+                            <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '8px' }}>
+                              <span style={{ color: '#64748b', fontSize: '13px', lineHeight: 1.6 }}>{weekData.question}</span>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                                {(weekData.keywords || []).map((kw, ki) => (
+                                  <span key={ki} style={{ background: phaseData.bgColor, color: phaseData.borderColor, borderRadius: '4px', padding: '2px 8px', fontSize: '11px', fontWeight: 600 }}>{kw}</span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* 과제물 */}
+                <div style={{ marginBottom: '40px', background: '#fefce8', border: '1px solid #fde68a', borderRadius: '12px', padding: '20px 24px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <span style={{ fontSize: '20px' }}>📝</span>
+                    <h5 style={{ fontSize: '16px', color: '#92400e', fontWeight: 700, margin: 0 }}>과제물</h5>
+                  </div>
+                  <p style={{ color: '#78350f', fontSize: '14px', lineHeight: 1.7, margin: 0 }}>{syllabusData.assignments}</p>
+                </div>
+
+                {/* 필수 도구 및 환경 — 카드 그리드 */}
+                <div style={{ marginBottom: '40px' }}>
+                  <h4 style={{ fontSize: '20px', color: '#334155', borderBottom: '2px solid #e2e8f0', paddingBottom: '10px', marginBottom: '20px', fontWeight: 'bold' }}>필수 도구 및 환경</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', marginBottom: '14px' }}>
+                    {syllabusData.toolsAndEnv.map((tool, idx) => (
+                      <div key={idx} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
+                        <div style={{ fontSize: '26px', marginBottom: '10px' }}>{tool.icon}</div>
+                        <div style={{ fontWeight: 700, color: '#1e293b', fontSize: '15px', marginBottom: '6px' }}>{tool.name}</div>
+                        <div style={{ color: '#64748b', fontSize: '13px', lineHeight: 1.5, marginBottom: '10px' }}>{tool.purpose}</div>
+                        <span style={{ background: tool.cost === '무료' ? '#dcfce7' : '#fef3c7', color: tool.cost === '무료' ? '#166534' : '#92400e', borderRadius: '20px', padding: '3px 10px', fontSize: '12px', fontWeight: 700 }}>{tool.cost}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {syllabusData.toolsNote && (
+                    <div style={{ background: '#fef9c3', border: '1px solid #fde68a', borderRadius: '8px', padding: '12px 16px', fontSize: '13px', color: '#92400e', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span>⚠️</span> {syllabusData.toolsNote}
+                    </div>
+                  )}
+                </div>
+
+                {/* 참고 도서 및 논문 — URL 링크 포함 */}
+                <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '28px', marginBottom: '30px' }}>
+                  <h4 style={{ fontSize: '18px', color: '#0f172a', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px', fontWeight: 'bold' }}>
+                    <span style={{ fontSize: '22px' }}>📚</span> 참고 도서 및 논문
+                  </h4>
+                  <div style={{ marginBottom: '24px' }}>
+                    <h5 style={{ fontSize: '14px', color: '#0369a1', fontWeight: 700, marginBottom: '14px', paddingLeft: '10px', borderLeft: '3px solid #0ea5e9' }}>기본 참고 논저</h5>
+                    <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {syllabusData.references.basic.map((ref, idx) => (
+                        <li key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '10px 12px', background: '#fff', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
+                          <span style={{ color: '#3b82f6', fontSize: '12px', flexShrink: 0, marginTop: '3px' }}>•</span>
+                          <span style={{ color: '#475569', fontSize: '14px', lineHeight: 1.6 }}>
+                            {ref.text}
+                            {ref.url && (
+                              <> {' '}<a href={ref.url} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: 600, background: '#eff6ff', padding: '1px 7px', borderRadius: '4px', fontSize: '12px', marginLeft: '4px' }}>
+                                {ref.urlLabel || '링크 ↗'}
+                              </a></>
+                            )}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h5 style={{ fontSize: '14px', color: '#7c3aed', fontWeight: 700, marginBottom: '14px', paddingLeft: '10px', borderLeft: '3px solid #8b5cf6' }}>도구 및 방법론 참고 문헌</h5>
+                    <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {syllabusData.references.tools.map((ref, idx) => (
+                        <li key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '10px 12px', background: '#fff', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
+                          <span style={{ color: '#8b5cf6', fontSize: '12px', flexShrink: 0, marginTop: '3px' }}>•</span>
+                          <span style={{ color: '#475569', fontSize: '14px', lineHeight: 1.6 }}>
+                            {ref.text}
+                            {ref.url && (
+                              <> {' '}<a href={ref.url} target="_blank" rel="noopener noreferrer" style={{ color: '#7c3aed', textDecoration: 'none', fontWeight: 600, background: '#ede9fe', padding: '1px 7px', borderRadius: '4px', fontSize: '12px', marginLeft: '4px' }}>
+                                {ref.urlLabel || '링크 ↗'}
+                              </a></>
+                            )}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* 수업 설계 배경 및 철학 */}
+                <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderLeft: '5px solid #3b82f6', borderRadius: '12px', padding: '24px' }}>
+                  <h5 style={{ fontSize: '16px', color: '#1e293b', marginBottom: '16px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>💡</span> 수업 설계의 배경과 철학
+                  </h5>
+                  <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    {syllabusData.philosophy.map((item, idx) => (
+                      <li key={idx} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', color: '#475569', fontSize: '14px', lineHeight: 1.7 }}>
+                        <span style={{ color: '#3b82f6', fontWeight: 700, flexShrink: 0 }}>0{idx + 1}</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             )}
           </div>
