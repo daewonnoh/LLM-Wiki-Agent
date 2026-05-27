@@ -2,7 +2,7 @@ import urllib.request
 import json
 
 # 가장 최신 실패한 Actions run의 로그 확인
-run_id = '26388530481'
+run_id = '26501146208'
 url = f'https://api.github.com/repos/daewonnoh/LLM-Wiki-Agent/actions/runs/{run_id}/jobs'
 req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
 res = urllib.request.urlopen(req).read().decode('utf-8')
