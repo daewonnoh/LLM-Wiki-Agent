@@ -574,7 +574,7 @@ function App() {
                   className="main-visual-img"
                 />
                 <div className="visual-caption">
-                  M.C. 에셔의 &lt;그리는 손(Drawing Hands)&gt; 패러디: 인간 연구자와 AI 에이전트가 마찰 속에서 서로를 그려내는 존재론적 공공 창작
+                  M.C. 에셔의 &lt;그리는 손(Drawing Hands)&gt; 패러디: 인간 연구자와 AI 에이전트가 트러블과 감응 속에서 서로를 함께 그려내는 연구 과정
                 </div>
               </div>
             </section>
