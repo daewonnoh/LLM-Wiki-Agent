@@ -1955,7 +1955,7 @@ function App() {
                         <li key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '10px 12px', background: '#fff', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
                           <span style={{ color: '#3b82f6', fontSize: '12px', flexShrink: 0, marginTop: '3px' }}>•</span>
                           <span style={{ color: '#475569', fontSize: '14px', lineHeight: 1.6 }}>
-                            {ref.text}
+                            <span dangerouslySetInnerHTML={{ __html: ref.text }} />
                             {ref.url && (
                               <> {' '}<a href={ref.url} target="_blank" rel="noopener noreferrer" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: 600, background: '#eff6ff', padding: '1px 7px', borderRadius: '4px', fontSize: '12px', marginLeft: '4px' }}>
                                 {ref.urlLabel || '링크 ↗'}
@@ -1973,7 +1973,7 @@ function App() {
                         <li key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '10px 12px', background: '#fff', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
                           <span style={{ color: '#8b5cf6', fontSize: '12px', flexShrink: 0, marginTop: '3px' }}>•</span>
                           <span style={{ color: '#475569', fontSize: '14px', lineHeight: 1.6 }}>
-                            {ref.text}
+                            <span dangerouslySetInnerHTML={{ __html: ref.text }} />
                             {ref.url && (
                               <> {' '}<a href={ref.url} target="_blank" rel="noopener noreferrer" style={{ color: '#7c3aed', textDecoration: 'none', fontWeight: 600, background: '#ede9fe', padding: '1px 7px', borderRadius: '4px', fontSize: '12px', marginLeft: '4px' }}>
                                 {ref.urlLabel || '링크 ↗'}

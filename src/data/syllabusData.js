@@ -50,23 +50,23 @@ export const syllabusData = {
         url: "https://www.youtube.com/watch?v=kwSVtQ7dziU",
         urlLabel: "YouTube 영상"
       },
-      { text: "Lee, Sung Hyun, John A. Velez, and Dae-won Noh, \"Beyond Prompt Engineering: Exploring Collaborative Dialogue with GenAI for Problem-Solving,\" Cyberpsychology, Behavior, and Social Networking, June 30, 2025." }
+      { text: "Lee, Sung Hyun, John A. Velez, and Dae-won Noh, \"Beyond Prompt Engineering: Exploring Collaborative Dialogue with GenAI for Problem-Solving,\" <em>Cyberpsychology, Behavior, and Social Networking</em>, June 30, 2025." }
     ],
     tools: [
       { text: "숀케 아렌스, 김주은 역, 『제텔카스텐: 글 쓰는 인간을 위한 두 번째 뇌』, 인간희극, 2021." },
       { text: "이기형, ｢소통과 감응을 지향하는 학문적인 글쓰기를 위한 문제의식과 대안의 추구: '자기민속지학'과 대안적인 학술 글쓰기의 사례들을 중심으로｣, 『커뮤니케이션 이론』 9(2), 2013." },
       { text: "임태형, ｢에이전틱 AI 기반 공동연구자 시스템 구축 경험의 자문화기술지: 교육공학 연구자의 성찰｣, 『교육정보미디어연구』 32(2), 2026." },
       { text: "한경희, ｢연구자의 AI 트러블｣, 『제20회 KOSSDA 데이터 페어 발표 자료집 — AI 활용과 연구방법론: 도구를 넘어 연구로』, 2026." },
-      { text: "N. Katherine Hayles, How We Think: Digital Media and Contemporary Technogenesis, University of Chicago Press, 2012." },
-      { text: "Craig Vear, ed., The Routledge International Handbook of Practice-Based Research, Routledge, 2021." },
-      { text: "Donna Haraway, Staying with the Trouble: Making Kin in the Chthulucene, Duke University Press, 2016." },
-      { text: "Ellis, Carolyn, Adams, Tony E., & Bochner, Arthur P., \"Autoethnography: an overview\", Historical Social Research 36(4), 2011, 273-290." },
+      { text: "N. Katherine Hayles, <em>How We Think: Digital Media and Contemporary Technogenesis</em>, University of Chicago Press, 2012." },
+      { text: "Craig Vear, ed., <em>The Routledge International Handbook of Practice-Based Research</em>, Routledge, 2021." },
+      { text: "Donna Haraway, <em>Staying with the Trouble: Making Kin in the Chthulucene</em>, Duke University Press, 2016." },
+      { text: "Ellis, Carolyn, Adams, Tony E., & Bochner, Arthur P., \"Autoethnography: an overview\", <em>Historical Social Research</em> <em>36</em>(4), 2011, 273-290." },
       {
         text: "Huang, J. Y., \"Slow AI: AI that matches a human's pace\", 2026.",
         url: "https://jennyhuang19.github.io/slow-ai-ai-that-meets-a-humans-pace/",
         urlLabel: "원문 보기"
       },
-      { text: "O'Halloran, Kieran, \"Digital assemblages with AI for creative interpretation of short stories\", Digital Scholarship in the Humanities 39(2), 2024, 657-689." }
+      { text: "O'Halloran, Kieran, \"Digital assemblages with AI for creative interpretation of short stories\", <em>Digital Scholarship in the Humanities</em> <em>39</em>(2), 2024, 657-689." }
     ]
   },
   assignments: "관련 논문을 작성하거나 AI 도구를 활용한 교육 모델/애플리케이션 설계 프로젝트를 병행한다. 연구/프로젝트에 대한 계획서를 제출·발표·토론하고 최종 결과 보고서/논문을 제출한다.",
