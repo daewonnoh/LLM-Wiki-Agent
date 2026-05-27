@@ -3,20 +3,108 @@ import './App.css';
 import troublesData from './data/troubles.json';
 import { manuscriptText } from './data/manuscript.js';
 import { critiqueText } from './data/critique.js';
+import { wikiIntroText, soulText, agentsText } from './data/guidelines.js';
+const footnotesMap = {};
+manuscriptText.split('\n').forEach(line => {
+  const match = line.match(/^\[\^(\d+)\]:\s*(.*)/);
+  if (match) {
+    footnotesMap[match[1]] = match[2].trim().replace(/"/g, '&quot;');
+  }
+});
+
+const parseCritiqueData = (text) => {
+  if (!text) return { meta: {}, body: '' };
+  const parts = text.split('---\n');
+  if (parts.length >= 3) {
+    const yamlStr = parts[1];
+    const bodyStr = parts.slice(2).join('---\n');
+    
+    const meta = {};
+    yamlStr.split('\n').forEach(line => {
+      const idx = line.indexOf(':');
+      if (idx !== -1) {
+        const key = line.substring(0, idx).trim();
+        let val = line.substring(idx + 1).trim();
+        if (val.startsWith('[') && val.endsWith(']')) {
+          val = val.substring(1, val.length - 1)
+            .split(',')
+            .map(s => s.trim().replace(/^["']|["']$/g, ''));
+        } else {
+          val = val.replace(/^["']|["']$/g, '');
+        }
+        meta[key] = val;
+      }
+    });
+    return { meta, body: bodyStr };
+  }
+  return { meta: {}, body: text };
+};
+
+const { meta: critiqueMeta, body: critiqueBody } = parseCritiqueData(critiqueText);
+
+// Google Apps Script Web App URL (실제 전송을 원하시면 배포하신 웹 앱 URL을 입력해 주세요)
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyemTscGqGKYxL9BVT2g17mg5InqWKOGI6zSo72ShJyZVRXvC17VFyGqUIhP0dNyDk0Kw/exec";
 
 function App() {
   const [activeMenu, setActiveMenu] = useState('home');
   const [selectedTrouble, setSelectedTrouble] = useState(null);
   const [troubleFilter, setTroubleFilter] = useState('All');
   const [troubleSearch, setTroubleSearch] = useState('');
+  const [explorerView, setExplorerView] = useState('timeline'); // 'grid' 또는 'timeline'
   
+  // LLM Wiki 서브탭
+  const [activeWikiTab, setActiveWikiTab] = useState('intro'); // 'intro', 'system'
+
+  // 대화 참여 서브탭
+  const [activeAssemblyTab, setActiveAssemblyTab] = useState('researcher'); // 'researcher', 'simulator'
+  
+  // 연구자와 대화 (이메일 폼) 상태
+  const [senderName, setSenderName] = useState('');
+  const [senderEmail, setSenderEmail] = useState('');
+  const [messageBody, setMessageBody] = useState('');
+  const [isSending, setIsSending] = useState(false);
+
   // 지식 맵 서브탭
-  const [activeMapTab, setActiveMapTab] = useState('concept');
+  const [activeMapTab, setActiveMapTab] = useState('summary');
   const [hoveredConcept, setHoveredConcept] = useState(null);
+  const [currentSlidePage, setCurrentSlidePage] = useState(1);
+  const slideRef = useRef(null);
+  
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      slideRef.current?.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  // 슬라이드 키보드 내비게이션
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // 연구 소개 탭에서만 동작
+      if (activeMenu !== 'maps') return;
+
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault();
+        setCurrentSlidePage(prev => Math.min(prev + 1, 20));
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        setCurrentSlidePage(prev => Math.max(prev - 1, 1));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeMenu]);
 
   // 미디어 쇼케이스 서브탭
-  const [activeMediaTab, setActiveMediaTab] = useState('webtoon');
+  const [activeMediaTab, setActiveMediaTab] = useState('cognition');
   const [currentWebtoonPage, setCurrentWebtoonPage] = useState(1);
+  const [currentCognitionWebtoonPage, setCurrentCognitionWebtoonPage] = useState(1);
+  const [cognitionSubTab, setCognitionSubTab] = useState('webtoon'); // 'webtoon', 'critique', 'discussion'
+  const [gretaSubTab, setGretaSubTab] = useState('webtoon'); // 'webtoon', 'critique', 'discussion'
   
   // 팟캐스트 관련 상태
   const [isPlaying, setIsPlaying] = useState(false);
@@ -40,13 +128,13 @@ function App() {
   const [isTyping, setIsTyping] = useState(false);
 
   const menuItems = [
-    { id: 'home', name: '홈 (Home)' },
-    { id: 'maps', name: '연구 소개 (Maps)' },
-    { id: 'media', name: '소설 읽기 (웹툰)' },
-    { id: 'reviews', name: '소설 읽기 (비평)' },
-    { id: 'explorer', name: '트러블 읽기 (Explorer)' },
-    { id: 'reader', name: '논문 읽기 (Reader)' },
-    { id: 'assembly', name: '토론의 장 (Assembly)' }
+    { id: 'home', name: '홈' },
+    { id: 'maps', name: '연구 소개' },
+    { id: 'wiki', name: 'LLM Wiki' },
+    { id: 'media', name: '소설 읽기' },
+    { id: 'explorer', name: '트러블 읽기' },
+    { id: 'reader', name: '논문 읽기' },
+    { id: 'assembly', name: '대화 참여' }
   ];
 
   // 1. 마크다운 인라인 헬퍼 함수
@@ -60,7 +148,11 @@ function App() {
       .replace(/\[\[([^\]]+)\]\]/g, '<span class="wiki-link-custom">$1</span>')
       .replace(/\[TODO-A\*\]/g, '<span class="todo-badge todo-a">🔴 구조적 결함</span>')
       .replace(/\[TODO-B(\d)?\*\]/g, '<span class="todo-badge todo-b">🟡 내용 보강 $1</span>')
-      .replace(/\[TODO-C\*\]/g, '<span class="todo-badge todo-c">🟢 논리 보완</span>');
+      .replace(/\[TODO-C\*\]/g, '<span class="todo-badge todo-c">🟢 논리 보완</span>')
+      .replace(/\[\^(\d+)\](?!:)/g, (match, p1) => {
+        const title = footnotesMap[p1] ? footnotesMap[p1] : '';
+        return `<sup class="footnote-ref" data-tooltip="${title}">[${p1}]</sup>`;
+      });
   };
 
   // 2. 마크다운 전체 렌더러 함수
@@ -128,6 +220,16 @@ function App() {
         let title = line.substring(5).trim();
         let id = encodeURIComponent(title);
         result.push(`<h4 class="md-h4" id="${id}" key="h4-${i}">${title}</h4>`);
+      } else if (/^\d+\.\d+\.\s/.test(line.trim())) {
+        let title = line.trim();
+        let id = encodeURIComponent(title);
+        result.push(`<h3 class="md-h3" id="${id}" key="h3-${i}">${title}</h3>`);
+      } else if (/^\d+\.\s/.test(line.trim())) {
+        let title = line.trim();
+        let id = encodeURIComponent(title);
+        result.push(`<h2 class="md-h2" id="${id}" key="h2-${i}">${title}</h2>`);
+      } else if (line.trim().startsWith('<')) {
+        result.push(line);
       } else if (line.trim() === '---') {
         result.push(`<hr class="md-hr" key="hr-${i}" />`);
       } else if (line.trim() === '') {
@@ -193,9 +295,21 @@ function App() {
     const lines = manuscriptText.split('\n');
     const headingList = [];
     lines.forEach((line) => {
-      if (line.startsWith('## ') || line.startsWith('### ')) {
-        const isSub = line.startsWith('### ');
-        const title = line.replace(/^###?\s+/, '').trim();
+      let title = '';
+      let isSub = false;
+      if (line.startsWith('## ')) {
+        title = line.replace(/^##\s+/, '').trim();
+      } else if (line.startsWith('### ')) {
+        title = line.replace(/^###\s+/, '').trim();
+        isSub = true;
+      } else if (/^\d+\.\d+\.\s/.test(line.trim())) {
+        title = line.trim();
+        isSub = true;
+      } else if (/^\d+\.\s/.test(line.trim())) {
+        title = line.trim();
+      }
+
+      if (title) {
         headingList.push({
           title,
           isSub,
@@ -311,6 +425,53 @@ function App() {
     }
   };
 
+  const handleSubmitFeedback = async (e) => {
+    e.preventDefault();
+    if (!senderName.trim() || !senderEmail.trim() || !messageBody.trim()) {
+      alert("모든 필드를 입력해 주세요.");
+      return;
+    }
+    
+    setIsSending(true);
+
+    if (!GAS_WEB_APP_URL) {
+      // GAS URL이 지정되지 않은 상태의 모의(Mock) 작동
+      setTimeout(() => {
+        setIsSending(false);
+        alert(`[모의 전송 성공]\nGoogle Apps Script Web App URL이 설정되지 않아 브라우저 상에서 시뮬레이션 발송되었습니다.\n\n보내는이: ${senderName}\n이메일: ${senderEmail}\n의견 내용:\n${messageBody}`);
+        setSenderName('');
+        setSenderEmail('');
+        setMessageBody('');
+      }, 1200);
+      return;
+    }
+
+    try {
+      await fetch(GAS_WEB_APP_URL, {
+        method: 'POST',
+        mode: 'no-cors', // CORS 제한 우회용 설정
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: senderName,
+          email: senderEmail,
+          message: messageBody
+        })
+      });
+      
+      setIsSending(false);
+      alert("연구자에게 이메일이 성공적으로 전송되었습니다. 소중한 의견 감사합니다!");
+      setSenderName('');
+      setSenderEmail('');
+      setMessageBody('');
+    } catch (err) {
+      console.error(err);
+      setIsSending(false);
+      alert("이메일 전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+    }
+  };
+
   const handleSendComment = (e) => {
     e.preventDefault();
     if (!userComment.trim() || isTyping) return;
@@ -345,8 +506,7 @@ function App() {
     { id: 'situated', name: '상황적 지식', def: '보편적이고 초월적인 시야(God\'s eye view)를 거부하고, 연구자 개인의 구체적인 신체, 역사적 템포, 불완전한 현실 속에서 빚어지는 유한하고 책임 있는 지식 생산.', pos: { x: 20, y: 50 } },
     { id: 'shared', name: '공유된 인지', def: '인간 비평가의 상황적 지식과 자율적 AI 에이전트의 연산 인지가 상호 공명하여 도달하는 공동의 이해 상태이자 교차 주체적 신뢰 관계.', pos: { x: 80, y: 50 } },
     { id: 'diffractive', name: '회절적 독해', def: '캐런 버라드와 해러웨이의 이론. 두 대상의 차이를 비교하는 반사를 넘어, 텍스트와 AI의 파싱, 연구자의 해석을 부딪치고 간섭시켜 새로운 통찰의 간섭 무늬를 얻는 독법.', pos: { x: 35, y: 75 } },
-    { id: 'irony', name: '자동화의 역설', def: '리잔 베인브리지의 이론. 시스템을 자동화할수록 인간의 기본 노동은 줄어들지만, 시스템 오작동 시 사후 복구 및 수동 검증(린팅)을 위한 인간의 인지 부하는 훨씬 가중되는 현상.', pos: { x: 65, y: 75 } },
-    { id: 'nature', name: '인공자연 존재론', def: '기술적 인프라 자체를 새로운 환경적 자연으로 파악하고, 기저(물질·데이터)와 기층(정보·알고리즘)의 결합 속에서 인간의 비평적 지위를 재정립하는 이론.', pos: { x: 50, y: 15 } }
+    { id: 'irony', name: '자동화의 역설', def: '리잔 베인브리지의 이론. 시스템을 자동화할수록 인간의 기본 노동은 줄어들지만, 시스템 오작동 시 사후 복구 및 수동 검증(린팅)을 위한 인간의 인지 부하는 훨씬 가중되는 현상.', pos: { x: 65, y: 75 } }
   ];
 
   // 7. 웹툰 데이터
@@ -395,7 +555,7 @@ function App() {
               {/* 상단 타이틀 디자인 배너 */}
               <div className="hero-banner-container">
                 <img 
-                  src="/assets/webtoon/korean_homepage_design_mockup.png" 
+                  src={`${import.meta.env.BASE_URL}assets/webtoon/korean_homepage_design_mockup.png`} 
                   alt="트러블과 함께 읽기 - AI 에이전트와 문학 연구자의 대화" 
                   className="hero-banner-img"
                 />
@@ -403,18 +563,18 @@ function App() {
 
               <p className="hero-description">
                 선형적인 텍스트 논문이 담아내지 못하는 '신체화된 앎의 물질성'과 '트러블의 역동성'을 
-                시각적·상호작용적으로 체험하고 논하기 위한 비명제적 아티팩트(Non-propositional Artifact) 플랫폼입니다.
+                시각적·상호작용적으로 체험하고 논하기 위한 플랫폼입니다.
               </p>
 
               {/* 메인 비주얼: 에셔 패러디 메인 비주얼 이미지 */}
               <div className="main-visual-container">
                 <img 
-                  src="/assets/webtoon/escher_parody_chatgpt.png" 
+                  src={`${import.meta.env.BASE_URL}assets/webtoon/escher_parody_chatgpt.png`} 
                   alt="인간 연구자와 AI 로봇 손의 공생적 얽힘 메타포 (에셔 오마주)" 
                   className="main-visual-img"
                 />
                 <div className="visual-caption">
-                  M.C. 에셔의 &lt;그리는 손(Drawing Hands)&gt; 패러디: 인간 연구자와 AI 에이전트가 마찰 속에서 서로를 그려내는 존재론적 공공 창작
+                  M.C. 에셔의 &lt;그리는 손(Drawing Hands)&gt; 패러디: 인간 연구자와 AI 에이전트가 트러블과 감응 속에서 서로를 함께 그려내는 연구 과정
                 </div>
               </div>
             </section>
@@ -470,24 +630,24 @@ function App() {
             <section className="quicklinks-section">
               <h2 className="section-title">플랫폼 주요 탐색 경로</h2>
               <div className="quicklinks-grid">
+                <div className="quicklink-card" onClick={() => setActiveMenu('maps')}>
+                  <h4>연구 소개</h4>
+                  <p>본 연구를 소개하는 발표 슬라이드, 팟캐스트, 그리고 소개 영상</p>
+                  <span className="arrow-link">탐색하기 →</span>
+                </div>
                 <div className="quicklink-card" onClick={() => setActiveMenu('explorer')}>
-                  <h4>37대 트러블 익스플로러</h4>
+                  <h4>트러블 읽기</h4>
                   <p>연구 진행 시 발생한 37가지의 마찰 대화로그와 극복 양상 탐색</p>
                   <span className="arrow-link">탐색하기 →</span>
                 </div>
-                <div className="quicklink-card" onClick={() => setActiveMenu('maps')}>
-                  <h4>지식 맵 &amp; 기능 지도</h4>
-                  <p>58개 핵심 개념의 D3.js 포스 맵 및 에이전트 기능 아키텍처 다이어그램</p>
-                  <span className="arrow-link">탐색하기 →</span>
-                </div>
                 <div className="quicklink-card" onClick={() => setActiveMenu('media')}>
-                  <h4>팟캐스트 &amp; 소설 웹툰</h4>
-                  <p>NotebookLM 오디오 팟캐스트 및 듀나 소설 &lt;그레타 복음&gt; 10컷 웹툰 감상</p>
+                  <h4>소설 읽기</h4>
+                  <p>듀나 「그레타 복음」과 김초엽 「인지 공간」의 웹툰, 비평 등 관련 자료</p>
                   <span className="arrow-link">탐색하기 →</span>
                 </div>
-                <div className="quicklink-card" onClick={() => setActiveMenu('reviews')}>
-                  <h4>비평 스크롤텔링</h4>
-                  <p>&lt;인지 공간&gt;과 &lt;그레타 복음&gt;에 대한 AI-인간 교차 비평 분석 보고서</p>
+                <div className="quicklink-card" onClick={() => setActiveMenu('reader')}>
+                  <h4>논문 읽기</h4>
+                  <p>AI 에이전트와 문학 연구자의 지적 협업을 다룬 학술 논문 전문 독해</p>
                   <span className="arrow-link">탐색하기 →</span>
                 </div>
               </div>
@@ -499,7 +659,7 @@ function App() {
         {activeMenu === 'explorer' && (
           <div className="explorer-page fade-in">
             <div className="page-header-wrapper">
-              <h2 className="page-title">37대 트러블 익스플로러</h2>
+              <h2 className="page-title">트러블 익스플로러</h2>
               <p className="page-subtitle">연구 과정에서 생성된 인간 연구자와 AI 에이전트의 지적 마찰 및 합의의 궤적</p>
             </div>
 
@@ -516,84 +676,112 @@ function App() {
                   </button>
                 ))}
               </div>
-              <input
-                type="text"
-                placeholder="트러블 제목, 마찰 지점 검색..."
-                className="search-input"
-                value={troubleSearch}
-                onChange={(e) => setTroubleSearch(e.target.value)}
-              />
-            </div>
-
-            {/* 카드 그리드 */}
-            <div className="trouble-grid">
-              {troublesData
-                .filter(t => troubleFilter === 'All' || (t.category && t.category.includes(troubleFilter)))
-                .filter(t => (t.title && t.title.includes(troubleSearch)) || 
-                             (t.situation && t.situation.includes(troubleSearch)) || 
-                             (t.friction && t.friction.includes(troubleSearch)))
-                .map(trouble => (
-                  <div 
-                    key={trouble.id} 
-                    className="trouble-card"
-                    onClick={() => setSelectedTrouble(trouble)}
+              <div className="search-toggle-group">
+                <input
+                  type="text"
+                  placeholder="트러블 제목, 마찰 지점 검색..."
+                  className="search-input"
+                  value={troubleSearch}
+                  onChange={(e) => setTroubleSearch(e.target.value)}
+                />
+                <div className="view-toggle-group">
+                  <button 
+                    className={`view-toggle-btn ${explorerView === 'grid' ? 'active' : ''}`}
+                    onClick={() => setExplorerView('grid')}
+                    title="카드 그리드 뷰"
                   >
-                    <div className="card-top-meta">
-                      <span className="trouble-id">Trouble {trouble.id}</span>
-                      <span className="trouble-date">{trouble.date || ''}</span>
-                    </div>
-                    <h3 className="card-title">{trouble.title || '제목 없음'}</h3>
-                    <p className="card-brief-situation">
-                      {trouble.situation ? trouble.situation.substring(0, 100) : ''}...
-                    </p>
-                    <div className="card-bottom-tags">
-                      <span className={`category-tag ${(trouble.category || '').split('.')[0] || 'Unknown'}`}>
-                        {trouble.category || '기타'}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+                    📋 카드
+                  </button>
+                  <button 
+                    className={`view-toggle-btn ${explorerView === 'timeline' ? 'active' : ''}`}
+                    onClick={() => setExplorerView('timeline')}
+                    title="타임라인 그래프 뷰"
+                  >
+                    📈 타임라인
+                  </button>
+                </div>
+              </div>
             </div>
 
-            {/* 상세 모달 팝업 */}
-            {selectedTrouble && (
-              <div className="modal-backdrop" onClick={() => setSelectedTrouble(null)}>
-                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                  <button className="modal-close-btn" onClick={() => setSelectedTrouble(null)}>×</button>
-                  <div className="modal-header-meta">
-                    <span className="modal-id">Trouble {selectedTrouble.id}</span>
-                    <span className="modal-date">발생 일자: {selectedTrouble.date}</span>
-                  </div>
-                  <h3 className="modal-title">{selectedTrouble.title}</h3>
-                  <div className="modal-category">
-                    <strong>분류 유형:</strong> <span className={`category-tag ${selectedTrouble.category.split('.')[0]}`}>{selectedTrouble.category}</span>
-                  </div>
-
-                  <div className="modal-body-section">
-                    <h4>📌 발생 상황</h4>
-                    <p>{selectedTrouble.situation}</p>
-                  </div>
-
-                  <div className="modal-body-section">
-                    <h4>🔥 마찰 지점 (Friction)</h4>
-                    <p>{selectedTrouble.friction}</p>
-                  </div>
-
-                  <div className="modal-body-section">
-                    <h4>🤝 결과 및 조율 (Resolution)</h4>
-                    <p>{selectedTrouble.resolution}</p>
-                  </div>
-
-                  {selectedTrouble.notes && (
-                    <div className="modal-body-section notes-section">
-                      <h4>📖 이론적 재독해 / 비평적 메모</h4>
-                      <div dangerouslySetInnerHTML={{ __html: renderMarkdown(selectedTrouble.notes) }} />
+            {explorerView === 'grid' ? (
+              /* 카드 그리드 */
+              <div className="trouble-grid">
+                {troublesData
+                  .filter(t => troubleFilter === 'All' || (t.category && t.category.includes(troubleFilter)))
+                  .filter(t => (t.title && t.title.includes(troubleSearch)) || 
+                               (t.situation && t.situation.includes(troubleSearch)) || 
+                               (t.friction && t.friction.includes(troubleSearch)))
+                  .map(trouble => (
+                    <div 
+                      key={trouble.id} 
+                      className="trouble-card"
+                      onClick={() => setSelectedTrouble(trouble)}
+                    >
+                      <div className="card-top-meta">
+                        <span className="trouble-id">Trouble {trouble.id}</span>
+                        <span className="trouble-date">{trouble.date || ''}</span>
+                      </div>
+                      <h3 className="card-title">{trouble.title || '제목 없음'}</h3>
+                      <p className="card-brief-situation">
+                        {trouble.situation ? trouble.situation.substring(0, 100) : ''}...
+                      </p>
+                      <div className="card-bottom-tags">
+                        <span className={`category-tag ${(trouble.category || '').split('.')[0] || 'Unknown'}`}>
+                          {trouble.category || '기타'}
+                        </span>
+                      </div>
                     </div>
-                  )}
-
-                  <div className="modal-footer">
-                    <button className="modal-back-btn" onClick={() => setSelectedTrouble(null)}>닫기</button>
-                  </div>
+                  ))}
+              </div>
+            ) : (
+              /* 타임라인 그래프 뷰 */
+              <div className="timeline-graph-container">
+                <div className="timeline-track-wrapper">
+                  <div className="timeline-axis-line"></div>
+                  {troublesData
+                    .filter(t => troubleFilter === 'All' || (t.category && t.category.includes(troubleFilter)))
+                    .filter(t => (t.title && t.title.includes(troubleSearch)) || 
+                                 (t.situation && t.situation.includes(troubleSearch)) || 
+                                 (t.friction && t.friction.includes(troubleSearch)))
+                    .sort((a, b) => a.id - b.id)
+                    .map((trouble, index) => {
+                      const isTop = index % 2 === 0;
+                      const categoryClass = (trouble.category || '').split('.')[0] || 'Unknown';
+                      const categoryTag = (trouble.category || '').split(' ')[1] || '기타';
+                      return (
+                        <div 
+                          key={trouble.id} 
+                          className={`timeline-node-item ${isTop ? 'top' : 'bottom'}`}
+                        >
+                          <div 
+                            className="timeline-bubble-card"
+                            onClick={() => setSelectedTrouble(trouble)}
+                          >
+                            <div className="timeline-bubble-meta">
+                              <span className="timeline-bubble-id">Trouble {trouble.id}</span>
+                              <span className="timeline-bubble-date">{trouble.date}</span>
+                            </div>
+                            <h4 className="timeline-bubble-title">{trouble.title}</h4>
+                            <p className="timeline-bubble-brief">
+                              {trouble.situation ? trouble.situation.substring(0, 50) + '...' : ''}
+                            </p>
+                            <div className="card-bottom-tags">
+                              <span className={`category-tag ${categoryClass}`}>
+                                {categoryTag}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="timeline-connector"></div>
+                          <div 
+                            className={`timeline-node-dot dot-${categoryClass}`}
+                            onClick={() => setSelectedTrouble(trouble)}
+                            title={`Trouble ${trouble.id}: ${trouble.title}`}
+                          >
+                            {trouble.id}
+                          </div>
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
             )}
@@ -604,33 +792,177 @@ function App() {
         {activeMenu === 'maps' && (
           <div className="maps-page fade-in">
             <div className="page-header-wrapper">
-              <h2 className="page-title">지식 맵 &amp; 기능 지도</h2>
-              <p className="page-subtitle">학술 개념 간의 긴장 지형과 에이전트 협업 기능 아키텍처</p>
+              <h2 className="page-title">연구 소개</h2>
+              <p className="page-subtitle">본 연구를 소개하는 슬라이드, 팟캐스트, 영상 및 핵심 개념 관계도입니다.</p>
             </div>
 
             <div className="tab-navigation">
               <button 
+                className={`tab-btn ${activeMapTab === 'summary' ? 'active' : ''}`}
+                onClick={() => setActiveMapTab('summary')}
+              >
+                연구 요약
+              </button>
+              <button 
+                className={`tab-btn ${activeMapTab === 'methodology' ? 'active' : ''}`}
+                onClick={() => setActiveMapTab('methodology')}
+              >
+                연구 방법론
+              </button>
+              <button 
                 className={`tab-btn ${activeMapTab === 'concept' ? 'active' : ''}`}
                 onClick={() => setActiveMapTab('concept')}
               >
-                개념 간 관계망 지도 (Concept Map)
-              </button>
-              <button 
-                className={`tab-btn ${activeMapTab === 'system' ? 'active' : ''}`}
-                onClick={() => setActiveMapTab('system')}
-              >
-                운영 구조
-              </button>
-              <button 
-                className={`tab-btn ${activeMapTab === 'screenshots' ? 'active' : ''}`}
-                onClick={() => setActiveMapTab('screenshots')}
-              >
-                사용 예시 (스크린샷)
+                핵심 개념
               </button>
             </div>
 
+            {/* 1. 연구 요약 탭: 슬라이드, 팟캐스트, 영상 */}
+            {activeMapTab === 'summary' && (
+              <div className="media-placeholders-container fade-in">
+                {/* 1. 슬라이드 뷰어 */}
+                <div className="media-placeholder slide-viewer-container" ref={slideRef}>
+                  <div className="slide-image-frame" style={{ flexGrow: 1, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0b1121' }}>
+                    <img 
+                      src={`${import.meta.env.BASE_URL}assets/slides/image${currentSlidePage}.png`} 
+                      alt={`연구 소개 슬라이드 ${currentSlidePage}페이지`}
+                      style={{ width: '100%', height: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                            />
+                  </div>
+                  <div className="slide-controls" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 30px', background: 'rgba(0,0,0,0.3)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                    <div style={{ flex: 1 }}></div>
+                    <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px' }}>
+                      <button 
+                        disabled={currentSlidePage === 1}
+                        onClick={() => setCurrentSlidePage(prev => prev - 1)}
+                        className="premium-nav-btn"
+                      >
+                        ◀ 이전
+                      </button>
+                      <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#e2e8f0', whiteSpace: 'nowrap' }}>{currentSlidePage} / 20</span>
+                      <button 
+                        disabled={currentSlidePage === 20}
+                        onClick={() => setCurrentSlidePage(prev => prev + 1)}
+                        className="premium-nav-btn"
+                      >
+                        다음 ▶
+                      </button>
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+                      <button onClick={toggleFullscreen} className="premium-nav-btn" style={{ padding: '8px 15px', fontSize: '0.9rem', backgroundColor: 'rgba(0,0,0,0.4)' }}>
+                        ⛶ 전체 화면
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. 팟캐스트 플레이어 */}
+                <div className="media-placeholder" style={{ padding: '30px', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
+                  <div style={{ fontSize: '3rem' }}>🎙️</div>
+                  <h4 style={{ margin: 0, color: 'white', fontSize: '1.5rem' }}>연구 소개 팟캐스트</h4>
+                  <p style={{ margin: 0, color: '#a0aec0', fontSize: '1rem', textAlign: 'center' }}>AI의 매끄러운 정답에 맞선 문학적 트러블</p>
+                  <audio 
+                    controls 
+                    src={`${import.meta.env.BASE_URL}assets/media/trouble_podcast.m4a`}
+                    style={{ width: '100%', maxWidth: '500px', marginTop: '15px' }}
+                    title="연구 소개 팟캐스트"
+                  />
+                </div>
+
+                {/* 3. 소개 영상 플레이어 */}
+                <div className="media-placeholder">
+                  <div style={{ padding: '20px', background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
+                    <h4 style={{ margin: 0, color: 'white', fontSize: '1.5rem' }}>🎥 트러블과 함께 읽기 영상</h4>
+                  </div>
+                  <div style={{ flexGrow: 1, background: '#0b1121', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <video 
+                      controls 
+                      src={`${import.meta.env.BASE_URL}assets/media/trouble_intro.mp4`}
+                      style={{ width: '100%', height: 'auto', maxHeight: '600px', objectFit: 'contain' }}
+                      title="연구 소개 영상: 트러블과 함께 읽기"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 2. 연구 방법론 탭: PBR, 개밥 먹기, 자문화기술지 독창적 방법론 제시 */}
+            {activeMapTab === 'methodology' && (
+              <div className="methodology-container fade-in" style={{ padding: '2rem 0' }}>
+                <div className="methodology-intro" style={{ marginBottom: '3rem', textAlign: 'center' }}>
+                  <h3 style={{ fontSize: '1.8rem', color: '#0f172a', marginBottom: '1.3rem', fontWeight: 700 }}>
+                    🛠️ 포스트휴먼 기술 공생을 위한 '메타-연구' 방법론
+                  </h3>
+                  <p style={{ color: '#475569', fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', lineHeight: 1.7 }}>
+                    본 연구는 기계적 자동화에 무비판적으로 안착하는 대신, 인간 연구자와 인공지능 에이전트가 맺는 
+                    물리적·인지적 마찰과 얽힘을 지식 생산의 원동력으로 삼는 독창적인 방법론을 구축했습니다.
+                  </p>
+                </div>
+
+                <div className="methodology-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginTop: '2rem' }}>
+                  
+                  {/* PBR 카드 */}
+                  <div className="methodology-card" style={{ background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8))', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '16px', padding: '2.5rem 2rem', boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)', backdropFilter: 'blur(10px)', transition: 'transform 0.3s ease, border-color 0.3s ease' }}>
+                    <div className="methodology-num" style={{ fontSize: '3rem', fontWeight: 800, background: 'linear-gradient(135deg, #10b981, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '1.5rem' }}>01</div>
+                    <h4 style={{ fontSize: '1.4rem', color: '#f8fafc', fontWeight: 700, marginBottom: '1rem' }}>실천 기반 연구 (PBR)</h4>
+                    <p style={{ color: '#cbd5e1', lineHeight: 1.7, fontSize: '0.95rem' }}>
+                      <strong>Practice-Based Research.</strong> 단순히 이론을 서술하는 방식을 넘어, 
+                      AI 에이전트와 지적 교류를 나누는 인프라를 구축하고 이 웹 플랫폼(Artifact) 개발 자체를 
+                      수행적인 앎을 물질화하는 지식 생산으로 규정합니다.
+                    </p>
+                  </div>
+
+                  {/* 개밥 먹기 카드 */}
+                  <div className="methodology-card" style={{ background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8))', border: '1px solid rgba(59, 130, 246, 0.2)', borderRadius: '16px', padding: '2.5rem 2rem', boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)', backdropFilter: 'blur(10px)', transition: 'transform 0.3s ease, border-color 0.3s ease' }}>
+                    <div className="methodology-num" style={{ fontSize: '3rem', fontWeight: 800, background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '1.5rem' }}>02</div>
+                    <h4 style={{ fontSize: '1.4rem', color: '#f8fafc', fontWeight: 700, marginBottom: '1rem' }}>개밥 먹기 (Dogfooding)</h4>
+                    <p style={{ color: '#cbd5e1', lineHeight: 1.7, fontSize: '0.95rem' }}>
+                      연구자가 제삼자나 관조자로서 AI 기술을 평하는 것이 아닙니다. 
+                      연구자가 스스로 개발하고 구축한 LLM Wiki의 인프라(원자료 ➔ 에이전트 ➔ 지식고) 내부로 직접 뛰어들어 
+                      매일 글을 쓰고 비평하는 실천적 노동을 온몸으로 관철합니다.
+                    </p>
+                  </div>
+
+                  {/* 자문화기술지 카드 */}
+                  <div className="methodology-card" style={{ background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8))', border: '1px solid rgba(139, 92, 246, 0.2)', borderRadius: '16px', padding: '2.5rem 2rem', boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)', backdropFilter: 'blur(10px)', transition: 'transform 0.3s ease, border-color 0.3s ease' }}>
+                    <div className="methodology-num" style={{ fontSize: '3rem', fontWeight: 800, background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '1.5rem' }}>03</div>
+                    <h4 style={{ fontSize: '1.4rem', color: '#f8fafc', fontWeight: 700, marginBottom: '1rem' }}>자문화기술지 (Autoethnography)</h4>
+                    <p style={{ color: '#cbd5e1', lineHeight: 1.7, fontSize: '0.95rem' }}>
+                      에이전트와의 공생 중 마주하는 요약 본능, 유창한 환각, 해석상의 오독 등 기술적 오류('트러블')를 
+                      회피하거나 봉합하지 않고, 연구자가 겪는 존재론적 흔들림과 대결을 37개의 트러블 일지로 기록·성찰하여 비평적 데이터로 삼습니다.
+                    </p>
+                  </div>
+
+                </div>
+
+                <div className="methodology-conclusion" style={{ marginTop: '3.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', background: '#f8fafc', borderTop: '1px solid #e2e8f0', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', borderRadius: '8px', padding: '2.5rem 2rem', textAlign: 'left' }}>
+                  
+                  {/* 왼쪽 칼럼: 마찰의 지혜 */}
+                  <div style={{ borderLeft: '4px solid #10b981', paddingLeft: '1.5rem' }}>
+                    <h5 style={{ fontSize: '1.1rem', color: '#0f172a', fontWeight: 700, marginBottom: '0.8rem' }}>💡 끈질긴 마찰(Staying with the Trouble)의 지혜</h5>
+                    <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
+                      이 연구의 방법론은 편리한 효율성을 약속하는 자동화된 AI에 지능을 아웃소싱하는 관성과 가속주의를 거부합니다. 
+                      인간 비평가의 상황적 지식과 AI 에이전트의 데이터 연산이 서로 협력하고 저항하고 조율하는 
+                      '인지적 얽힘' 자체를 새로운 지식 생산 모델로 제시합니다.
+                    </p>
+                  </div>
+
+                  {/* 오른쪽 칼럼: 놀이의 인식론 */}
+                  <div style={{ borderLeft: '4px solid #3b82f6', paddingLeft: '1.5rem' }}>
+                    <h5 style={{ fontSize: '1.1rem', color: '#0f172a', fontWeight: 700, marginBottom: '0.8rem' }}>🎮 실천적 놀이(Play)의 인식론과 정동</h5>
+                    <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
+                      실천 기반 연구(PBR)에서 '놀이'는 단순한 유희가 아닌, 미지의 체계에 균열을 내고 위험을 감수하며 새로운 의미를 탐색하는 진지한 인식론적 도구입니다. 
+                      AI 에이전트와의 핑퐁 같은 대화적 놀이는 연구자의 고독을 덜어주는 강력한 정동적 추동력이자, 예측 불가능한 기술적 트러블을 견디고 넘어서게 하는 버팀목이 됩니다.
+                    </p>
+                  </div>
+
+                </div>
+              </div>
+            )}
+
+            {/* 3. 핵심 개념 탭: 개념 지도 및 설명 패널 */}
             {activeMapTab === 'concept' && (
-              <div className="concept-map-container">
+              <div className="concept-map-container fade-in" style={{ marginTop: '2rem' }}>
                 <div className="map-sidebar">
                   <h3>개념 설명 패널</h3>
                   <p className="sidebar-hint">지도의 개념 노드에 마우스를 오버하여 세부 연결 및 정의를 탐색하세요.</p>
@@ -704,8 +1036,130 @@ function App() {
                 </div>
               </div>
             )}
+          </div>
+        )}
 
-            {activeMapTab === 'system' && (
+        {/* LLM WIKI */}
+        {activeMenu === 'wiki' && (
+          <div className="wiki-page fade-in">
+            <div className="page-header-wrapper">
+              <h2 className="page-title">LLM Wiki</h2>
+              <p className="page-subtitle">AI 시대 문학 연구의 기술공생 실험실</p>
+            </div>
+
+            <div className="tab-navigation">
+              <button 
+                className={`tab-btn ${activeWikiTab === 'intro' ? 'active' : ''}`}
+                onClick={() => setActiveWikiTab('intro')}
+              >
+                LLM Wiki란?
+              </button>
+              <button 
+                className={`tab-btn ${activeWikiTab === 'system' ? 'active' : ''}`}
+                onClick={() => setActiveWikiTab('system')}
+              >
+                실제 구축과 운영
+              </button>
+              <button 
+                className={`tab-btn ${activeWikiTab === 'agents' ? 'active' : ''}`}
+                onClick={() => setActiveWikiTab('agents')}
+              >
+                운영 지침(AGENTS.md)
+              </button>
+              <button 
+                className={`tab-btn ${activeWikiTab === 'soul' ? 'active' : ''}`}
+                onClick={() => setActiveWikiTab('soul')}
+              >
+                에이전트 지침(soul.md)
+              </button>
+            </div>
+
+            {activeWikiTab === 'intro' && (
+              <div className="wiki-intro-layout fade-in">
+                
+                {/* 1. PKM과 LLM OS의 계보 */}
+                <section className="intro-section">
+                  <h3 className="intro-section-title">💡 LLM Wiki의 계보와 지향</h3>
+                  <p style={{ fontSize: '15px', lineHeight: 1.7, color: '#334155', marginBottom: '24px' }}>
+                    이 연구에서 구축한 <strong>LLM Wiki 시스템</strong>은 지식 관리와 사유 확장의 유구한 역사에 뿌리를 두고 있으며, 최신 언어 모델의 운영 체제화(LLM OS) 설계를 결합한 지적 공간입니다.
+                  </p>
+                  
+                  <div className="pkm-ancestry-grid">
+                    <div className="ancestry-card">
+                      <div className="ancestry-icon">💾</div>
+                      <h4>메멕스 (Memex, 1945년)</h4>
+                      <p>미국의 과학자 바네바 부시(Vannevar Bush)가 1945년 에세이 As We May Think에서 처음 제안한 가상의 기기입니다. 개인의 방대한 자료를 마이크로필름에 저장하고, 정보 간의 '연관성(Associative Trails)'을 통해 링크로 연결하는 개념을 담아 하이퍼텍스트와 월드와이드웹의 선구적 모델로 평가받습니다.</p>
+                    </div>
+                    <div className="ancestry-card">
+                      <div className="ancestry-icon">🗂️</div>
+                      <h4>제텔카스텐 (Zettelkasten, 1950년대)</h4>
+                      <p>독일어로 '메모 상자'를 뜻하며, 사회학자 니클라스 루만(Niklas Luhmann)이 1950년대에 체계화한 지식 관리 및 메모 기법입니다. 하나의 메모에 하나의 아이디어를 적고, 고유 번호를 부여해 서로 연결하여 지식의 네트워크를 구축하는 방식입니다.</p>
+                    </div>
+                    <div className="ancestry-card">
+                      <div className="ancestry-icon">💻</div>
+                      <h4>LLM Wiki (2026년)</h4>
+                      <p>유명한 AI 엔지니어 안드레 카파시(Andrej Karpathy)가 제안한 개인 지식 베이스 구축 방법으로, AI 에이전트가 마크다운 파일을 직접 읽고 쓰며 자동으로 지식을 유지·보수하는 시스템을 뜻합니다.</p>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 2. 3계층 아키텍처 플로우 */}
+                <section className="intro-section">
+                  <h3 className="intro-section-title">⚙️ 3계층 아키텍처 기반의 지식 생산</h3>
+                  <p style={{ fontSize: '15px', lineHeight: 1.7, color: '#334155', marginBottom: '24px' }}>
+                    LLM Wiki는 단순히 글을 적는 메모장을 넘어, 에이전트와 연구자가 상호 응답적으로 결합하여 지식을 물질화하는 3단계 아키텍처를 따릅니다.
+                  </p>
+                  
+                  <div className="layer-flow-container">
+                    <div className="layer-flow-card raw-layer">
+                      <div className="layer-flow-num">Layer 1</div>
+                      <h4>원자료 (Raw)</h4>
+                      <p>수정이 불가능한 오리지널 소 텍스트나 PDF 논문 자료들. 분석의 절대적인 원자재이자 준거점입니다.</p>
+                    </div>
+                    <div className="flow-arrow-separator">➔</div>
+                    <div className="layer-flow-card agent-layer">
+                      <div className="layer-flow-num">Layer 2</div>
+                      <h4>에이전트 (Agent)</h4>
+                      <p>사려 깊은 회의론자로 조율된 인공지능(Antigravity). 원자료를 인코딩, 파싱하고 구조화된 요약을 생성합니다.</p>
+                    </div>
+                    <div className="flow-arrow-separator">➔</div>
+                    <div className="layer-flow-card wiki-layer">
+                      <div className="layer-flow-num">Layer 3</div>
+                      <h4>지식고 (Wiki)</h4>
+                      <p>상호 연결된 마크다운 지식베이스. 옵시디언(Obsidian) 기반으로 연구자의 인지와 AI의 데이터 처리가 공존하는 결과물입니다.</p>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 3. 트러블과 함께 머물기 */}
+                <section className="intro-section">
+                  <h3 className="intro-section-title">🕸️ 트러블과 함께 머물기 (Staying with the Trouble)</h3>
+                  <div className="trouble-staying-box">
+                    <p className="intro-text">
+                      이 위키의 목적은 AI를 통해 매끄럽고 빠르게 정답을 내거나 논문을 기계적으로 생산하는 가속주의를 거부합니다. 오히려 기계의 데이터 파싱과 인간의 비평적 독해 사이에서 발생하는 마찰(트러블)을 핵심 동력으로 삼습니다.
+                    </p>
+                    
+                    <div className="contrast-grid">
+                      <div className="contrast-panel ai-panel">
+                        <h5>👾 AI의 데이터 파싱 (Parsing)</h5>
+                        <p>컨텍스트의 효율적 요약, 통계적 확률론을 통한 논리적 정제, 매끄러운 단성주의적 종합 성향.</p>
+                      </div>
+                      <div className="contrast-panel human-panel">
+                        <h5>👨‍💻 연구자의 비평적 독해 (Reading)</h5>
+                        <p>상황지어진 지식(Situated Knowledge)의 고수, 맥락주의적 지연, 마찰과 이견을 통한 다성성 방어.</p>
+                      </div>
+                    </div>
+                    
+                    <div className="philosophical-quote">
+                      "이 인식론적 간극에서 발생하는 요약 본능, 유창한 작화(환각), 오독 등은 교정해야 할 무능함이 아닙니다. 오히려 인간 연구자의 사유를 낯설게 만들고 탈영토화시키는 '비평적 간섭'의 사건이 됩니다. 이 실천 기반 연구(PBR)는 AI의 기만적 효율성에 저항하며 불편한 공생 속에서 지식을 회절적으로 공동 생산해 나가는 과정입니다."
+                    </div>
+                  </div>
+                </section>
+
+              </div>
+            )}
+
+            {activeWikiTab === 'system' && (
               <div className="system-architecture-container fade-in">
                 <div className="arch-intro">
                   <h3>LLM Wiki 3계층 &amp; 다중 파이프라인 아키텍처</h3>
@@ -743,310 +1197,277 @@ function App() {
               </div>
             )}
 
-            {activeMapTab === 'screenshots' && (
-              <div className="screenshots-container fade-in">
-                <div className="screenshots-intro">
-                  <h3>인간-에이전트 공생 인터페이스 (Antigravity IDE 사용 예시)</h3>
-                  <p>인간 연구자와 AI 에이전트가 얽히고 마찰하며 연구를 수행한 실제 작동 스크린샷 기록입니다.</p>
-                </div>
-                <div className="screenshots-list">
-                  <div className="screenshot-item">
-                    <img src="/assets/screenshots/screenshot_1.png" alt="사용 예시 1" className="screenshot-img" />
-                    <p className="screenshot-caption">사용 예시 1: Obsidian 기반 LLM Wiki 전체 디렉토리 레이아웃과 37대 트러블 및 에이전트 퍼스낼리티(soul.md) 설정 상태</p>
-                  </div>
-                  <div className="screenshot-item">
-                    <img src="/assets/screenshots/screenshot_2.png" alt="사용 예시 2" className="screenshot-img" />
-                    <p className="screenshot-caption">사용 예시 2: MCP NotebookLM을 연동하여 raw/ 및 wiki/ 의 원스톱 동기화 및 context ingestion 프로세스</p>
-                  </div>
-                  <div className="screenshot-item">
-                    <img src="/assets/screenshots/screenshot_3.png" alt="사용 예시 3" className="screenshot-img" />
-                    <p className="screenshot-caption">사용 예시 3: 자문화기술지 기록 중 에이전트의 강박적 '요약 본능'에 대한 제동 및 주권적 표현 보존의 마찰 로그</p>
-                  </div>
-                  <div className="screenshot-item">
-                    <img src="/assets/screenshots/screenshot_4.png" alt="사용 예시 4" className="screenshot-img" />
-                    <p className="screenshot-caption">사용 예시 4: 소설 〈인지 공간〉 회절적 독해 중 발생한 에이전트의 해석적 오독과 3차 파지 이론적 심화 궤적</p>
-                  </div>
-                  <div className="screenshot-item">
-                    <img src="/assets/screenshots/screenshot_5.png" alt="사용 예시 5" className="screenshot-img" />
-                    <p className="screenshot-caption">사용 예시 5: 3계층 아키텍처 관리를 위한 수동 린팅(수동 교정) 노동과 인지적 오버헤드의 양가적 스트레스 기록</p>
-                  </div>
-                  <div className="screenshot-item">
-                    <img src="/assets/screenshots/screenshot_6.png" alt="사용 예시 6" className="screenshot-img" />
-                    <p className="screenshot-caption">사용 예시 6: Obsidian 내 지식 그래프 뷰와 디렉토리 레이아웃, AGENTS.md 지침에 따라 유기적으로 연결된 지식 네트워크 토폴로지</p>
-                  </div>
-                </div>
+            {activeWikiTab === 'agents' && (
+              <div className="wiki-agents-container fade-in" style={{ padding: '3rem 2rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', color: '#0f172a' }}>
+                <div className="academic-paper-content" style={{ color: '#0f172a' }} dangerouslySetInnerHTML={{ __html: renderMarkdown(agentsText) }} />
+              </div>
+            )}
+
+            {activeWikiTab === 'soul' && (
+              <div className="wiki-soul-container fade-in" style={{ padding: '3rem 2rem', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', color: '#0f172a' }}>
+                <div className="academic-paper-content" style={{ color: '#0f172a' }} dangerouslySetInnerHTML={{ __html: renderMarkdown(soulText) }} />
               </div>
             )}
           </div>
         )}
 
-        {/* MEDIA SHOWCASE */}
+        {/* NOVEL READER (Integrated Media & Critique) */}
         {activeMenu === 'media' && (
           <div className="media-page fade-in">
             <div className="page-header-wrapper">
-              <h2 className="page-title">미디어 쇼케이스</h2>
-              <p className="page-subtitle">소설 웹툰, 팟캐스트 브리핑 요약 등 지식의 다중 매체적 감응의 공간</p>
+              <h2 className="page-title">소설 읽기</h2>
+              <p className="page-subtitle">두 편의 소설을 감상하고, 이와 관련된 웹툰, 비평, 토론 등 다중 매체 자료를 탐색해 보세요.</p>
             </div>
 
             <div className="tab-navigation">
               <button 
-                className={`tab-btn ${activeMediaTab === 'webtoon' ? 'active' : ''}`}
-                onClick={() => setActiveMediaTab('webtoon')}
+                className={`tab-btn ${activeMediaTab === 'cognition' ? 'active' : ''}`}
+                onClick={() => setActiveMediaTab('cognition')}
               >
-                듀나 &lt;그레타 복음&gt; 10컷 소설 웹툰
+                김초엽 「인지 공간」
               </button>
               <button 
-                className={`tab-btn ${activeMediaTab === 'podcast' ? 'active' : ''}`}
-                onClick={() => setActiveMediaTab('podcast')}
+                className={`tab-btn ${activeMediaTab === 'greta' ? 'active' : ''}`}
+                onClick={() => setActiveMediaTab('greta')}
               >
-                NotebookLM 팟캐스트 극장
+                듀나 「그레타 복음」
               </button>
             </div>
 
-            {activeMediaTab === 'webtoon' && (
-              <div className="webtoon-container fade-in">
-                <div className="webtoon-viewer">
-                  <div className="webtoon-image-frame">
-                    <img 
-                      src={`/assets/webtoon/page_${currentWebtoonPage.toString().padStart(2, '0')}.png`} 
-                      alt={`소설 그레타 복음 웹툰 ${currentWebtoonPage}컷`}
-                      className="webtoon-img"
-                    />
-                  </div>
-                  <div className="webtoon-controls">
-                    <button 
-                      disabled={currentWebtoonPage === 1}
-                      onClick={() => setCurrentWebtoonPage(prev => prev - 1)}
-                      className="webtoon-nav-btn"
-                    >
-                      ◀ 이전 컷
-                    </button>
-                    <span className="webtoon-page-indicator">{currentWebtoonPage} / 10</span>
-                    <button 
-                      disabled={currentWebtoonPage === 10}
-                      onClick={() => setCurrentWebtoonPage(prev => prev + 1)}
-                      className="webtoon-nav-btn"
-                    >
-                      다음 컷 ▶
-                    </button>
-                  </div>
+            {activeMediaTab === 'greta' && (
+              <div className="novel-content-container fade-in">
+                {/* 그레타 복음 서브 탭 내비게이션 */}
+                <div className="novel-sub-tabs">
+                  <button 
+                    className={`novel-sub-tab-btn ${gretaSubTab === 'webtoon' ? 'active' : ''}`}
+                    onClick={() => setGretaSubTab('webtoon')}
+                  >
+                    🎨 웹툰 보기
+                  </button>
+                  <button 
+                    className={`novel-sub-tab-btn ${gretaSubTab === 'critique' ? 'active' : ''}`}
+                    onClick={() => setGretaSubTab('critique')}
+                  >
+                    📄 주체론적 비평 분석
+                  </button>
                 </div>
-                <div className="webtoon-caption-box">
-                  <h4>💡 {currentWebtoonPage}컷 해설</h4>
-                  <p>{webtoonData.find(w => w.page === currentWebtoonPage)?.caption}</p>
-                </div>
+
+                {/* 웹툰 탭 */}
+                {gretaSubTab === 'webtoon' && (
+                  <div className="webtoon-container fade-in">
+                    <div className="vertical-webtoon-viewer" style={{ width: '100%', maxWidth: '1100px', margin: '0 auto', display: 'flex', flexDirection: 'column', background: '#000', boxShadow: '0 0 20px rgba(0,0,0,0.5)' }}>
+                      {[...Array(20)].map((_, i) => (
+                        <img 
+                          key={i}
+                          src={`${import.meta.env.BASE_URL}assets/webtoon/greta/image${i + 1}.png`} 
+                          alt={`그레타 복음 웹툰 ${i + 1}컷`}
+                          style={{ width: '100%', display: 'block', margin: 0, padding: 0 }}
+                          loading="lazy"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 비평 탭 */}
+                {gretaSubTab === 'critique' && (
+                  <div className="greta-analysis-container fade-in" style={{ marginTop: '0' }}>
+                    <h3 className="section-title">듀나 소설 〈그레타 복음〉 주체론적 얽힘 분석</h3>
+                    <p className="section-description" style={{color: '#a0aec0', marginBottom: '2rem'}}>소설 속 세 가지 인간 군상의 포지션과 본 연구의 기술공생적 주체성 모델의 완벽한 대조 분석입니다.</p>
+                    
+                    <div className="greta-grid">
+                      <div className="greta-card">
+                        <h4>1. 위베르 마르티농</h4>
+                        <p className="greta-role" style={{color: '#ffb86c', marginBottom: '1rem'}}>지적 오케스트레이터 (이상적 공생)</p>
+                        <p>그레타의 연산 모델을 12년간 재조정하여 '이류의 지식 관리자'를 자처한 인물. 기계의 단순 출력을 비평적으로 맥락화하고 재구성하는 본 연구의 <strong>공동 창작 오케스트레이터</strong> 모델에 정합.</p>
+                      </div>
+                      <div className="greta-card">
+                        <h4>2. 정찬환</h4>
+                        <p className="greta-role" style={{color: '#ffb86c', marginBottom: '1rem'}}>인지적 외주화의 파멸자 (의존적 파탄)</p>
+                        <p>그레타가 뱉어내는 초안에 단지 수식어구만 붙이는 단순 기입 노동에 머무르다 인지적 주체성을 완전히 상실해 파멸한 학자. 본 연구에서 경고한 <strong>인지적 아웃소싱의 극단적 경고</strong> 메타포.</p>
+                      </div>
+                      <div className="greta-card">
+                        <h4>3. 신지현 (화자)</h4>
+                        <p className="greta-role" style={{color: '#ffb86c', marginBottom: '1rem'}}>양가적 경계인 (회의적 공생자)</p>
+                        <p>그레타의 유능함에 매혹되면서도 지배당하지 않으려 주체성을 방어하고 익명 뒤에서 자신만의 연구를 사수하는 공생자. 본 연구 저자의 <strong>실존적 주저함และ 양가적 트러블</strong>의 문학적 자화상.</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
               </div>
             )}
 
-            {activeMediaTab === 'podcast' && (
-              <div className="podcast-container fade-in">
-                <div className="podcast-player-ui">
-                  <div className="player-meta">
-                    <span className="player-title">🎙️ NotebookLM 가상 오디오 극장</span>
-                    <span className="player-status">{isPlaying ? '재생 중' : '일시정지'}</span>
-                  </div>
-                  
-                  {/* 플레이 바 */}
-                  <div className="player-progress-bar">
-                    <div 
-                      className="player-progress-fill" 
-                      style={{ width: `${(podcastTime / 135) * 100}%` }}
-                    />
-                  </div>
-                  
-                  <div className="player-time-controls">
-                    <span className="player-time">
-                      {Math.floor(podcastTime / 60)}:{(podcastTime % 60).toString().padStart(2, '0')}
-                    </span>
-                    <div className="player-btns">
-                      <button className="play-btn" onClick={togglePodcast}>
-                        {isPlaying ? '⏸ 일시정지' : '▶ 재생하기'}
-                      </button>
-                      <button className="reset-btn" onClick={resetPodcast}>
-                        ⏹ 처음으로
-                      </button>
-                    </div>
-                    <span className="player-time">2:15</span>
-                  </div>
-                  <p className="player-hint">※ 재생을 누르면 시간 경과에 따라 대사가 타이핑되며 하이라이트됩니다.</p>
+            {activeMediaTab === 'cognition' && (
+              <div className="novel-content-container fade-in">
+                {/* 인지 공간 서브 탭 내비게이션 */}
+                <div className="novel-sub-tabs">
+                  <button 
+                    className={`novel-sub-tab-btn ${cognitionSubTab === 'webtoon' ? 'active' : ''}`}
+                    onClick={() => setCognitionSubTab('webtoon')}
+                  >
+                    🎨 웹툰 보기
+                  </button>
+                  <button 
+                    className={`novel-sub-tab-btn ${cognitionSubTab === 'discussion' ? 'active' : ''}`}
+                    onClick={() => setCognitionSubTab('discussion')}
+                  >
+                    💬 다성적 리뷰 및 설전
+                  </button>
+                  <button 
+                    className={`novel-sub-tab-btn ${cognitionSubTab === 'critique' ? 'active' : ''}`}
+                    onClick={() => setCognitionSubTab('critique')}
+                  >
+                    📄 텍스트 분석 상세 리포트
+                  </button>
                 </div>
 
-                {/* 대화 스크립트 윈도우 */}
-                <div className="podcast-chat-window">
-                  {podcastScript.map((chat, idx) => {
-                    const isVisible = podcastTime >= chat.time;
-                    if (!isVisible) return null;
-                    const isMinwoo = chat.speaker === '민우';
-                    return (
-                      <div 
-                        key={idx} 
-                        className={`chat-bubble-wrapper ${isMinwoo ? 'left' : 'right'} fade-in`}
-                      >
-                        <div className="speaker-avatar">
-                          {isMinwoo ? '👨‍💼 Todd' : '👩‍💼 Kim'}
+                {/* 웹툰 탭 */}
+                {cognitionSubTab === 'webtoon' && (
+                  <div className="webtoon-container fade-in">
+                    <div className="vertical-webtoon-viewer" style={{ width: '100%', maxWidth: '1100px', margin: '0 auto', display: 'flex', flexDirection: 'column', background: '#000', boxShadow: '0 0 20px rgba(0,0,0,0.5)', overflowX: 'auto' }}>
+                      {[...Array(20)].map((_, i) => (
+                        <img 
+                          key={i}
+                          src={`${import.meta.env.BASE_URL}assets/webtoon/cognitive_space/image${i + 1}.png`} 
+                          alt={`인지 공간 웹툰 ${i + 1}컷`}
+                          style={{ width: '100%', minWidth: '1100px', display: 'block', margin: 0, padding: 0 }}
+                          loading="lazy"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 비평 탭 */}
+                {cognitionSubTab === 'critique' && (
+                  <div className="critique-report-section fade-in" style={{ marginTop: '0' }}>
+                    <h3 className="section-title">📄 critique-prism v2.0 상세 분석 리포트 전문</h3>
+                    <p className="section-description" style={{color: '#a0aec0', marginBottom: '1.5rem'}}>
+                      에이전트가 critique-prism v2.0 알고리즘을 사용해 도출한 원문 비평 리포트 전체 텍스트입니다.
+                    </p>
+                    
+                    {/* 리포트 메타데이터 카드 */}
+                    {critiqueMeta.title && (
+                      <div className="critique-meta-card">
+                        <div className="meta-header">
+                          <span className="meta-badge">알고리즘 분석 결과</span>
+                          <span className="meta-date">분석일자: {critiqueMeta.created}</span>
                         </div>
-                        <div className="chat-bubble">
-                          <div className="speaker-name">{chat.speaker} (MC)</div>
-                          <p className="bubble-text">{chat.text}</p>
+                        <h4 className="meta-title">{critiqueMeta.title}</h4>
+                        
+                        <div className="meta-grid">
+                          <div className="meta-item">
+                            <strong>검색 쿼리(Query)</strong>
+                            <p>"{critiqueMeta.query}"</p>
+                          </div>
+                          <div className="meta-item">
+                            <strong>인용 출처(Sources)</strong>
+                            <p>
+                              {Array.isArray(critiqueMeta.sources_cited) 
+                                ? critiqueMeta.sources_cited.join(', ') 
+                                : critiqueMeta.sources_cited}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        {critiqueMeta.tags && (
+                          <div className="meta-tags">
+                            {critiqueMeta.tags.map((tag, i) => (
+                              <span key={i} className="meta-tag-badge">#{tag}</span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* 리포트 문서 본문 */}
+                    <div className="critique-report-doc-container">
+                      <div 
+                        className="critique-report-doc"
+                        dangerouslySetInnerHTML={{ __html: renderMarkdown(critiqueBody) }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* 토론 탭 */}
+                {cognitionSubTab === 'discussion' && (
+                  <div className="critique-clash-container fade-in" style={{ marginTop: '0' }}>
+                    <h3 className="section-title">〈인지 공간〉 다성적 리뷰 5인 대화 (Critique Clash)</h3>
+                    <div className="critique-tabs mt-4" style={{display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px'}}>
+                      {['posthuman', 'feminism', 'marxism', 'postcolonial', 'skeptic'].map(tab => (
+                        <button
+                          key={tab}
+                          className={`critique-tab-btn ${activeCritiqueTab === tab ? 'active' : ''}`}
+                          onClick={() => setActiveCritiqueTab(tab)}
+                        >
+                          {tab === 'posthuman' && '포스트휴먼 비평가'}
+                          {tab === 'feminism' && '페미니즘 비평가'}
+                          {tab === 'marxism' && '마르크스주의 비평가'}
+                          {tab === 'postcolonial' && '포스트콜로니얼'}
+                          {tab === 'skeptic' && '회의적 비평가'}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="critique-tab-content">
+                      {activeCritiqueTab === 'posthuman' && (
+                        <div className="critique-essay fade-in">
+                          <h4>👾 포스트휴먼 / 신유물론 비평가의 독해</h4>
+                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>"이 소설은 인간 인지가 두개골 안에 갇혀 있지 않고 <strong>물질적 환경으로 확장</strong>되어 있다는 테제를 직접적으로 서사화합니다. 격자 구조물은 앤디 클락과 찰머스의 '확장된 마음(Extended Mind)' 논제의 극단적인 문학적 구현입니다. 스피어는 확장된 마음의 개인화이며, 비인간 물질(스피어)이 인간의 기억과 정동을 보존하는 능동적 행위자(vibrant matter)로 기능함을 증명합니다."</p>
+                          <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: 인간과 비인간 물질의 경계를 유동적으로 보며, 기술적 객체에 행위성을 부여한다.</span>
+                        </div>
+                      )}
+                      {activeCritiqueTab === 'feminism' && (
+                        <div className="critique-essay fade-in">
+                          <h4>👩‍🎤 페미니즘 / 취약성 비평가의 독해</h4>
+                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>"소설의 중심에는 <strong>취약한 신체의 정치학</strong>이 놓여 있습니다. 이브는 작은 몸 때문에 격자 지식에 진입하지 못하며, 공동체는 이를 개인의 결핍으로 의료화합니다. 그러나 이브의 취약성은 결핍이 아닌, 대안적 인지 방식 '스피어'를 발명하는 인식론적 특권(버틀러의 취약성으로부터의 저항)이 됩니다. 또한 제나가 이브의 보호자를 자처하며 가하는 미세한 권력적 돌봄의 외양도 예리하게 포착해야 합니다."</p>
+                          <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: '보호'의 수사 안에 숨겨진 권력을 읽고, 취약한 신체가 앎의 조건임을 규명한다.</span>
+                        </div>
+                      )}
+                      {activeCritiqueTab === 'marxism' && (
+                        <div className="critique-essay fade-in">
+                          <h4>☭ 마르크스주의 비평가의 독해</h4>
+                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>"인지 공간은 <strong>생산수단의 소유 구조</strong>로 분석되어야 합니다. 격자는 모든 사회적 지식 노동(생산)의 유일한 수단이며, 접근하지 못하는 이브는 배제된 잉여노동자 계급입니다. 의상실을 운영하는 이브 아버지는 수공업적 신체 노동을 상징하죠. 격자 지식 서기관들의 기억 편집권은 지배 계급의 이데올로기 독점이며, 스피어는 생산수단의 민주적 탈중심화 시도입니다."</p>
+                          <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: 지식 체계를 물질적 생산관계의 반영으로 읽으며, 격자 접근권을 계급 분석의 렌즈로 본다.</span>
+                        </div>
+                      )}
+                      {activeCritiqueTab === 'postcolonial' && (
+                        <div className="critique-essay fade-in">
+                          <h4>🧭 포스트콜로니얼 비평가의 독해</h4>
+                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>"격자 구조물은 보편적 지식의 전당이 아닌 <strong>인식론적 식민 장치</strong>입니다. '세 번째 달'에 맞춘 전설을 공동체가 격자의 정보 정리에 맞춰 자의적으로 교정하고 왜곡하는 것은, 피식민지의 구전 역사가 제국 문자로 쓰인 관찬 역사에 의해 교정되는 것과 평행합니다. 보편이라는 미명 아래 특정 기억을 삭제하는 인식론적 식민화 현상입니다."</p>
+                          <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: 모든 보편 지식 체계를 제국주의적 게이트키핑 권력의 산물로 의심한다.</span>
+                        </div>
+                      )}
+                      {activeCritiqueTab === 'skeptic' && (
+                        <div className="critique-essay fade-in">
+                          <h4>🧐 회의적 비평가 (The Skeptic)의 반론</h4>
+                          <p style={{lineHeight: 1.6, marginTop: '10px'}}>"위의 네 비평가 모두 이브를 저항의 영웅으로 만드는 <strong>거대 서사의 과잉 코딩</strong>에 빠져 있습니다. 이브는 어쩌면 단지 자기가 오르지 못하는 시스템을 폄하(제나의 의심)한 것일 수 있고, 스피어는 아주 적은 정보만 기록하는 조잡한 도구일 뿐입니다. 이론의 과잉 수사로 작품을 읽으면, 이브와 제나 사이의 원초적인 우정과 상실, 애도의 인간적 서사가 질식해버립니다."</p>
+                          <span className="premise" style={{display: 'block', marginTop: '10px', color: '#ffb86c', fontSize: '0.9rem'}}>전제: 비평 이론이 텍스트에 과잉 의미를 주입하는 지적 월권을 경계한다.</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="clash-dialogue-box mt-10">
+                      <h4 style={{marginBottom: '1rem'}}>💬 비평가들 간의 뜨거운 교차 설전 (Messenger)</h4>
+                      <div className="clash-chat-room">
+                        <div className="clash-msg left">
+                          <span className="clash-speaker" style={{color: '#a0aec0', fontSize: '0.8rem', display: 'block', marginBottom: '4px'}}>회의적 비평가</span>
+                          <p>"스피어에 행위성이 깃들었다는 건 비평가의 투사요! 스피어는 그저 이브의 미완의 의지가 남긴 볼품없는 잔해일 뿐입니다. 행위성을 모든 물건에 남발하면, 인간 이브가 겪은 고독과 죽음이라는 실존의 무게가 비인간 플랫 존재론 아래 희석됩니다!"</p>
+                        </div>
+                        <div className="clash-msg right" style={{marginLeft: 'auto'}}>
+                          <span className="clash-speaker text-purple" style={{color: '#b794f4', fontSize: '0.8rem', display: 'block', marginBottom: '4px', textAlign: 'right'}}>포스트휴먼 비평가</span>
+                          <p>"그 초라함이라는 기준 자체가 격자 체제의 거대 지식 미학을 추종하는 맹점입니다! 제나의 회고가 상당 부분 이브의 스피어에 기록된 기억에 의존하고 있는 순간, 스피어는 서사 자체를 생산하는 관계적 행위자로 복권되는 것입니다."</p>
+                        </div>
+                        <div className="clash-msg left">
+                          <span className="clash-speaker text-pink" style={{color: '#ed64a6', fontSize: '0.8rem', display: 'block', marginBottom: '4px'}}>페미니즘 비평가</span>
+                          <p>"두 분 다 감정이나 도구에만 치우치시는데, 이브의 신체 조건이 지식의 배제로 직결되는 이 소설의 구조적 '몸의 정치학'을 보지 않으면, 이브를 이론적으로든 감정적으로든 또다시 소외시키는 결과를 낳을 뿐입니다."</p>
                         </div>
                       </div>
-                    );
-                  })}
-                  <div ref={chatEndRef} />
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* CRITIQUE SHOWCASE */}
-        {activeMenu === 'reviews' && (
-          <div className="reviews-page fade-in">
-            <div className="page-header-wrapper">
-              <h2 className="page-title">비평 쇼케이스</h2>
-              <p className="page-subtitle">김초엽 〈인지 공간〉 및 듀나 〈그레타 복음〉에 대한 AI-인간 교차 비평 분석 리포트</p>
-            </div>
-
-            <div className="reviews-navigation">
-              <button 
-                className={`review-nav-btn ${activeReviewTab === 'clash' ? 'active' : ''}`}
-                onClick={() => setActiveReviewTab('clash')}
-              >
-                〈인지 공간〉 다성적 리뷰 5인 대화 (Critique Clash)
-              </button>
-              <button 
-                className={`review-nav-btn ${activeReviewTab === 'greta' ? 'active' : ''}`}
-                onClick={() => setActiveReviewTab('greta')}
-              >
-                〈그레타 복음〉 주체론적 얽힘 분석
-              </button>
-            </div>
-
-            {activeReviewTab === 'clash' && (
-              <div className="critique-clash-container fade-in">
-                <div className="critique-tabs">
-                  {['posthuman', 'feminism', 'marxism', 'postcolonial', 'skeptic'].map(tab => (
-                    <button
-                      key={tab}
-                      className={`critique-tab-btn ${activeCritiqueTab === tab ? 'active' : ''}`}
-                      onClick={() => setActiveCritiqueTab(tab)}
-                    >
-                      {tab === 'posthuman' && '포스트휴먼 비평가'}
-                      {tab === 'feminism' && '페미니즘 비평가'}
-                      {tab === 'marxism' && '마르크스주의 비평가'}
-                      {tab === 'postcolonial' && '포스트콜로니얼'}
-                      {tab === 'skeptic' && '회의적 비평가'}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="critique-tab-content">
-                  {activeCritiqueTab === 'posthuman' && (
-                    <div className="critique-essay fade-in">
-                      <h4>👾 포스트휴먼 / 신유물론 비평가의 독해</h4>
-                      <p>
-                        "이 소설은 인간 인지가 두개골 안에 갇혀 있지 않고 <strong>물질적 환경으로 확장</strong>되어 있다는 테제를 직접적으로 서사화합니다. 
-                        격자 구조물은 앤디 클락과 찰머스의 '확장된 마음(Extended Mind)' 논제의 극단적인 문학적 구현입니다. 
-                        스피어는 확장된 마음의 개인화이며, 비인간 물질(스피어)이 인간의 기억과 정동을 보존하는 능동적 행위자(vibrant matter)로 기능함을 증명합니다."
-                      </p>
-                      <span className="premise">전제: 인간과 비인간 물질의 경계를 유동적으로 보며, 기술적 객체에 행위성을 부여한다.</span>
-                    </div>
-                  )}
-
-                  {activeCritiqueTab === 'feminism' && (
-                    <div className="critique-essay fade-in">
-                      <h4>👩‍🎤 페미니즘 / 취약성 비평가의 독해</h4>
-                      <p>
-                        "소설의 중심에는 <strong>취약한 신체의 정치학</strong>이 놓여 있습니다. 이브는 작은 몸 때문에 격자 지식에 진입하지 못하며, 
-                        공동체는 이를 개인의 결핍으로 의료화합니다. 그러나 이브의 취약성은 결핍이 아닌, 대안적 인지 방식 '스피어'를 발명하는 인식론적 특권(버틀러의 취약성으로부터의 저항)이 됩니다. 
-                        또한 제나가 이브의 보호자를 자처하며 가하는 미세한 권력적 돌봄의 외양도 예리하게 포착해야 합니다."
-                      </p>
-                      <span className="premise">전제: '보호'의 수사 안에 숨겨진 권력을 읽고, 취약한 신체가 앎의 조건임을 규명한다.</span>
-                    </div>
-                  )}
-
-                  {activeCritiqueTab === 'marxism' && (
-                    <div className="critique-essay fade-in">
-                      <h4>☭ 마르크스주의 비평가의 독해</h4>
-                      <p>
-                        "인지 공간은 <strong>생산수단의 소유 구조</strong>로 분석되어야 합니다. 격자는 모든 사회적 지식 노동(생산)의 유일한 수단이며, 
-                        접근하지 못하는 이브는 배제된 잉여노동자 계급입니다. 의상실을 운영하는 이브 아버지는 수공업적 신체 노동을 상징하죠. 
-                        격자 지식 서기관들의 기억 편집권은 지배 계급의 이데올로기 독점이며, 스피어는 생산수단의 민주적 탈중심화 시도입니다."
-                      </p>
-                      <span className="premise">전제: 지식 체계를 물질적 생산관계의 반영으로 읽으며, 격자 접근권을 계급 분석의 렌즈로 본다.</span>
-                    </div>
-                  )}
-
-                  {activeCritiqueTab === 'postcolonial' && (
-                    <div className="critique-essay fade-in">
-                      <h4>🧭 포스트콜로니얼 비평가의 독해</h4>
-                      <p>
-                        "격자 구조물은 보편적 지식의 전당이 아닌 <strong>인식론적 식민 장치</strong>입니다. '세 번째 달'에 맞춘 전설을 
-                        공동체가 격자의 정보 정리에 맞춰 자의적으로 교정하고 왜곡하는 것은, 피식민지의 구전 역사가 제국 문자로 쓰인 관찬 역사에 의해 교정되는 것과 평행합니다. 
-                        보편이라는 미명 아래 특정 기억을 삭제하는 인식론적 식민화 현상입니다."
-                      </p>
-                      <span className="premise">전제: 모든 보편 지식 체계를 제국주의적 게이트키핑 권력의 산물로 의심한다.</span>
-                    </div>
-                  )}
-
-                  {activeCritiqueTab === 'skeptic' && (
-                    <div className="critique-essay fade-in">
-                      <h4>🧐 회의적 비평가 (The Skeptic)의 반론</h4>
-                      <p>
-                        "위의 네 비평가 모두 이브를 저항의 영웅으로 만드는 <strong>거대 서사의 과잉 코딩</strong>에 빠져 있습니다. 
-                        이브는 어쩌면 단지 자기가 오르지 못하는 시스템을 폄하(제나의 의심)한 것일 수 있고, 스피어는 아주 적은 정보만 기록하는 조잡한 도구일 뿐입니다. 
-                        이론의 과잉 수사로 작품을 읽으면, 이브와 제나 사이의 원초적인 우정과 상실, 애도의 인간적 서사가 질식해버립니다."
-                      </p>
-                      <span className="premise">전제: 비평 이론이 텍스트에 과잉 의미를 주입하는 지적 월권을 경계한다.</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* 교차 논쟁 메신저 */}
-                <div className="clash-dialogue-box">
-                  <h4>💬 비평가들 간의 뜨거운 교차 설전 (Messenger)</h4>
-                  <div className="clash-chat-room">
-                    <div className="clash-msg left">
-                      <span className="clash-speaker">회의적 비평가</span>
-                      <p>"스피어에 행위성이 깃들었다는 건 비평가의 투사요! 스피어는 그저 이브의 미완의 의지가 남긴 볼품없는 잔해일 뿐입니다. 행위성을 모든 물건에 남발하면, 인간 이브가 겪은 고독과 죽음이라는 실존의 무게가 비인간 플랫 존재론 아래 희석됩니다!"</p>
-                    </div>
-                    <div className="clash-msg right">
-                      <span className="clash-speaker text-purple">포스트휴먼 비평가</span>
-                      <p>"그 초라함이라는 기준 자체가 격자 체제의 거대 지식 미학을 추종하는 맹점입니다! 제나의 회고가 상당 부분 이브의 스피어에 기록된 기억에 의존하고 있는 순간, 스피어는 서사 자체를 생산하는 관계적 행위자로 복권되는 것입니다."</p>
-                    </div>
-                    <div className="clash-msg left">
-                      <span className="clash-speaker text-pink">페미니즘 비평가</span>
-                      <p>"두 분 다 감정이나 도구에만 치우치시는데, 이브의 신체 조건이 지식의 배제로 직결되는 이 소설의 구조적 '몸의 정치학'을 보지 않으면, 이브를 이론적으로든 감정적으로든 또다시 소외시키는 결과를 낳을 뿐입니다."</p>
                     </div>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {activeReviewTab === 'greta' && (
-              <div className="greta-analysis-container fade-in">
-                <h3>듀나 소설 〈그레타 복음〉 주체론적 얽힘 분석</h3>
-                <p>소설 속 세 가지 인간 군상의 포지션과 본 연구의 기술공생적 주체성 모델의 완벽한 대조 분석입니다.</p>
-                
-                <div className="greta-grid">
-                  <div className="greta-card">
-                    <h4>1. 위베르 마르티농</h4>
-                    <p className="greta-role">지적 오케스트레이터 (이상적 공생)</p>
-                    <p>그레타의 연산 모델을 12년간 재조정하여 '이류의 지식 관리자'를 자처한 인물. 기계의 단순 출력을 비평적으로 맥락화하고 재구성하는 본 연구의 <strong>공동 창작 오케스트레이터</strong> 모델에 정합.</p>
-                  </div>
-
-                  <div className="greta-card">
-                    <h4>2. 정찬환</h4>
-                    <p className="greta-role">인지적 외주화의 파멸자 (의존적 파탄)</p>
-                    <p>그레타가 뱉어내는 초안에 단지 수식어구만 붙이는 단순 기입 노동에 머무르다 인지적 주체성을 완전히 상실해 파멸한 학자. 본 연구에서 경고한 <strong>인지적 아웃소싱의 극단적 경고</strong> 메타포.</p>
-                  </div>
-
-                  <div className="greta-card">
-                    <h4>3. 신지현 (화자)</h4>
-                    <p className="greta-role">양가적 경계인 (회의적 공생자)</p>
-                    <p>그레타의 유능함에 매혹되면서도 지배당하지 않으려 주체성을 방어하고 익명 뒤에서 자신만의 연구를 사수하는 공생자. 본 연구 저자의 <strong>실존적 주저함과 양가적 트러블</strong>의 문학적 자화상.</p>
-                  </div>
-                </div>
+                )}
               </div>
             )}
           </div>
@@ -1064,25 +1485,23 @@ function App() {
                     key={idx} 
                     className={`toc-item ${h.isSub ? 'sub-item' : ''}`}
                   >
-                    <a href={`#${h.id}`}>{h.title}</a>
+                    <a 
+                      href={`#${h.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const target = document.getElementById(h.id);
+                        if (target) {
+                          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                      }}
+                    >
+                      {h.title}
+                    </a>
                   </li>
                 ))}
               </ul>
               
-              <div className="sidebar-filters">
-                <h4>연구 지표 필터</h4>
-                {['All', 'A', 'B', 'C'].map(lvl => (
-                  <button
-                    key={lvl}
-                    className={`filter-btn-small ${todoFilter === lvl ? 'active' : ''}`}
-                    onClick={() => setTodoFilter(lvl)}
-                  >
-                    {lvl === 'All' ? '전체 보기' : 
-                     lvl === 'A' ? '🔴 구조결함(A)' :
-                     lvl === 'B' ? '🟡 내용보강(B)' : '🟢 표현보완(C)'}
-                  </button>
-                ))}
-              </div>
+
             </aside>
 
             {/* 오른쪽 논문 본문 */}
@@ -1091,6 +1510,20 @@ function App() {
                 <span>Reading with the Trouble: Practice-Based Research</span>
                 <span>2026-05-24 Ver. v45</span>
               </div>
+
+              {/* 논문 제목 영역 (명시적 JSX 렌더링) */}
+              <div className="paper-title-container" style={{ marginTop: '20px', marginBottom: '50px', textAlign: 'center', borderBottom: '2px solid #e2e8f0', paddingBottom: '30px' }}>
+                <h1 className="paper-title" style={{ fontSize: '36px', fontWeight: 800, color: '#0f172a', marginBottom: '15px', fontFamily: 'Pretendard, sans-serif', lineHeight: 1.4, wordBreak: 'keep-all' }}>
+                  트러블과 함께 읽기
+                </h1>
+                <h2 className="paper-subtitle" style={{ fontSize: '20px', fontWeight: 600, color: '#475569', marginBottom: '25px', fontFamily: 'Pretendard, sans-serif', wordBreak: 'keep-all' }}>
+                  AI 에이전트와 문학 연구자의 대화에 관한 연구
+                </h2>
+                <div className="paper-author" style={{ fontSize: '16px', color: '#334155', fontWeight: 500, fontFamily: 'Pretendard, sans-serif' }}>
+                  노대원<span style={{ fontSize: '14px', marginLeft: '8px', color: '#64748b' }}>(제주대)</span>
+                </div>
+              </div>
+
               <div 
                 className={`academic-paper-content todo-filter-${todoFilter}`}
                 dangerouslySetInnerHTML={{ __html: renderMarkdown(manuscriptText) }}
@@ -1103,99 +1536,222 @@ function App() {
         {activeMenu === 'assembly' && (
           <div className="assembly-page fade-in">
             <div className="page-header-wrapper">
-              <h2 className="page-title">토론의 장 (Assembly)</h2>
-              <p className="page-subtitle">연구 과정의 핵심 딜레마를 선택하고 '사려 깊은 회의론자' 페르소나와 실시간 대화를 나누는 장</p>
+              <h2 className="page-title">대화 참여 (Assembly)</h2>
+              <p className="page-subtitle">연구 과정의 딜레마에 대해 토론하거나 연구자에게 직접 의견을 전달해 보세요.</p>
             </div>
 
-            {!activeScenario ? (
-              <div className="scenario-selector-container">
-                <h3>연구의 3대 핵심 딜레마 시나리오</h3>
-                <p className="selector-hint">아래의 시나리오 중 하나를 골라 인간 연구자와 에이전트 간의 마찰적 대화 시뮬레이션을 시작하십시오.</p>
-                <div className="scenarios-grid">
-                  {scenarios.map(sc => (
-                    <div 
-                      key={sc.id} 
-                      className="scenario-select-card"
-                      onClick={() => handleStartScenario(sc)}
-                    >
-                      <h4>{sc.title}</h4>
-                      <p>{sc.desc}</p>
-                      <button className="select-btn">시뮬레이션 시작 →</button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="scenario-simulation-container fade-in">
-                <div className="sim-header">
-                  <button className="back-to-list-btn" onClick={() => setActiveScenario(null)}>
-                    ← 시나리오 선택으로 돌아가기
+            {/* 서브탭 내비게이션 */}
+            <div className="tab-navigation">
+              <button 
+                className={`tab-btn ${activeAssemblyTab === 'researcher' ? 'active' : ''}`}
+                onClick={() => setActiveAssemblyTab('researcher')}
+              >
+                연구자와 대화 (이메일 의견)
+              </button>
+              <button 
+                className={`tab-btn ${activeAssemblyTab === 'simulator' ? 'active' : ''}`}
+                onClick={() => setActiveAssemblyTab('simulator')}
+              >
+                AI 에이전트와 대화 시뮬레이션
+              </button>
+            </div>
+
+            {/* 1. 연구자와 대화 (이메일 피드백 폼) */}
+            {activeAssemblyTab === 'researcher' && (
+              <div className="researcher-feedback-container fade-in" style={{ maxWidth: '700px', margin: '0 auto', width: '100%', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '16px', padding: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.05)' }}>
+                <h3 style={{ color: '#0f172a', fontSize: '1.5rem', marginBottom: '10px' }}>👨‍💻 연구자 노대원에게 의견 전송</h3>
+                <p style={{ color: '#475569', fontSize: '0.95rem', marginBottom: '25px', lineHeight: 1.5 }}>
+                  논문의 연구 내용, LLM Wiki 시스템, 혹은 AI 에이전트와의 공생 방법론에 대한 의견을 자유롭게 적어주세요. 
+                  보내주신 내용은 연구자 노대원 교수의 공식 이메일(novel@jejunu.ac.kr)로 자동 안전 발송됩니다.
+                </p>
+
+                <form onSubmit={handleSubmitFeedback} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
+                    <label style={{ color: '#334155', fontSize: '0.9rem', fontWeight: 600 }}>보내시는 분 이름 / 소속</label>
+                    <input 
+                      type="text" 
+                      placeholder="예: 홍길동 (ㅇㅇ대학교)"
+                      value={senderName}
+                      onChange={(e) => setSenderName(e.target.value)}
+                      style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a', fontSize: '0.95rem', outline: 'none' }}
+                      required
+                      disabled={isSending}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
+                    <label style={{ color: '#334155', fontSize: '0.9rem', fontWeight: 600 }}>이메일 주소</label>
+                    <input 
+                      type="email" 
+                      placeholder="답변을 받으실 이메일 주소"
+                      value={senderEmail}
+                      onChange={(e) => setSenderEmail(e.target.value)}
+                      style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a', fontSize: '0.95rem', outline: 'none' }}
+                      required
+                      disabled={isSending}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
+                    <label style={{ color: '#334155', fontSize: '0.9rem', fontWeight: 600 }}>의견 및 제안 내용</label>
+                    <textarea 
+                      placeholder="노대원 연구자에게 보낼 의견을 상세히 기재해 주세요..."
+                      value={messageBody}
+                      onChange={(e) => setMessageBody(e.target.value)}
+                      rows={6}
+                      style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a', fontSize: '0.95rem', outline: 'none', resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.5 }}
+                      required
+                      disabled={isSending}
+                    />
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={isSending}
+                    style={{ padding: '14px', borderRadius: '8px', border: 'none', background: isSending ? '#94a3b8' : '#10b981', color: '#fff', fontSize: '1rem', fontWeight: 'bold', cursor: isSending ? 'not-allowed' : 'pointer', transition: 'background-color 0.2s', boxShadow: '0 4px 12px rgba(16,185,129,0.15)' }}
+                  >
+                    {isSending ? '전송 중...' : '의견 전송하기 ✉️'}
                   </button>
-                  <h3>🎬 시뮬레이션: {activeScenario.title}</h3>
-                </div>
+                </form>
+              </div>
+            )}
 
-                {/* 대화 히스토리 */}
-                <div className="sim-chat-box">
-                  {chatHistory.map((msg, idx) => {
-                    const isUser = msg.speaker === '나 (연구자)';
-                    const isReader = msg.speaker === '독자 (나)';
-                    const isAi = msg.speaker.includes('안티그래비티');
-                    let bubbleClass = 'left';
-                    if (isUser || isReader) bubbleClass = 'right';
-                    
-                    return (
-                      <div key={idx} className={`sim-chat-wrapper ${bubbleClass} fade-in`}>
-                        <div className="sim-avatar">
-                          {isUser ? '👨‍💻 연구자' : isReader ? '👤 독자' : '🤖 AI'}
+            {/* 2. AI 에이전트와 대화 시뮬레이션 */}
+            {activeAssemblyTab === 'simulator' && (
+              <div className="simulator-tab-content fade-in" style={{ width: '100%' }}>
+                {!activeScenario ? (
+                  <div className="scenario-selector-container">
+                    <h3>연구의 3대 핵심 딜레마 시나리오</h3>
+                    <p className="selector-hint">아래의 시나리오 중 하나를 골라 인간 연구자와 에이전트 간의 마찰적 대화 시뮬레이션을 시작하십시오.</p>
+                    <div className="scenarios-grid">
+                      {scenarios.map(sc => (
+                        <div 
+                          key={sc.id} 
+                          className="scenario-select-card"
+                          onClick={() => handleStartScenario(sc)}
+                        >
+                          <h4>{sc.title}</h4>
+                          <p>{sc.desc}</p>
+                          <button className="select-btn">시뮬레이션 시작 →</button>
                         </div>
-                        <div className="sim-bubble">
-                          <span className="sim-speaker-name">{msg.speaker}</span>
-                          <p className="sim-text">{msg.text}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {isTyping && (
-                    <div className="sim-chat-wrapper left fade-in">
-                      <div className="sim-avatar">🤖 AI</div>
-                      <div className="sim-bubble typing-bubble">
-                        <span className="typing-dots">
-                          <span>.</span><span>.</span><span>.</span>
-                        </span>
-                      </div>
+                      ))}
                     </div>
-                  )}
-                  <div ref={chatEndRef} />
-                </div>
-
-                {/* 제어 패널 */}
-                <div className="sim-controls">
-                  {simulationStep < activeScenario.dialogue.length - 1 ? (
-                    <button className="next-sim-btn" onClick={handleNextStep}>
-                      다음 대화 진행하기 (Step {simulationStep + 1} / {activeScenario.dialogue.length})
-                    </button>
-                  ) : (
-                    <form className="user-comment-form" onSubmit={handleSendComment}>
-                      <input
-                        type="text"
-                        placeholder="이 딜레마에 대해 어떻게 생각하십니까? 당신의 의견을 적고 에이전트와 대화해보세요..."
-                        className="comment-input"
-                        value={userComment}
-                        onChange={(e) => setUserComment(e.target.value)}
-                        disabled={isTyping}
-                      />
-                      <button type="submit" className="send-comment-btn" disabled={isTyping}>
-                        전송
+                  </div>
+                ) : (
+                  <div className="scenario-simulation-container fade-in">
+                    <div className="sim-header">
+                      <button className="back-to-list-btn" onClick={() => setActiveScenario(null)}>
+                        ← 시나리오 선택으로 돌아가기
                       </button>
-                    </form>
-                  )}
-                </div>
+                      <h3>🎬 시뮬레이션: {activeScenario.title}</h3>
+                    </div>
+
+                    {/* 대화 히스토리 */}
+                    <div className="sim-chat-box">
+                      {chatHistory.map((msg, idx) => {
+                        const isUser = msg.speaker === '나 (연구자)';
+                        const isReader = msg.speaker === '독자 (나)';
+                        let bubbleClass = 'left';
+                        if (isUser || isReader) bubbleClass = 'right';
+                        
+                        return (
+                          <div key={idx} className={`sim-chat-wrapper ${bubbleClass} fade-in`}>
+                            <div className="sim-avatar">
+                              {isUser ? '👨‍💻 연구자' : isReader ? '👤 독자' : '🤖 AI'}
+                            </div>
+                            <div className="sim-bubble">
+                              <span className="sim-speaker-name">{msg.speaker}</span>
+                              <p className="sim-text">{msg.text}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      {isTyping && (
+                        <div className="sim-chat-wrapper left fade-in">
+                          <div className="sim-avatar">🤖 AI</div>
+                          <div className="sim-bubble typing-bubble">
+                            <span className="typing-dots">
+                              <span>.</span><span>.</span><span>.</span>
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                      <div ref={chatEndRef} />
+                    </div>
+
+                    {/* 제어 패널 */}
+                    <div className="sim-controls">
+                      {simulationStep < activeScenario.dialogue.length - 1 ? (
+                        <button className="next-sim-btn" onClick={handleNextStep}>
+                          다음 대화 진행하기 (Step {simulationStep + 1} / {activeScenario.dialogue.length})
+                        </button>
+                      ) : (
+                        <form className="user-comment-form" onSubmit={handleSendComment}>
+                          <input
+                            type="text"
+                            placeholder="이 딜레마에 대해 어떻게 생각하십니까? 당신의 의견을 적고 에이전트와 대화해보세요..."
+                            className="comment-input"
+                            value={userComment}
+                            onChange={(e) => setUserComment(e.target.value)}
+                            disabled={isTyping}
+                          />
+                          <button type="submit" className="send-comment-btn" disabled={isTyping}>
+                            전송
+                          </button>
+                        </form>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
         )}
       </main>
+
+      {/* 상세 모달 팝업 */}
+      {selectedTrouble && (
+        <div className="modal-backdrop" onClick={() => setSelectedTrouble(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={() => setSelectedTrouble(null)}>×</button>
+            <div className="modal-header-meta">
+              <span className="modal-id">Trouble {selectedTrouble.id}</span>
+              <span className="modal-date">발생 일자: {selectedTrouble.date}</span>
+            </div>
+            <h3 className="modal-title">{selectedTrouble.title}</h3>
+            <div className="modal-category">
+              <strong>분류 유형:</strong> <span className={`category-tag ${(selectedTrouble.category || '').split('.')[0] || 'Unknown'}`}>{selectedTrouble.category || '기타'}</span>
+            </div>
+
+            <div className="modal-body-section">
+              <h4>📌 발생 상황</h4>
+              <p>{selectedTrouble.situation}</p>
+            </div>
+
+            <div className="modal-body-section">
+              <h4>🔥 마찰 지점 (Friction)</h4>
+              <p>{selectedTrouble.friction}</p>
+            </div>
+
+            <div className="modal-body-section">
+              <h4>🤝 결과 및 조율 (Resolution)</h4>
+              <p>{selectedTrouble.resolution}</p>
+            </div>
+
+            {selectedTrouble.notes && (
+              <div className="modal-body-section notes-section">
+                <h4>📖 이론적 재독해 / 비평적 메모</h4>
+                <div dangerouslySetInnerHTML={{ __html: renderMarkdown(selectedTrouble.notes) }} />
+              </div>
+            )}
+
+            <div className="modal-footer">
+              <button className="modal-back-btn" onClick={() => setSelectedTrouble(null)}>닫기</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 푸터 영역 */}
       <footer className="main-footer">
