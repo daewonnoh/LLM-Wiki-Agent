@@ -4,6 +4,7 @@ import troublesData from './data/troubles.json';
 import { manuscriptText } from './data/manuscript.js';
 import { critiqueText } from './data/critique.js';
 import { wikiIntroText, soulText, agentsText } from './data/guidelines.js';
+import { syllabusText } from './data/syllabus.js';
 import screenshot1 from './assets/screenshots/screenshot_1.png';
 import screenshot2 from './assets/screenshots/screenshot_2.png';
 import screenshot3 from './assets/screenshots/screenshot_3.png';
@@ -49,65 +50,7 @@ const parseCritiqueData = (text) => {
 
 const { meta: critiqueMeta, body: critiqueBody } = parseCritiqueData(critiqueText);
 
-const syllabusData = {
-  title: "AI문학연구방법론: LLM Wiki와 바이브 코딩 (대학원 강의계획서안)",
-  info: [
-    { label: "교과목명", value: "AI문학연구방법론 (임시 명칭)" },
-    { label: "대상", value: "국어국문학과 등 인문학 계열 일반대학원생" },
-    { label: "기간", value: "16주 (주 1회, 3시간)" },
-    { label: "핵심 기술", value: "LLM Wiki (로컬 PKM), Vibe Coding" }
-  ],
-  philosophy: [
-    "교수자의 실제 연구 경험: 트러블과 머물기, 바이브코딩, 교정된 응답성, 느린 AI, 토큰 효율성 딜레마를 수업에 반영",
-    "참조 과정: Anastasia Salter의 텍스트→시각→절차적 3단계 구조 재구성"
-  ],
-  phases: [
-    {
-      phase: "Phase 1: PKM 시스템 구축 — 지식의 수집과 제텔카스텐 (1–5주)",
-      weeks: [
-        { week: 1, content: "오리엔테이션 및 AI와 인문학의 조우", question: "AI는 어떻게 인문학적 '도구'가 아닌 '인지적 파트너'가 될 수 있는가?" },
-        { week: 2, content: "개인 지식 관리(PKM)와 제텔카스텐 방법론 이해", question: "왜 폴더 구조가 아닌 상호 연결망이 중요한가? (제텔카스텐, 연결주의)" },
-        { week: 3, content: "마크다운(Markdown)과 LLM Wiki 기본 아키텍처 실습", question: "텍스트 포맷팅을 단순화하는 것이 어떻게 지식의 구조화에 기여하는가?" },
-        { week: 4, content: "데이터 파이프라인(Ingest) 구축: 학술 논문 및 문헌 수집", question: "분절된 문헌들을 어떻게 하나의 지식 생태계로 통합할 것인가?" },
-        { week: 5, content: "연결과 창발: 지식의 얽힘과 메타-문서 작성", question: "노트와 노트의 연결은 어떻게 예측하지 못한 아이디어를 창발하는가?" }
-      ]
-    },
-    {
-      phase: "Phase 2: 에이전틱 연구 환경과 트러블 — 대화와 분석 (6–10주)",
-      weeks: [
-        { week: 6, content: "AI 에이전트의 이해와 프롬프트/대화 엔지니어링", question: "단방향적 지시와 상호작용적 협력(대화 엔지니어링)의 차이는 무엇인가?" },
-        { week: 7, content: "LLM을 활용한 문학 텍스트 분석 실습", question: "기계의 비의식적 통계 처리(파싱)는 인간의 독해와 어떻게 충돌/협력하는가?" },
-        { week: 8, content: "회절적 독해(Diffractive Reading)와 트러블 로그 작성", question: "AI의 오독과 환각은 제거해야 할 버그인가, 사유를 촉발하는 마찰인가?" },
-        { week: 9, content: "자연어 프로그래밍과 바이브 코딩(Vibe Coding)의 이해", question: "코딩 문법을 몰라도, 어떻게 컴퓨팅 사고를 소프트웨어로 구현할 수 있는가?" },
-        { week: 10, content: "연구/교육용 디지털 아티팩트 프로토타입 기획", question: "논문이라는 닫힌 텍스트를 넘어, 어떤 지식을 산출할 것인가?" }
-      ]
-    },
-    {
-      phase: "Phase 3: 산출과 공유 — 바이브 코딩 실습 및 토론 (11–16주)",
-      weeks: [
-        { week: 11, content: "바이브 코딩 실습 ①: 프론트엔드 컴포넌트 생성", question: "추상적 아이디어를 구체적 코드로 번역하는 과정에서 생기는 인식론적 변화는?" },
-        { week: 12, content: "바이브 코딩 실습 ②: 데이터 연동 및 인터랙션", question: "정적 지식을 동적 인터랙션으로 변환할 때 UX는 어떻게 달라지는가?" },
-        { week: 13, content: "버전 관리 및 자동 배포 시스템 구축", question: "지식의 무결성을 어떻게 보존하고, 세상과 투명하게 공유할 것인가?" },
-        { week: 14, content: "디지털 아티팩트 고도화 및 동료 리뷰 (Peer Review)", question: "기계가 아닌 인간 동료의 피드백은 아티팩트를 어떻게 성숙시키는가?" },
-        { week: 15, content: "[아티팩트 시연] 디지털 결과물 및 시연 발표", question: "제작된 아티팩트는 우리가 던진 연구 질문에 어떤 방식으로 응답하는가?" },
-        { week: 16, content: "[최종 발표 2] 소논문/보고서 제출 및 종합 토론", question: "기술공생 시대, 인문학 연구자의 새로운 존재 증명 방식은 무엇인가?" }
-      ]
-    }
-  ],
-  references: [
-    '김병준, 노대원, 「생성형 AI는 인문학 연구를 어떻게 바꿀까?」, 2025.',
-    '이기형, 「소통과 감응을 지향하는 학문적인 글쓰기를 위한 문제의식과 대안의 추구」, 2013.',
-    '임태형, 「에이전틱 AI 기반 공동연구자 시스템 구축 경험의 자문화기술지」, 2026.',
-    '한경희, 「연구자의 AI 트러블」, 『KOSSDA 데이터 페어 발표 자료집』, 2026.',
-    'Karpathy, Andrej, "llm-wiki.md: A pattern for building personal knowledge bases using LLMs"',
-    'N. Katherine Hayles, How We Think: Digital Media and Contemporary Technogenesis, 2012.',
-    'Craig Vear, ed., The Routledge International Handbook of Practice-Based Research, 2021.',
-    'Donna Haraway, Staying with the Trouble: Making Kin in the Chthulucene, 2016.',
-    'Clark, Andy, & Chalmers, David, "The Extended Mind", Analysis 58(1), 1998, 7-19.',
-    'Ellis, Carolyn, et al., "Autoethnography: an overview", Historical Social Research 36(4), 2011.',
-    'O\'Halloran, Kieran, "Digital assemblages with AI for creative interpretation of short stories", DSH 39(2), 2024.'
-  ]
-};
+
 
 // Google Apps Script Web App URL (실제 전송을 원하시면 배포하신 웹 앱 URL을 입력해 주세요)
 const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyemTscGqGKYxL9BVT2g17mg5InqWKOGI6zSo72ShJyZVRXvC17VFyGqUIhP0dNyDk0Kw/exec";
@@ -1827,74 +1770,12 @@ function App() {
 
             {/* 3. 대학원 수업 아이디어 (Syllabus) */}
             {activeAssemblyTab === 'syllabus' && (
-              <div className="syllabus-container fade-in" style={{ maxWidth: '900px', margin: '0 auto', paddingBottom: '50px' }}>
-                <div className="syllabus-header-card" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', padding: '30px', borderRadius: '16px', border: '1px solid #cbd5e1', marginBottom: '30px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-                  <h3 style={{ fontSize: '24px', color: '#0f172a', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span>🎓</span> {syllabusData.title}
-                  </h3>
-                  
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '25px' }}>
-                    {syllabusData.info.map((info, idx) => (
-                      <div key={idx} style={{ background: 'rgba(255, 255, 255, 0.7)', padding: '15px', borderRadius: '10px', border: '1px solid rgba(255, 255, 255, 0.5)' }}>
-                        <div style={{ fontSize: '13px', color: '#64748b', fontWeight: 600, marginBottom: '5px' }}>{info.label}</div>
-                        <div style={{ fontSize: '15px', color: '#334155', fontWeight: 500 }}>{info.value}</div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="syllabus-philosophy" style={{ background: '#ffffff', padding: '20px', borderRadius: '12px', borderLeft: '4px solid #3b82f6' }}>
-                    <h4 style={{ fontSize: '16px', color: '#1e293b', marginBottom: '10px' }}>수업 설계의 배경과 철학</h4>
-                    <ul style={{ margin: 0, paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      {syllabusData.philosophy.map((item, idx) => (
-                        <li key={idx} style={{ color: '#475569', fontSize: '14.5px', lineHeight: 1.5 }}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="syllabus-curriculum">
-                  {syllabusData.phases.map((phaseData, pIdx) => (
-                    <div key={pIdx} className="syllabus-phase-section" style={{ marginBottom: '40px' }}>
-                      <h4 style={{ fontSize: '20px', color: '#334155', borderBottom: '2px solid #e2e8f0', paddingBottom: '10px', marginBottom: '20px' }}>
-                        {phaseData.phase}
-                      </h4>
-                      <div className="syllabus-table-wrapper" style={{ overflowX: 'auto', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', background: '#fff' }}>
-                          <thead>
-                            <tr style={{ background: '#f1f5f9' }}>
-                              <th style={{ padding: '12px 16px', width: '60px', borderBottom: '1px solid #e2e8f0', color: '#475569', fontSize: '14px' }}>주차</th>
-                              <th style={{ padding: '12px 16px', width: '40%', borderBottom: '1px solid #e2e8f0', color: '#475569', fontSize: '14px' }}>수업 내용</th>
-                              <th style={{ padding: '12px 16px', borderBottom: '1px solid #e2e8f0', color: '#475569', fontSize: '14px' }}>수업 핵심 질문 (핵심 개념)</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {phaseData.weeks.map((weekData, wIdx) => (
-                              <tr key={wIdx} style={{ borderBottom: wIdx === phaseData.weeks.length - 1 ? 'none' : '1px solid #f1f5f9' }}>
-                                <td style={{ padding: '16px', fontWeight: 600, color: '#3b82f6', verticalAlign: 'top' }}>{weekData.week}</td>
-                                <td style={{ padding: '16px', color: '#1e293b', fontWeight: 500, verticalAlign: 'top' }}>{weekData.content}</td>
-                                <td style={{ padding: '16px', color: '#64748b', fontSize: '14px', lineHeight: 1.5, verticalAlign: 'top' }}>{weekData.question}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="syllabus-references" style={{ marginTop: '50px', background: '#f8fafc', padding: '30px', borderRadius: '16px' }}>
-                  <h4 style={{ fontSize: '18px', color: '#0f172a', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '20px' }}>📚</span> 도구 및 방법론 핵심 참고 문헌
-                  </h4>
-                  <ul style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingLeft: '0', listStyle: 'none' }}>
-                    {syllabusData.references.map((ref, idx) => (
-                      <li key={idx} style={{ position: 'relative', paddingLeft: '20px', color: '#475569', fontSize: '14px', lineHeight: 1.5 }}>
-                        <span style={{ position: 'absolute', left: 0, top: '4px', color: '#94a3b8', fontSize: '12px' }}>•</span>
-                        {ref}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              <div className="syllabus-container fade-in" style={{ maxWidth: '900px', margin: '0 auto', paddingBottom: '50px', textAlign: 'left' }}>
+                <div 
+                  className="academic-paper-content"
+                  style={{ color: '#0f172a' }}
+                  dangerouslySetInnerHTML={{ __html: renderMarkdown(syllabusText) }}
+                />
               </div>
             )}
           </div>
