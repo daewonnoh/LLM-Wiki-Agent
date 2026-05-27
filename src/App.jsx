@@ -804,6 +804,12 @@ function App() {
                 연구 요약
               </button>
               <button 
+                className={`tab-btn ${activeMapTab === 'methodology' ? 'active' : ''}`}
+                onClick={() => setActiveMapTab('methodology')}
+              >
+                연구 방법론
+              </button>
+              <button 
                 className={`tab-btn ${activeMapTab === 'concept' ? 'active' : ''}`}
                 onClick={() => setActiveMapTab('concept')}
               >
@@ -880,7 +886,67 @@ function App() {
               </div>
             )}
 
-            {/* 2. 핵심 개념 탭: 개념 지도 및 설명 패널 */}
+            {/* 2. 연구 방법론 탭: PBR, 개밥 먹기, 자문화기술지 독창적 방법론 제시 */}
+            {activeMapTab === 'methodology' && (
+              <div className="methodology-container fade-in" style={{ padding: '2rem 0' }}>
+                <div className="methodology-intro" style={{ marginBottom: '3rem', textAlign: 'center' }}>
+                  <h3 style={{ fontSize: '1.8rem', color: '#f8fafc', marginBottom: '1.3rem', fontWeight: 700 }}>
+                    🛠️ 포스트휴먼 기술 공생의 독창적 방법론
+                  </h3>
+                  <p style={{ color: '#94a3b8', fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', lineHeight: 1.7 }}>
+                    본 연구는 기계적 자동화에 무비판적으로 안착하는 대신, 인간 연구자와 인공지능 에이전트가 맺는 
+                    물리적·인지적 마찰과 얽힘을 지식 생산의 원동력으로 삼는 독창적인 방법론을 구축했습니다.
+                  </p>
+                </div>
+
+                <div className="methodology-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginTop: '2rem' }}>
+                  
+                  {/* PBR 카드 */}
+                  <div className="methodology-card" style={{ background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8))', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '16px', padding: '2.5rem 2rem', boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)', backdropFilter: 'blur(10px)', transition: 'transform 0.3s ease, border-color 0.3s ease' }}>
+                    <div className="methodology-num" style={{ fontSize: '3rem', fontWeight: 800, background: 'linear-gradient(135deg, #10b981, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '1.5rem' }}>01</div>
+                    <h4 style={{ fontSize: '1.4rem', color: '#f8fafc', fontWeight: 700, marginBottom: '1rem' }}>실천 기반 연구 (PBR)</h4>
+                    <p style={{ color: '#cbd5e1', lineHeight: 1.7, fontSize: '0.95rem' }}>
+                      <strong>Practice-Based Research.</strong> 단순히 이론을 서술하는 방식을 넘어, 
+                      AI 에이전트와 지적 교류를 나누는 인프라를 구축하고 이 웹 플랫폼(Artifact) 개발 자체를 
+                      수행적인 앎을 물질화하는 지식 생산으로 규정합니다.
+                    </p>
+                  </div>
+
+                  {/* 개밥 먹기 카드 */}
+                  <div className="methodology-card" style={{ background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8))', border: '1px solid rgba(59, 130, 246, 0.2)', borderRadius: '16px', padding: '2.5rem 2rem', boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)', backdropFilter: 'blur(10px)', transition: 'transform 0.3s ease, border-color 0.3s ease' }}>
+                    <div className="methodology-num" style={{ fontSize: '3rem', fontWeight: 800, background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '1.5rem' }}>02</div>
+                    <h4 style={{ fontSize: '1.4rem', color: '#f8fafc', fontWeight: 700, marginBottom: '1rem' }}>개밥 먹기 (Dogfooding)</h4>
+                    <p style={{ color: '#cbd5e1', lineHeight: 1.7, fontSize: '0.95rem' }}>
+                      연구자가 제삼자나 관조자로서 AI 기술을 평하는 것이 아닙니다. 
+                      연구자가 스스로 개발하고 구축한 LLM Wiki의 인프라(원자료 ➔ 에이전트 ➔ 지식고) 내부로 직접 뛰어들어 
+                      매일 글을 쓰고 비평하는 실천적 노동을 온몸으로 관철합니다.
+                    </p>
+                  </div>
+
+                  {/* 자문화기술지 카드 */}
+                  <div className="methodology-card" style={{ background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8))', border: '1px solid rgba(139, 92, 246, 0.2)', borderRadius: '16px', padding: '2.5rem 2rem', boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)', backdropFilter: 'blur(10px)', transition: 'transform 0.3s ease, border-color 0.3s ease' }}>
+                    <div className="methodology-num" style={{ fontSize: '3rem', fontWeight: 800, background: 'linear-gradient(135deg, #8b5cf6, #ec4899)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginBottom: '1.5rem' }}>03</div>
+                    <h4 style={{ fontSize: '1.4rem', color: '#f8fafc', fontWeight: 700, marginBottom: '1rem' }}>자문화기술지 (Autoethnography)</h4>
+                    <p style={{ color: '#cbd5e1', lineHeight: 1.7, fontSize: '0.95rem' }}>
+                      에이전트와의 공생 중 마주하는 요약 본능, 유창한 환각, 해석상의 오독 등 기술적 오류('트러블')를 
+                      회피하거나 봉합하지 않고, 연구자가 겪는 존재론적 흔들림과 대결을 37개의 트러블 일지로 기록·성찰하여 비평적 데이터로 삼습니다.
+                    </p>
+                  </div>
+
+                </div>
+
+                <div className="methodology-conclusion" style={{ marginTop: '3.5rem', background: 'rgba(30, 41, 59, 0.4)', borderLeft: '4px solid #10b981', borderRadius: '8px', padding: '2rem', textAlign: 'left' }}>
+                  <h5 style={{ fontSize: '1.1rem', color: '#f8fafc', fontWeight: 700, marginBottom: '0.5rem' }}>💡 끈질긴 마찰(Staying with the Trouble)의 지혜</h5>
+                  <p style={{ color: '#cbd5e1', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
+                    결론적으로 본 연구의 방법론은 편리한 효율성을 약속하는 자동화된 AI에 지능을 아웃소싱하는 관성을 거부합니다. 
+                    인간 비평가의 상황적 지식과 기계 에이전트의 데이터 연산이 서로 저항하고 조율하는 
+                    '인지적 얽힘' 자체를 새로운 지식 생산 모델로 제시합니다.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* 3. 핵심 개념 탭: 개념 지도 및 설명 패널 */}
             {activeMapTab === 'concept' && (
               <div className="concept-map-container fade-in" style={{ marginTop: '2rem' }}>
                 <div className="map-sidebar">
