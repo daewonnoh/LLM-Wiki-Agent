@@ -65,7 +65,7 @@ function App() {
   const [isSending, setIsSending] = useState(false);
 
   // 지식 맵 서브탭
-  const [activeMapTab, setActiveMapTab] = useState('concept');
+  const [activeMapTab, setActiveMapTab] = useState('summary');
   const [hoveredConcept, setHoveredConcept] = useState(null);
   const [currentSlidePage, setCurrentSlidePage] = useState(1);
   const slideRef = useRef(null);
@@ -793,80 +793,97 @@ function App() {
           <div className="maps-page fade-in">
             <div className="page-header-wrapper">
               <h2 className="page-title">연구 소개</h2>
-              <p className="page-subtitle">본 연구를 요약하고 소개하는 슬라이드, 팟캐스트, 그리고 영상입니다.</p>
+              <p className="page-subtitle">본 연구를 소개하는 슬라이드, 팟캐스트, 영상 및 핵심 개념 관계도입니다.</p>
             </div>
 
-            {/* 미디어 플레이스홀더 (슬라이드, 팟캐스트, 영상) */}
-            <div className="media-placeholders-container">
-              
-              {/* 1. 슬라이드 뷰어 */}
-              <div className="media-placeholder slide-viewer-container" ref={slideRef}>
-                <div className="slide-image-frame" style={{ flexGrow: 1, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0b1121' }}>
-                  <img 
-                    src={`${import.meta.env.BASE_URL}assets/slides/image${currentSlidePage}.png`} 
-                    alt={`연구 소개 슬라이드 ${currentSlidePage}페이지`}
-                    style={{ width: '100%', height: '100%', maxHeight: '100%', objectFit: 'contain' }}
-                          />
-                </div>
-                <div className="slide-controls" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 30px', background: 'rgba(0,0,0,0.3)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                  <div style={{ flex: 1 }}></div>
-                  <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px' }}>
-                    <button 
-                      disabled={currentSlidePage === 1}
-                      onClick={() => setCurrentSlidePage(prev => prev - 1)}
-                      className="premium-nav-btn"
-                    >
-                      ◀ 이전
-                    </button>
-                    <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#e2e8f0', whiteSpace: 'nowrap' }}>{currentSlidePage} / 20</span>
-                    <button 
-                      disabled={currentSlidePage === 20}
-                      onClick={() => setCurrentSlidePage(prev => prev + 1)}
-                      className="premium-nav-btn"
-                    >
-                      다음 ▶
-                    </button>
-                  </div>
-                  <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
-                    <button onClick={toggleFullscreen} className="premium-nav-btn" style={{ padding: '8px 15px', fontSize: '0.9rem', backgroundColor: 'rgba(0,0,0,0.4)' }}>
-                      ⛶ 전체 화면
-                    </button>
-                  </div>
-                </div>
-              </div>
+            <div className="tab-navigation">
+              <button 
+                className={`tab-btn ${activeMapTab === 'summary' ? 'active' : ''}`}
+                onClick={() => setActiveMapTab('summary')}
+              >
+                연구 요약
+              </button>
+              <button 
+                className={`tab-btn ${activeMapTab === 'concept' ? 'active' : ''}`}
+                onClick={() => setActiveMapTab('concept')}
+              >
+                핵심 개념
+              </button>
+            </div>
 
-              {/* 2. 팟캐스트 플레이어 */}
-              <div className="media-placeholder" style={{ padding: '30px', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
-                <div style={{ fontSize: '3rem' }}>🎙️</div>
-                <h4 style={{ margin: 0, color: 'white', fontSize: '1.5rem' }}>연구 소개 팟캐스트</h4>
-                <p style={{ margin: 0, color: '#a0aec0', fontSize: '1rem', textAlign: 'center' }}>AI의 매끄러운 정답에 맞선 문학적 트러블</p>
-                <audio 
-                  controls 
-                  src={`${import.meta.env.BASE_URL}assets/media/trouble_podcast.m4a`}
-                  style={{ width: '100%', maxWidth: '500px', marginTop: '15px' }}
-                  title="연구 소개 팟캐스트"
-                />
-              </div>
-
-              {/* 3. 소개 영상 플레이어 */}
-              <div className="media-placeholder">
-                <div style={{ padding: '20px', background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
-                  <h4 style={{ margin: 0, color: 'white', fontSize: '1.5rem' }}>🎥 트러블과 함께 읽기 영상</h4>
+            {/* 1. 연구 요약 탭: 슬라이드, 팟캐스트, 영상 */}
+            {activeMapTab === 'summary' && (
+              <div className="media-placeholders-container fade-in">
+                {/* 1. 슬라이드 뷰어 */}
+                <div className="media-placeholder slide-viewer-container" ref={slideRef}>
+                  <div className="slide-image-frame" style={{ flexGrow: 1, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0b1121' }}>
+                    <img 
+                      src={`${import.meta.env.BASE_URL}assets/slides/image${currentSlidePage}.png`} 
+                      alt={`연구 소개 슬라이드 ${currentSlidePage}페이지`}
+                      style={{ width: '100%', height: '100%', maxHeight: '100%', objectFit: 'contain' }}
+                            />
+                  </div>
+                  <div className="slide-controls" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 30px', background: 'rgba(0,0,0,0.3)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                    <div style={{ flex: 1 }}></div>
+                    <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px' }}>
+                      <button 
+                        disabled={currentSlidePage === 1}
+                        onClick={() => setCurrentSlidePage(prev => prev - 1)}
+                        className="premium-nav-btn"
+                      >
+                        ◀ 이전
+                      </button>
+                      <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#e2e8f0', whiteSpace: 'nowrap' }}>{currentSlidePage} / 20</span>
+                      <button 
+                        disabled={currentSlidePage === 20}
+                        onClick={() => setCurrentSlidePage(prev => prev + 1)}
+                        className="premium-nav-btn"
+                      >
+                        다음 ▶
+                      </button>
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+                      <button onClick={toggleFullscreen} className="premium-nav-btn" style={{ padding: '8px 15px', fontSize: '0.9rem', backgroundColor: 'rgba(0,0,0,0.4)' }}>
+                        ⛶ 전체 화면
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div style={{ flexGrow: 1, background: '#0b1121', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <video 
+
+                {/* 2. 팟캐스트 플레이어 */}
+                <div className="media-placeholder" style={{ padding: '30px', alignItems: 'center', justifyContent: 'center', gap: '15px' }}>
+                  <div style={{ fontSize: '3rem' }}>🎙️</div>
+                  <h4 style={{ margin: 0, color: 'white', fontSize: '1.5rem' }}>연구 소개 팟캐스트</h4>
+                  <p style={{ margin: 0, color: '#a0aec0', fontSize: '1rem', textAlign: 'center' }}>AI의 매끄러운 정답에 맞선 문학적 트러블</p>
+                  <audio 
                     controls 
-                    src={`${import.meta.env.BASE_URL}assets/media/trouble_intro.mp4`}
-                    style={{ width: '100%', height: 'auto', maxHeight: '600px', objectFit: 'contain' }}
-                    title="연구 소개 영상: 트러블과 함께 읽기"
+                    src={`${import.meta.env.BASE_URL}assets/media/trouble_podcast.m4a`}
+                    style={{ width: '100%', maxWidth: '500px', marginTop: '15px' }}
+                    title="연구 소개 팟캐스트"
                   />
                 </div>
+
+                {/* 3. 소개 영상 플레이어 */}
+                <div className="media-placeholder">
+                  <div style={{ padding: '20px', background: 'rgba(0,0,0,0.3)', borderBottom: '1px solid rgba(255,255,255,0.1)', textAlign: 'center' }}>
+                    <h4 style={{ margin: 0, color: 'white', fontSize: '1.5rem' }}>🎥 트러블과 함께 읽기 영상</h4>
+                  </div>
+                  <div style={{ flexGrow: 1, background: '#0b1121', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <video 
+                      controls 
+                      src={`${import.meta.env.BASE_URL}assets/media/trouble_intro.mp4`}
+                      style={{ width: '100%', height: 'auto', maxHeight: '600px', objectFit: 'contain' }}
+                      title="연구 소개 영상: 트러블과 함께 읽기"
+                    />
+                  </div>
+                </div>
               </div>
+            )}
 
-            </div>
-
-            <div className="concept-map-container" style={{ marginTop: '2rem' }}>
-              <div className="map-sidebar">
+            {/* 2. 핵심 개념 탭: 개념 지도 및 설명 패널 */}
+            {activeMapTab === 'concept' && (
+              <div className="concept-map-container fade-in" style={{ marginTop: '2rem' }}>
+                <div className="map-sidebar">
                   <h3>개념 설명 패널</h3>
                   <p className="sidebar-hint">지도의 개념 노드에 마우스를 오버하여 세부 연결 및 정의를 탐색하세요.</p>
                   {hoveredConcept ? (
@@ -938,6 +955,7 @@ function App() {
                   </svg>
                 </div>
               </div>
+            )}
           </div>
         )}
 
