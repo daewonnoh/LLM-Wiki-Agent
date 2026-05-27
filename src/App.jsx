@@ -890,10 +890,10 @@ function App() {
             {activeMapTab === 'methodology' && (
               <div className="methodology-container fade-in" style={{ padding: '2rem 0' }}>
                 <div className="methodology-intro" style={{ marginBottom: '3rem', textAlign: 'center' }}>
-                  <h3 style={{ fontSize: '1.8rem', color: '#f8fafc', marginBottom: '1.3rem', fontWeight: 700 }}>
+                  <h3 style={{ fontSize: '1.8rem', color: '#0f172a', marginBottom: '1.3rem', fontWeight: 700 }}>
                     🛠️ 포스트휴먼 기술 공생의 독창적 방법론
                   </h3>
-                  <p style={{ color: '#94a3b8', fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', lineHeight: 1.7 }}>
+                  <p style={{ color: '#475569', fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', lineHeight: 1.7 }}>
                     본 연구는 기계적 자동화에 무비판적으로 안착하는 대신, 인간 연구자와 인공지능 에이전트가 맺는 
                     물리적·인지적 마찰과 얽힘을 지식 생산의 원동력으로 삼는 독창적인 방법론을 구축했습니다.
                   </p>
@@ -935,9 +935,9 @@ function App() {
 
                 </div>
 
-                <div className="methodology-conclusion" style={{ marginTop: '3.5rem', background: 'rgba(30, 41, 59, 0.4)', borderLeft: '4px solid #10b981', borderRadius: '8px', padding: '2rem', textAlign: 'left' }}>
-                  <h5 style={{ fontSize: '1.1rem', color: '#f8fafc', fontWeight: 700, marginBottom: '0.5rem' }}>💡 끈질긴 마찰(Staying with the Trouble)의 지혜</h5>
-                  <p style={{ color: '#cbd5e1', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
+                <div className="methodology-conclusion" style={{ marginTop: '3.5rem', background: '#f8fafc', borderLeft: '4px solid #10b981', borderTop: '1px solid #e2e8f0', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', borderRadius: '8px', padding: '2rem', textAlign: 'left' }}>
+                  <h5 style={{ fontSize: '1.1rem', color: '#0f172a', fontWeight: 700, marginBottom: '0.5rem' }}>💡 끈질긴 마찰(Staying with the Trouble)의 지혜</h5>
+                  <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
                     이 연구의 방법론은 편리한 효율성을 약속하는 자동화된 AI에 지능을 아웃소싱하는 관성과 가속주의를 거부합니다. 
                     인간 비평가의 상황적 지식과 AI 에이전트의 데이터 연산이 서로 협력하고 저항하고 조율하는 
                     '인지적 얽힘' 자체를 새로운 지식 생산 모델로 제시합니다.
