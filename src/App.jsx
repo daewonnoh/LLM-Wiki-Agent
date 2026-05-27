@@ -4,6 +4,13 @@ import troublesData from './data/troubles.json';
 import { manuscriptText } from './data/manuscript.js';
 import { critiqueText } from './data/critique.js';
 import { wikiIntroText, soulText, agentsText } from './data/guidelines.js';
+import screenshot1 from './assets/screenshots/screenshot_1.png';
+import screenshot2 from './assets/screenshots/screenshot_2.png';
+import screenshot3 from './assets/screenshots/screenshot_3.png';
+import screenshot4 from './assets/screenshots/screenshot_4.png';
+import screenshot5 from './assets/screenshots/screenshot_5.png';
+import screenshot6 from './assets/screenshots/screenshot_6.png';
+import screenshot7 from './assets/screenshots/screenshot_7.png';
 const footnotesMap = {};
 manuscriptText.split('\n').forEach(line => {
   const match = line.match(/^\[\^(\d+)\]:\s*(.*)/);
@@ -1223,31 +1230,31 @@ function App() {
                 </div>
                 <div className="screenshots-list">
                   <div className="screenshot-item">
-                    <img src={`${import.meta.env.BASE_URL}assets/screenshots/screenshot_1.png`} alt="에이전트가 변환한 markdown 파일" className="screenshot-img" />
+                    <img src={screenshot1} alt="에이전트가 변환한 markdown 파일" className="screenshot-img" />
                     <p className="screenshot-caption">사용자가 업로드한 PDF 및 DOCX 원본 파일들을 에이전트가 Markdown 포맷으로 변환 및 파싱하여 <code>raw/inbox/</code>에 수집한 모습.</p>
                   </div>
                   <div className="screenshot-item">
-                    <img src={`${import.meta.env.BASE_URL}assets/screenshots/screenshot_2.png`} alt="추출된 지식 네트워크" className="screenshot-img" />
+                    <img src={screenshot2} alt="추출된 지식 네트워크" className="screenshot-img" />
                     <p className="screenshot-caption">수집된 문헌 소스들로부터 <code>wiki/entities/</code> 및 <code>wiki/concepts/</code>를 생성하여 지식 간의 유기적 관계를 구축한 예시.</p>
                   </div>
                   <div className="screenshot-item">
-                    <img src={`${import.meta.env.BASE_URL}assets/screenshots/screenshot_3.png`} alt="논문 초고 작성 과정" className="screenshot-img" />
+                    <img src={screenshot3} alt="논문 초고 작성 과정" className="screenshot-img" />
                     <p className="screenshot-caption">지식베이스(LLM Wiki)를 바탕으로 사용자와 에이전트가 상호 작용하며 논문 초고(Draft)를 증분적으로 발전시켜 나가는 과정.</p>
                   </div>
                   <div className="screenshot-item">
-                    <img src={`${import.meta.env.BASE_URL}assets/screenshots/screenshot_4.png`} alt="연구 계획-관리" className="screenshot-img" />
+                    <img src={screenshot4} alt="연구 계획-관리" className="screenshot-img" />
                     <p className="screenshot-caption"><code>todos/연구계획-관리.md</code>를 통해 진행 상황(마일스톤, 완료 작업, 다음 행동)을 체계적으로 추적하고 에이전트와 동기화하는 모습.</p>
                   </div>
                   <div className="screenshot-item">
-                    <img src={`${import.meta.env.BASE_URL}assets/screenshots/screenshot_5.png`} alt="컴파일된 정적 웹페이지" className="screenshot-img" />
+                    <img src={screenshot5} alt="컴파일된 정적 웹페이지" className="screenshot-img" />
                     <p className="screenshot-caption">에이전트가 React 컴포넌트를 빌드하고 컴파일 스크립트를 통해 생성된 최종 인터랙티브 웹사이트 뷰.</p>
                   </div>
                   <div className="screenshot-item">
-                    <img src={`${import.meta.env.BASE_URL}assets/screenshots/screenshot_6.png`} alt="옵시디언 그래프 뷰" className="screenshot-img" />
+                    <img src={screenshot6} alt="옵시디언 그래프 뷰" className="screenshot-img" />
                     <p className="screenshot-caption">Obsidian의 지식 그래프 뷰와 디렉터리 레이아웃으로, <code>AGENTS.md</code> 지침에 따라 유기적으로 연결된 지식망 토폴로지를 보여주는 화면.</p>
                   </div>
                   <div className="screenshot-item">
-                    <img src={`${import.meta.env.BASE_URL}assets/screenshots/screenshot_7.png`} alt="트러블 해결 화면" className="screenshot-img" />
+                    <img src={screenshot7} alt="트러블 해결 화면" className="screenshot-img" />
                     <p className="screenshot-caption">코드 퇴행 등 기술적 트러블 발생 시 에이전트가 즉각적으로 원인을 파악하여 로컬 저장소를 복구하고, 조치 내역을 <code>troubles.json</code>에 상세히 기록하는 모습.</p>
                   </div>
                 </div>
