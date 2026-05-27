@@ -1247,7 +1247,7 @@ function App() {
                   </div>
                   <div className="screenshot-item">
                     <img src={screenshot5} alt="컴파일된 정적 웹페이지" className="screenshot-img" />
-                    <p className="screenshot-caption">Antigravity IDE의 모델 설정 화면으로, 연구 목적과 작업의 복잡도에 따라 다양한 최신 대형 언어 모델(Gemini 3.5, Claude 4.6 등)을 선택하고 전환하는 모습.</p>
+                    <p className="screenshot-caption">Antigravity IDE의 대형 언어 모델(Gemini 3.5, Claude 4.6 등) 사용량 표시 화면. 토큰 한도라는 딜레마와 맞부딪침.</p>
                   </div>
                   <div className="screenshot-item">
                     <img src={screenshot6} alt="옵시디언 그래프 뷰" className="screenshot-img" />
