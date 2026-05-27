@@ -935,13 +935,27 @@ function App() {
 
                 </div>
 
-                <div className="methodology-conclusion" style={{ marginTop: '3.5rem', background: '#f8fafc', borderLeft: '4px solid #10b981', borderTop: '1px solid #e2e8f0', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', borderRadius: '8px', padding: '2rem', textAlign: 'left' }}>
-                  <h5 style={{ fontSize: '1.1rem', color: '#0f172a', fontWeight: 700, marginBottom: '0.5rem' }}>💡 끈질긴 마찰(Staying with the Trouble)의 지혜</h5>
-                  <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
-                    이 연구의 방법론은 편리한 효율성을 약속하는 자동화된 AI에 지능을 아웃소싱하는 관성과 가속주의를 거부합니다. 
-                    인간 비평가의 상황적 지식과 AI 에이전트의 데이터 연산이 서로 협력하고 저항하고 조율하는 
-                    '인지적 얽힘' 자체를 새로운 지식 생산 모델로 제시합니다.
-                  </p>
+                <div className="methodology-conclusion" style={{ marginTop: '3.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', background: '#f8fafc', borderTop: '1px solid #e2e8f0', borderRight: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', borderRadius: '8px', padding: '2.5rem 2rem', textAlign: 'left' }}>
+                  
+                  {/* 왼쪽 칼럼: 마찰의 지혜 */}
+                  <div style={{ borderLeft: '4px solid #10b981', paddingLeft: '1.5rem' }}>
+                    <h5 style={{ fontSize: '1.1rem', color: '#0f172a', fontWeight: 700, marginBottom: '0.8rem' }}>💡 끈질긴 마찰(Staying with the Trouble)의 지혜</h5>
+                    <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
+                      이 연구의 방법론은 편리한 효율성을 약속하는 자동화된 AI에 지능을 아웃소싱하는 관성과 가속주의를 거부합니다. 
+                      인간 비평가의 상황적 지식과 AI 에이전트의 데이터 연산이 서로 협력하고 저항하고 조율하는 
+                      '인지적 얽힘' 자체를 새로운 지식 생산 모델로 제시합니다.
+                    </p>
+                  </div>
+
+                  {/* 오른쪽 칼럼: 놀이의 인식론 */}
+                  <div style={{ borderLeft: '4px solid #3b82f6', paddingLeft: '1.5rem' }}>
+                    <h5 style={{ fontSize: '1.1rem', color: '#0f172a', fontWeight: 700, marginBottom: '0.8rem' }}>🎮 실천적 놀이(Play)의 인식론과 정동</h5>
+                    <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
+                      실천 기반 연구(PBR)에서 '놀이'는 단순한 유희가 아닌, 미지의 체계에 균열을 내고 위험을 감수하며 새로운 의미를 탐색하는 진지한 인식론적 도구입니다. 
+                      AI 에이전트와의 핑퐁 같은 대화적 놀이는 연구자의 고독을 덜어주는 강력한 정동적 추동력이자, 예측 불가능한 기술적 트러블을 견디고 넘어서게 하는 버팀목이 됩니다.
+                    </p>
+                  </div>
+
                 </div>
               </div>
             )}
