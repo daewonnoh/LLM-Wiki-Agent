@@ -2007,6 +2007,71 @@ body {
 .send-comment-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}/* 8. 사용 예시 (스크린샷) 스타일 */
+.screenshots-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  background-color: #f8fafc;
+  border-radius: 24px;
+  padding: 40px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.screenshots-intro h3 {
+  font-size: 1.5rem;
+  color: #0f172a;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.screenshots-intro p {
+  color: #475569;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.screenshots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.screenshot-item {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.screenshot-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.screenshot-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.screenshot-caption {
+  padding: 20px 24px;
+  margin: 0;
+  color: #334155;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  background-color: white;
+}
+.screenshot-caption code {
+  background-color: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #0f172a;
 }
 
 /* 모바일 뷰 보정 */
