@@ -938,8 +938,8 @@ function App() {
                 <div className="methodology-conclusion" style={{ marginTop: '3.5rem', background: 'rgba(30, 41, 59, 0.4)', borderLeft: '4px solid #10b981', borderRadius: '8px', padding: '2rem', textAlign: 'left' }}>
                   <h5 style={{ fontSize: '1.1rem', color: '#f8fafc', fontWeight: 700, marginBottom: '0.5rem' }}>💡 끈질긴 마찰(Staying with the Trouble)의 지혜</h5>
                   <p style={{ color: '#cbd5e1', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
-                    결론적으로 본 연구의 방법론은 편리한 효율성을 약속하는 자동화된 AI에 지능을 아웃소싱하는 관성을 거부합니다. 
-                    인간 비평가의 상황적 지식과 기계 에이전트의 데이터 연산이 서로 저항하고 조율하는 
+                    이 연구의 방법론은 편리한 효율성을 약속하는 자동화된 AI에 지능을 아웃소싱하는 관성과 가속주의를 거부합니다. 
+                    인간 비평가의 상황적 지식과 AI 에이전트의 데이터 연산이 서로 협력하고 저항하고 조율하는 
                     '인지적 얽힘' 자체를 새로운 지식 생산 모델로 제시합니다.
                   </p>
                 </div>
