@@ -891,7 +891,7 @@ function App() {
               <div className="methodology-container fade-in" style={{ padding: '2rem 0' }}>
                 <div className="methodology-intro" style={{ marginBottom: '3rem', textAlign: 'center' }}>
                   <h3 style={{ fontSize: '1.8rem', color: '#0f172a', marginBottom: '1.3rem', fontWeight: 700 }}>
-                    🛠️ 포스트휴먼 기술 공생의 독창적 방법론
+                    🛠️ 포스트휴먼 기술 공생을 위한 '메타-연구' 방법론
                   </h3>
                   <p style={{ color: '#475569', fontSize: '1.1rem', maxWidth: '800px', margin: '0 auto', lineHeight: 1.7 }}>
                     본 연구는 기계적 자동화에 무비판적으로 안착하는 대신, 인간 연구자와 인공지능 에이전트가 맺는 
