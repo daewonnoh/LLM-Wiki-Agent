@@ -6,6 +6,7 @@ import { critiqueText } from './data/critique.js';
 import { wikiIntroText, soulText, agentsText } from './data/guidelines.js';
 import { syllabusData } from './data/syllabusData.js';
 import { discussionMeta, discussionText, discussionReferences } from './data/discussion.js';
+import discussionPoster from './assets/discussion/trouble-poster.webp';
 import screenshot1 from './assets/screenshots/screenshot_1.png';
 import screenshot2 from './assets/screenshots/screenshot_2.png';
 import screenshot3 from './assets/screenshots/screenshot_3.png';
@@ -1656,13 +1657,21 @@ function App() {
                   dangerouslySetInnerHTML={{ __html: renderMarkdown(discussionText) }}
                 />
 
-                <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid #e2e8f0' }}>
+                <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid #e2e8f0', textAlign: 'left' }}>
                   <h4 style={{ fontSize: '15px', color: '#334155', marginBottom: '10px' }}>참고 문헌</h4>
-                  <ul style={{ fontSize: '13.5px', color: '#64748b', lineHeight: 1.8, paddingLeft: '20px' }}>
+                  <ul style={{ fontSize: '13.5px', color: '#64748b', lineHeight: 1.8, paddingLeft: '20px', textAlign: 'left', margin: 0 }}>
                     {discussionReferences.map((ref, i) => (
-                      <li key={i}>{ref}</li>
+                      <li key={i} style={{ textAlign: 'left' }}>{ref}</li>
                     ))}
                   </ul>
+                </div>
+
+                <div style={{ marginTop: '30px' }}>
+                  <img
+                    src={discussionPoster}
+                    alt="트러블과 함께 읽기: 노대원 교수와 LLM 위키의 불안정한 공진 — 연구 트러블 인포그래픽"
+                    style={{ width: '100%', height: 'auto', borderRadius: '16px', border: '1px solid #e2e8f0', display: 'block' }}
+                  />
                 </div>
 
                 <p style={{ marginTop: '20px', fontSize: '12.5px', color: '#94a3b8' }}>
