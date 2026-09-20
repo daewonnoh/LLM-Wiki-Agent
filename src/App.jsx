@@ -5,6 +5,7 @@ import { manuscriptText } from './data/manuscript.js';
 import { critiqueText } from './data/critique.js';
 import { wikiIntroText, soulText, agentsText } from './data/guidelines.js';
 import { syllabusData } from './data/syllabusData.js';
+import { discussionMeta, discussionText, discussionReferences } from './data/discussion.js';
 import screenshot1 from './assets/screenshots/screenshot_1.png';
 import screenshot2 from './assets/screenshots/screenshot_2.png';
 import screenshot3 from './assets/screenshots/screenshot_3.png';
@@ -74,7 +75,7 @@ function App() {
   const [activeWikiTab, setActiveWikiTab] = useState('intro'); // 'intro', 'system'
 
   // 대화 참여 서브탭
-  const [activeAssemblyTab, setActiveAssemblyTab] = useState('researcher'); // 'researcher', 'simulator'
+  const [activeAssemblyTab, setActiveAssemblyTab] = useState('discussion'); // 'discussion', 'researcher', 'simulator', 'syllabus'
   
   // 연구자와 대화 (이메일 폼) 상태
   const [senderName, setSenderName] = useState('');
@@ -152,7 +153,7 @@ function App() {
     { id: 'media', name: '소설 읽기' },
     { id: 'explorer', name: '트러블 읽기' },
     { id: 'reader', name: '논문 읽기' },
-    { id: 'assembly', name: '대화 참여' }
+    { id: 'assembly', name: '토론과 대화' }
   ];
 
   // 1. 마크다운 인라인 헬퍼 함수
@@ -1599,13 +1600,19 @@ function App() {
         {activeMenu === 'assembly' && (
           <div className="assembly-page fade-in">
             <div className="page-header-wrapper">
-              <h2 className="page-title">대화 참여 (Assembly)</h2>
-              <p className="page-subtitle">연구 과정의 딜레마에 대해 토론하거나 연구자에게 직접 의견을 전달해 보세요.</p>
+              <h2 className="page-title">토론과 대화 (Assembly)</h2>
+              <p className="page-subtitle">학술대회에서 오간 실제 토론을 읽고, 연구 과정의 딜레마에 대해 토론하거나 연구자에게 직접 의견을 전달해 보세요.</p>
             </div>
 
             {/* 서브탭 내비게이션 */}
             <div className="tab-navigation">
-              <button 
+              <button
+                className={`tab-btn ${activeAssemblyTab === 'discussion' ? 'active' : ''}`}
+                onClick={() => setActiveAssemblyTab('discussion')}
+              >
+                학술대회 토론
+              </button>
+              <button
                 className={`tab-btn ${activeAssemblyTab === 'researcher' ? 'active' : ''}`}
                 onClick={() => setActiveAssemblyTab('researcher')}
               >
@@ -1624,6 +1631,45 @@ function App() {
                 교육 확산 (대학원 프로젝트)
               </button>
             </div>
+
+            {/* 0. 학술대회 토론 */}
+            {activeAssemblyTab === 'discussion' && (
+              <div className="discussion-container fade-in" style={{ maxWidth: '800px', margin: '0 auto', width: '100%' }}>
+                <div className="discussion-header-card" style={{ background: 'linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)', padding: '30px', borderRadius: '16px', border: '1px solid rgba(124,58,237,0.15)', marginBottom: '30px' }}>
+                  <h3 style={{ fontSize: '20px', color: '#1e1b4b', margin: '0 0 12px', fontWeight: 800 }}>
+                    {discussionMeta.title}
+                  </h3>
+                  <div style={{ fontSize: '14px', color: '#475569', lineHeight: 1.7 }}>
+                    <div><strong style={{ color: '#334155' }}>토론자</strong> · {discussionMeta.discussant}</div>
+                    {discussionMeta.affiliation.map((a, i) => (
+                      <div key={i} style={{ color: '#64748b' }}>{a}</div>
+                    ))}
+                    <div style={{ marginTop: '6px' }}>
+                      <a href={`mailto:${discussionMeta.contact}`} style={{ color: '#7c3aed', textDecoration: 'none' }}>{discussionMeta.contact}</a>
+                    </div>
+                  </div>
+                </div>
+
+                <article
+                  className="academic-paper-content"
+                  style={{ color: '#0f172a' }}
+                  dangerouslySetInnerHTML={{ __html: renderMarkdown(discussionText) }}
+                />
+
+                <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid #e2e8f0' }}>
+                  <h4 style={{ fontSize: '15px', color: '#334155', marginBottom: '10px' }}>참고 문헌</h4>
+                  <ul style={{ fontSize: '13.5px', color: '#64748b', lineHeight: 1.8, paddingLeft: '20px' }}>
+                    {discussionReferences.map((ref, i) => (
+                      <li key={i}>{ref}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <p style={{ marginTop: '20px', fontSize: '12.5px', color: '#94a3b8' }}>
+                  원문 출처: <a href={discussionMeta.sourceUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#7c3aed' }}>{discussionMeta.sourceUrl}</a>
+                </p>
+              </div>
+            )}
 
             {/* 1. 연구자와 대화 (이메일 피드백 폼) */}
             {activeAssemblyTab === 'researcher' && (
