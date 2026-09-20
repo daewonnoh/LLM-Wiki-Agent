@@ -2110,7 +2110,7 @@ function App() {
           © 2026 트러블과 함께 읽기: AI 에이전트와 문학 연구자의 대화. All rights reserved.
         </p>
         <p className="footer-credits">
-          연구자: 노대원 (제주대학교) | 공동 생성 파트너: Antigravity AI Agent
+          연구자: 노대원 (성균관대학교) | 공동 생성 파트너: Antigravity AI Agent
         </p>
       </footer>
     </div>
