@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import troublesData from './data/troubles.json';
-import { manuscriptText } from './data/manuscript.js';
+import { manuscriptText, finalManuscriptText } from './data/manuscript.js';
 import { critiqueText } from './data/critique.js';
 import { wikiIntroText, soulText, agentsText } from './data/guidelines.js';
 import { syllabusData } from './data/syllabusData.js';
@@ -139,6 +139,11 @@ function App() {
   // 논문 뷰어 상태
   const [todoFilter, setTodoFilter] = useState('All');
   const [headings, setHeadings] = useState([]);
+
+  // 논문 읽기 서브탭 ('conference': 학술대회 발표 논문, 'final': 최종 논문)
+  const [activeReaderTab, setActiveReaderTab] = useState('conference');
+  const activeManuscriptText = activeReaderTab === 'final' ? finalManuscriptText : manuscriptText;
+  const hasTodoMarkers = activeReaderTab !== 'final';
 
   // 토론의 장 상태
   const [activeScenario, setActiveScenario] = useState(null);
@@ -312,7 +317,7 @@ function App() {
 
   // 3. 목차 자동 추출 (논문 뷰어용)
   useEffect(() => {
-    const lines = manuscriptText.split('\n');
+    const lines = activeManuscriptText.split('\n');
     const headingList = [];
     lines.forEach((line) => {
       let title = '';
@@ -338,7 +343,7 @@ function App() {
       }
     });
     setHeadings(headingList);
-  }, []);
+  }, [activeManuscriptText]);
 
   // 4. 팟캐스트 오디오 시뮬레이터 타이머
   const podcastScript = [
@@ -1541,6 +1546,22 @@ function App() {
         {/* THESIS READER */}
         {activeMenu === 'reader' && (
           <div className="reader-page fade-in">
+            {/* 논문 읽기 서브탭 내비게이션 */}
+            <div className="tab-navigation" style={{ gridColumn: '1 / -1', marginBottom: '20px' }}>
+              <button
+                className={`tab-btn ${activeReaderTab === 'conference' ? 'active' : ''}`}
+                onClick={() => setActiveReaderTab('conference')}
+              >
+                학술대회 발표 논문
+              </button>
+              <button
+                className={`tab-btn ${activeReaderTab === 'final' ? 'active' : ''}`}
+                onClick={() => setActiveReaderTab('final')}
+              >
+                최종 논문
+              </button>
+            </div>
+
             {/* 왼쪽 사이드바 목차 */}
             <aside className="reader-sidebar">
               <h3>논문 목차</h3>
@@ -1571,10 +1592,17 @@ function App() {
 
             {/* 오른쪽 논문 본문 */}
             <article className="reader-body-wrapper">
-              <div className="academic-page-decor">
-                <span>Reading with the Trouble: Practice-Based Research</span>
-                <span>2026-05-24 Ver. v45</span>
-              </div>
+              {activeReaderTab === 'final' ? (
+                <div className="academic-page-decor">
+                  <span>트러블과 함께 읽기: 최종 게재본</span>
+                  <span>2026-09-16 게재 확정</span>
+                </div>
+              ) : (
+                <div className="academic-page-decor">
+                  <span>Reading with the Trouble: Practice-Based Research</span>
+                  <span>2026-05-24 Ver. v45</span>
+                </div>
+              )}
 
               {/* 논문 제목 영역 (명시적 JSX 렌더링) */}
               <div className="paper-title-container" style={{ marginTop: '20px', marginBottom: '50px', textAlign: 'center', borderBottom: '2px solid #e2e8f0', paddingBottom: '30px' }}>
@@ -1582,16 +1610,18 @@ function App() {
                   트러블과 함께 읽기
                 </h1>
                 <h2 className="paper-subtitle" style={{ fontSize: '20px', fontWeight: 600, color: '#475569', marginBottom: '25px', fontFamily: 'Pretendard, sans-serif', wordBreak: 'keep-all' }}>
-                  AI 에이전트와 문학 연구자의 대화에 관한 연구
+                  {activeReaderTab === 'final'
+                    ? ': AI 에이전트 기반 LLM Wiki 구축 과정의 대화'
+                    : 'AI 에이전트와 문학 연구자의 대화에 관한 연구'}
                 </h2>
                 <div className="paper-author" style={{ fontSize: '16px', color: '#334155', fontWeight: 500, fontFamily: 'Pretendard, sans-serif' }}>
                   노대원<span style={{ fontSize: '14px', marginLeft: '8px', color: '#64748b' }}>(제주대)</span>
                 </div>
               </div>
 
-              <div 
-                className={`academic-paper-content todo-filter-${todoFilter}`}
-                dangerouslySetInnerHTML={{ __html: renderMarkdown(manuscriptText) }}
+              <div
+                className={`academic-paper-content ${hasTodoMarkers ? `todo-filter-${todoFilter}` : ''}`}
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(activeManuscriptText) }}
               />
             </article>
           </div>
