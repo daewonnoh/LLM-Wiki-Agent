@@ -2246,6 +2246,11 @@ function App() {
         <p className="footer-credits">
           연구자: 노대원 (성균관대학교) | 공동 생성 파트너: Antigravity AI Agent
         </p>
+        <p className="footer-links">
+          <a href="https://daewonnoh.github.io/" target="_blank" rel="noopener noreferrer">노대원 홈페이지 ↗</a>
+          {" | "}
+          <a href="https://daewonnoh.github.io/research.html#papers" target="_blank" rel="noopener noreferrer">논문 서지 정보 ↗</a>
+        </p>
       </footer>
     </div>
   );
