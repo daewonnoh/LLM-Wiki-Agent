@@ -70,6 +70,25 @@ function App() {
   const [selectedTrouble, setSelectedTrouble] = useState(null);
   const [troubleFilter, setTroubleFilter] = useState('All');
   const [troubleSearch, setTroubleSearch] = useState('');
+  const [citeCopied, setCiteCopied] = useState(false);
+
+  const finalPaperCitation = '노대원, 「트러블과 함께 읽기 — AI 에이전트 기반 LLM Wiki 구축 과정의 대화」, 『국어국문학』 216, 국어국문학회, 2026.';
+  const copyCitation = async () => {
+    try {
+      await navigator.clipboard.writeText(finalPaperCitation);
+    } catch (e) {
+      const ta = document.createElement('textarea');
+      ta.value = finalPaperCitation;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e2) { /* ignore */ }
+      document.body.removeChild(ta);
+    }
+    setCiteCopied(true);
+    setTimeout(() => setCiteCopied(false), 2000);
+  };
   const [explorerView, setExplorerView] = useState('timeline'); // 'grid' 또는 'timeline'
   
   // LLM Wiki 서브탭
@@ -1675,6 +1694,9 @@ function App() {
                     <a className="final-paper-btn" href={finalPaperKciUrl} target="_blank" rel="noopener noreferrer">
                       KCI 서지 정보
                     </a>
+                    <button type="button" className="final-paper-btn" onClick={copyCitation}>
+                      {citeCopied ? '복사됨 ✓' : '인용하기'}
+                    </button>
                   </div>
                   <p className="final-paper-note">
                     아래 본문은 웹에서 읽기 위한 하이퍼텍스트판입니다. 본문의 <span className="page-marker">p.105</span> 표시는 PDF 게재본에서 해당 쪽이 시작되는 위치이며, 인용할 때는 PDF 게재본의 쪽수를 기준으로 해 주세요.
