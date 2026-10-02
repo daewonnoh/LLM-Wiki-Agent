@@ -140,10 +140,39 @@ function App() {
   const [todoFilter, setTodoFilter] = useState('All');
   const [headings, setHeadings] = useState([]);
 
-  // 논문 읽기 서브탭 ('conference': 학술대회 발표 논문, 'final': 최종 논문)
-  const [activeReaderTab, setActiveReaderTab] = useState('conference');
+  // 논문 읽기 서브탭 ('final': 최종 논문, 'conference': 학술대회 발표 논문)
+  const [activeReaderTab, setActiveReaderTab] = useState('final');
   const activeManuscriptText = activeReaderTab === 'final' ? finalManuscriptText : manuscriptText;
   const hasTodoMarkers = activeReaderTab !== 'final';
+
+  // 최종 논문 게재본 PDF 및 서지 링크
+  const finalPaperPdfUrl = `${import.meta.env.BASE_URL}assets/paper/noh-2026-reading-with-trouble-kll216.pdf`;
+  const finalPaperDownloadName = '노대원_트러블과 함께 읽기_국어국문학216.pdf';
+  const finalPaperKciUrl = 'https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003390446';
+  const finalPaperDoiUrl = 'https://doi.org/10.31889/kll.2026.9.216.103';
+
+  // 트러블 번호: 논문(표 1)의 정규화 번호 T01–T42. 논문 외 기록은 code가 null
+  const troubleByCode = Object.fromEntries(troublesData.filter(t => t.code).map(t => [t.code, t]));
+  const troubleLabel = (t) => t.code || '논문 외';
+  const troubleTypeNames = { 'Ⅰ': '해석적', 'Ⅱ': '관계적', 'Ⅲ': '인식론적', 'Ⅳ': '기술적', 'Ⅴ': '양가적' };
+
+  // 논문 본문 안의 링크 처리: 트러블 코드는 상세 창으로, 각주·쪽 앵커는 문서 안에서 스크롤
+  const handlePaperClick = (e) => {
+    const link = e.target.closest('a');
+    if (!link) return;
+    const code = link.dataset.trouble;
+    if (code) {
+      e.preventDefault();
+      if (troubleByCode[code]) setSelectedTrouble(troubleByCode[code]);
+      return;
+    }
+    const href = link.getAttribute('href') || '';
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const target = document.getElementById(href.slice(1));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
 
   // 토론의 장 상태
   const [activeScenario, setActiveScenario] = useState(null);
@@ -337,6 +366,12 @@ function App() {
       if (title) {
         headingList.push({
           title,
+          label: title
+            .replace(/<sup[^>]*>.*?<[/]sup>/g, '')
+            .replace(/<span[^>]*>.*?<[/]span>/g, '')
+            .replace(/<[^>]+>/g, '')
+            .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#42;/g, '*').replace(/&amp;/g, '&')
+            .trim(),
           isSub,
           id: encodeURIComponent(title)
         });
@@ -662,7 +697,7 @@ function App() {
                 </div>
                 <div className="quicklink-card" onClick={() => setActiveMenu('explorer')}>
                   <h4>트러블 읽기</h4>
-                  <p>연구 진행 시 발생한 37가지의 마찰 대화로그와 극복 양상 탐색</p>
+                  <p>연구 진행 시 발생한 42건의 마찰 대화로그와 극복 양상 탐색</p>
                   <span className="arrow-link">탐색하기 →</span>
                 </div>
                 <div className="quicklink-card" onClick={() => setActiveMenu('media')}>
@@ -743,7 +778,7 @@ function App() {
                       onClick={() => setSelectedTrouble(trouble)}
                     >
                       <div className="card-top-meta">
-                        <span className="trouble-id">Trouble {trouble.id}</span>
+                        <span className="trouble-id">{troubleLabel(trouble)}<span className="trouble-legacy-id">구 {trouble.legacy_id}</span></span>
                         <span className="trouble-date">{trouble.date || ''}</span>
                       </div>
                       <h3 className="card-title">{trouble.title || '제목 없음'}</h3>
@@ -751,9 +786,11 @@ function App() {
                         {trouble.situation ? trouble.situation.substring(0, 100) : ''}...
                       </p>
                       <div className="card-bottom-tags">
-                        <span className={`category-tag ${(trouble.category || '').split('.')[0] || 'Unknown'}`}>
-                          {trouble.category || '기타'}
-                        </span>
+                        {trouble.types.length ? trouble.types.map(type => (
+                          <span key={type} className={`category-tag ${type}`}>{type}. {troubleTypeNames[type]}</span>
+                        )) : (
+                          <span className="category-tag Unknown">논문 외 기록</span>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -771,8 +808,7 @@ function App() {
                     .sort((a, b) => a.id - b.id)
                     .map((trouble, index) => {
                       const isTop = index % 2 === 0;
-                      const categoryClass = (trouble.category || '').split('.')[0] || 'Unknown';
-                      const categoryTag = (trouble.category || '').split(' ')[1] || '기타';
+                      const categoryClass = trouble.types[0] || 'Unknown';
                       return (
                         <div 
                           key={trouble.id} 
@@ -783,7 +819,7 @@ function App() {
                             onClick={() => setSelectedTrouble(trouble)}
                           >
                             <div className="timeline-bubble-meta">
-                              <span className="timeline-bubble-id">Trouble {trouble.id}</span>
+                              <span className="timeline-bubble-id">{troubleLabel(trouble)}</span>
                               <span className="timeline-bubble-date">{trouble.date}</span>
                             </div>
                             <h4 className="timeline-bubble-title">{trouble.title}</h4>
@@ -791,18 +827,20 @@ function App() {
                               {trouble.situation ? trouble.situation.substring(0, 50) + '...' : ''}
                             </p>
                             <div className="card-bottom-tags">
-                              <span className={`category-tag ${categoryClass}`}>
-                                {categoryTag}
-                              </span>
+                              {trouble.types.length ? trouble.types.map(type => (
+                                <span key={type} className={`category-tag ${type}`}>{troubleTypeNames[type]}</span>
+                              )) : (
+                                <span className="category-tag Unknown">논문 외</span>
+                              )}
                             </div>
                           </div>
                           <div className="timeline-connector"></div>
                           <div 
                             className={`timeline-node-dot dot-${categoryClass}`}
                             onClick={() => setSelectedTrouble(trouble)}
-                            title={`Trouble ${trouble.id}: ${trouble.title}`}
+                            title={`${troubleLabel(trouble)}: ${trouble.title}`}
                           >
-                            {trouble.id}
+                            {trouble.code ? trouble.code.slice(1) : '外'}
                           </div>
                         </div>
                       );
@@ -954,7 +992,7 @@ function App() {
                     <h4 style={{ fontSize: '1.4rem', color: '#f8fafc', fontWeight: 700, marginBottom: '1rem' }}>자문화기술지 (Autoethnography)</h4>
                     <p style={{ color: '#cbd5e1', lineHeight: 1.7, fontSize: '0.95rem' }}>
                       에이전트와의 공생 중 마주하는 요약 본능, 유창한 환각, 해석상의 오독 등 기술적 오류('트러블')를 
-                      회피하거나 봉합하지 않고, 연구자가 겪는 존재론적 흔들림과 대결을 37개의 트러블 일지로 기록·성찰하여 비평적 데이터로 삼습니다.
+                      회피하거나 봉합하지 않고, 연구자가 겪는 존재론적 흔들림과 대결을 42건의 트러블 일지로 기록·성찰하여 비평적 데이터로 삼습니다.
                     </p>
                   </div>
 
@@ -1549,16 +1587,16 @@ function App() {
             {/* 논문 읽기 서브탭 내비게이션 */}
             <div className="tab-navigation" style={{ gridColumn: '1 / -1', marginBottom: '20px' }}>
               <button
-                className={`tab-btn ${activeReaderTab === 'conference' ? 'active' : ''}`}
-                onClick={() => setActiveReaderTab('conference')}
-              >
-                학술대회 발표 논문
-              </button>
-              <button
                 className={`tab-btn ${activeReaderTab === 'final' ? 'active' : ''}`}
                 onClick={() => setActiveReaderTab('final')}
               >
                 최종 논문
+              </button>
+              <button
+                className={`tab-btn ${activeReaderTab === 'conference' ? 'active' : ''}`}
+                onClick={() => setActiveReaderTab('conference')}
+              >
+                학술대회 발표 논문
               </button>
             </div>
 
@@ -1581,7 +1619,7 @@ function App() {
                         }
                       }}
                     >
-                      {h.title}
+                      {h.label}
                     </a>
                   </li>
                 ))}
@@ -1615,12 +1653,42 @@ function App() {
                     : 'AI 에이전트와 문학 연구자의 대화에 관한 연구'}
                 </h2>
                 <div className="paper-author" style={{ fontSize: '16px', color: '#334155', fontWeight: 500, fontFamily: 'Pretendard, sans-serif' }}>
-                  노대원<span style={{ fontSize: '14px', marginLeft: '8px', color: '#64748b' }}>(제주대)</span>
+                  노대원<span style={{ fontSize: '14px', marginLeft: '8px', color: '#64748b' }}>{activeReaderTab === 'final' ? '(성균관대학교)' : '(제주대)'}</span>
                 </div>
               </div>
 
+              {/* 최종 논문: 게재 서지 및 PDF 다운로드 */}
+              {activeReaderTab === 'final' && (
+                <div className="final-paper-card">
+                  <div className="final-paper-meta">
+                    <span className="final-paper-badge">게재본</span>
+                    <span>『국어국문학』 216호, 국어국문학회, 2026, pp. 103–134</span>
+                  </div>
+                  <p className="final-paper-en">Reading with the Trouble: Conversations in Building an Agentic AI-Based LLM Wiki</p>
+                  <div className="final-paper-actions">
+                    <a className="final-paper-btn primary" href={finalPaperPdfUrl} download={finalPaperDownloadName}>
+                      PDF 다운로드
+                    </a>
+                    <a className="final-paper-btn" href={finalPaperPdfUrl} target="_blank" rel="noopener noreferrer">
+                      PDF 새 창에서 열기
+                    </a>
+                    <a className="final-paper-btn" href={finalPaperKciUrl} target="_blank" rel="noopener noreferrer">
+                      KCI 서지 정보
+                    </a>
+                    <a className="final-paper-btn" href={finalPaperDoiUrl} target="_blank" rel="noopener noreferrer">
+                      DOI
+                    </a>
+                  </div>
+                  <p className="final-paper-note">
+                    아래 본문은 웹에서 읽기 위한 하이퍼텍스트판입니다. 본문의 <span className="page-marker">p.105</span> 표시는 PDF 게재본에서 해당 쪽이 시작되는 위치이며, 인용할 때는 PDF 게재본의 쪽수를 기준으로 해 주세요.
+                    본문의 트러블 코드(T01–T42)를 누르면 해당 트러블 기록이 열립니다. 본문 예시 가운데 구 번호로 표기된 곳에는 표 1 기준의 정규화 번호를 작게 덧붙였습니다(예: T24<sup>=T23</sup>).
+                  </p>
+                </div>
+              )}
+
               <div
                 className={`academic-paper-content ${hasTodoMarkers ? `todo-filter-${todoFilter}` : ''}`}
+                onClick={handlePaperClick}
                 dangerouslySetInnerHTML={{ __html: renderMarkdown(activeManuscriptText) }}
               />
             </article>
@@ -2097,12 +2165,17 @@ function App() {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close-btn" onClick={() => setSelectedTrouble(null)}>×</button>
             <div className="modal-header-meta">
-              <span className="modal-id">Trouble {selectedTrouble.id}</span>
+              <span className="modal-id">{troubleLabel(selectedTrouble)} <span className="trouble-legacy-id">구 {selectedTrouble.legacy_id}</span></span>
               <span className="modal-date">발생 일자: {selectedTrouble.date}</span>
             </div>
             <h3 className="modal-title">{selectedTrouble.title}</h3>
             <div className="modal-category">
-              <strong>분류 유형:</strong> <span className={`category-tag ${(selectedTrouble.category || '').split('.')[0] || 'Unknown'}`}>{selectedTrouble.category || '기타'}</span>
+              <strong>분류 유형:</strong>{' '}
+              {selectedTrouble.types.length ? selectedTrouble.types.map(type => (
+                <span key={type} className={`category-tag ${type}`} style={{ marginRight: '6px' }}>{type}. {troubleTypeNames[type]} 트러블</span>
+              )) : (
+                <span className="category-tag Unknown">논문 외 기록 (논문의 42건에 포함되지 않음)</span>
+              )}
             </div>
 
             <div className="modal-body-section">
@@ -2128,6 +2201,14 @@ function App() {
             )}
 
             <div className="modal-footer">
+              {activeMenu !== 'explorer' && (
+                <button
+                  className="modal-back-btn"
+                  onClick={() => { setSelectedTrouble(null); setActiveMenu('explorer'); window.scrollTo(0, 0); }}
+                >
+                  트러블 읽기에서 보기
+                </button>
+              )}
               <button className="modal-back-btn" onClick={() => setSelectedTrouble(null)}>닫기</button>
             </div>
           </div>
