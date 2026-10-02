@@ -149,7 +149,7 @@ function App() {
   const finalPaperPdfUrl = `${import.meta.env.BASE_URL}assets/paper/noh-2026-reading-with-trouble-kll216.pdf`;
   const finalPaperDownloadName = '노대원_트러블과 함께 읽기_국어국문학216.pdf';
   const finalPaperKciUrl = 'https://www.kci.go.kr/kciportal/ci/sereArticleSearch/ciSereArtiView.kci?sereArticleSearchBean.artiId=ART003390446';
-  const finalPaperDoiUrl = 'https://doi.org/10.31889/kll.2026.9.216.103';
+  // DOI(10.31889/kll.2026.9.216.103)는 2026-10-02 기준 미등록. 등록되면 DOI 버튼을 다시 추가한다.
 
   // 트러블 번호: 논문(표 1)의 정규화 번호 T01–T42. 논문 외 기록은 code가 null
   const troubleByCode = Object.fromEntries(troublesData.filter(t => t.code).map(t => [t.code, t]));
@@ -1633,7 +1633,7 @@ function App() {
               {activeReaderTab === 'final' ? (
                 <div className="academic-page-decor">
                   <span>트러블과 함께 읽기: 최종 게재본</span>
-                  <span>2026-09-16 게재 확정</span>
+                  <span>2026-09-30 게재</span>
                 </div>
               ) : (
                 <div className="academic-page-decor">
@@ -1674,9 +1674,6 @@ function App() {
                     </a>
                     <a className="final-paper-btn" href={finalPaperKciUrl} target="_blank" rel="noopener noreferrer">
                       KCI 서지 정보
-                    </a>
-                    <a className="final-paper-btn" href={finalPaperDoiUrl} target="_blank" rel="noopener noreferrer">
-                      DOI
                     </a>
                   </div>
                   <p className="final-paper-note">
