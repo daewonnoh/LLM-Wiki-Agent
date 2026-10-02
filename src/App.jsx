@@ -1698,6 +1698,10 @@ function App() {
                       {citeCopied ? '복사됨 ✓' : '인용하기'}
                     </button>
                   </div>
+                  <div className="final-paper-cite" role="button" tabIndex={0} title="클릭하면 복사됩니다" onClick={copyCitation} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); copyCitation(); } }}>
+                    <span className="final-paper-cite-text">{finalPaperCitation}</span>
+                    <span className="final-paper-cite-hint">{citeCopied ? '복사됨 ✓' : '클릭하여 복사'}</span>
+                  </div>
                   <p className="final-paper-note">
                     아래 본문은 웹에서 읽기 위한 하이퍼텍스트판입니다. 본문의 <span className="page-marker">p.105</span> 표시는 PDF 게재본에서 해당 쪽이 시작되는 위치이며, 인용할 때는 PDF 게재본의 쪽수를 기준으로 해 주세요.
                     본문의 트러블 코드(T01–T42)를 누르면 해당 트러블 기록이 열립니다. 본문 예시 가운데 구 번호로 표기된 곳에는 표 1 기준의 정규화 번호를 작게 덧붙였습니다(예: T24<sup>=T23</sup>).

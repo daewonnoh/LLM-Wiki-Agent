@@ -3309,3 +3309,31 @@ body {
   color: #94a3b8;
   margin-left: 6px;
 }
+
+.final-paper-cite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin-top: 14px;
+  padding: 10px 14px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  background-color: #f8fafc;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: #334155;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.final-paper-cite:hover {
+  border-color: #7c3aed;
+}
+
+.final-paper-cite-hint {
+  font-size: 12px;
+  font-weight: 700;
+  color: #7c3aed;
+  white-space: nowrap;
+}
