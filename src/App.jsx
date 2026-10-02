@@ -1701,12 +1701,6 @@ function App() {
 <a className="final-paper-btn" href={finalPaperKciUrl} target="_blank" rel="noopener noreferrer">
                       KCI 서지 정보
                     </a>
-                    <a className="final-paper-btn" href="https://daewonnoh.github.io/" target="_blank" rel="noopener noreferrer">
-                      저자 홈페이지 ↗
-                    </a>
-                    <a className="final-paper-btn" href="https://daewonnoh.github.io/research.html#papers" target="_blank" rel="noopener noreferrer">
-                      저자의 다른 논문 ↗
-                    </a>
                     <button type="button" className="final-paper-btn" onClick={copyCitation}>
                       {citeCopied ? '복사됨 ✓' : '인용하기'}
                     </button>
