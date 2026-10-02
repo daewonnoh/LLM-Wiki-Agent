@@ -640,9 +640,16 @@ function App() {
                 />
               </div>
 
+              <p className="hero-byline">
+                <a href="https://daewonnoh.github.io/" target="_blank" rel="noopener noreferrer">노대원</a>
+                <span className="hero-byline-affil">성균관대학교 국어국문학과</span>
+              </p>
+
               <p className="hero-description">
-                선형적인 텍스트 논문이 담아내지 못하는 '신체화된 앎의 물질성'과 '트러블의 역동성'을 
-                시각적·상호작용적으로 체험하고 논하기 위한 플랫폼입니다.
+                이 사이트는 『국어국문학』 216호에 실린 논문 「트러블과 함께 읽기: AI 에이전트 기반 LLM Wiki 구축 과정의 대화」와 함께 만든 연구 플랫폼입니다.
+                한 문학 연구자가 AI 에이전트와 LLM Wiki를 구축·운용하면서 부딪힌 42건의 트러블을 대화 로그, 개념 지도, 웹툰, 팟캐스트로 펼쳐 보입니다.
+                AI의 그럴듯한 오류, 자동화의 월권, 효율과 인문학적 느림 사이의 긴장처럼 선형적인 논문 텍스트가 다 담지 못하는 신체화된 앎의 물질성과 트러블의 역동성을
+                직접 겪어 보고 함께 논하는 공간입니다.
               </p>
 
               {/* 메인 비주얼: 에셔 패러디 메인 비주얼 이미지 */}
@@ -1691,8 +1698,14 @@ function App() {
                     <a className="final-paper-btn" href={finalPaperPdfUrl} target="_blank" rel="noopener noreferrer">
                       PDF 새 창에서 열기
                     </a>
-                    <a className="final-paper-btn" href={finalPaperKciUrl} target="_blank" rel="noopener noreferrer">
+<a className="final-paper-btn" href={finalPaperKciUrl} target="_blank" rel="noopener noreferrer">
                       KCI 서지 정보
+                    </a>
+                    <a className="final-paper-btn" href="https://daewonnoh.github.io/" target="_blank" rel="noopener noreferrer">
+                      저자 홈페이지 ↗
+                    </a>
+                    <a className="final-paper-btn" href="https://daewonnoh.github.io/research.html#papers" target="_blank" rel="noopener noreferrer">
+                      저자의 다른 논문 ↗
                     </a>
                     <button type="button" className="final-paper-btn" onClick={copyCitation}>
                       {citeCopied ? '복사됨 ✓' : '인용하기'}

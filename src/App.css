@@ -175,6 +175,31 @@ body {
   letter-spacing: -0.2px;
 }
 
+.hero-byline {
+  margin: 0;
+  font-size: 16px;
+  color: #475569;
+  letter-spacing: -0.2px;
+}
+
+.hero-byline a {
+  font-weight: 700;
+  color: #6d28d9;
+  text-decoration: underline;
+  text-decoration-color: rgba(109, 40, 217, 0.35);
+  text-underline-offset: 4px;
+}
+
+.hero-byline a:hover {
+  text-decoration-color: #6d28d9;
+}
+
+.hero-byline-affil::before {
+  content: "·";
+  margin: 0 8px;
+  color: #94a3b8;
+}
+
 /* 메인 비주얼 이미지 캔버스 */
 .main-visual-container {
   width: 100%;
